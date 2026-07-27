@@ -1,4 +1,4 @@
-# BTween
+# TheQuote
 
 A personal quote-collecting Android app, built natively in Kotlin with Jetpack Compose.
 
@@ -21,7 +21,7 @@ A personal quote-collecting Android app, built natively in Kotlin with Jetpack C
 ## Module layout
 
 ```
-app/src/main/java/com/btween/app/
+app/src/main/java/com/thequote/app/
 ├── data/
 │   ├── local/
 │   │   ├── entity/       Room @Entity classes
