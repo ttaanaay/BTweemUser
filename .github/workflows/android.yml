@@ -52,7 +52,15 @@ jobs:
         run: |
           APK_PATH=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
           echo "Checking: $APK_PATH"
-          keytool -printcert -jarfile "$APK_PATH" | grep "SHA1:"
+
+          APKSIGNER=$(find "$ANDROID_HOME" -name "apksigner" 2>/dev/null | head -1)
+          if [ -n "$APKSIGNER" ]; then
+            echo "--- via apksigner (reads v1/v2/v3 signing schemes correctly) ---"
+            "$APKSIGNER" verify --print-certs "$APK_PATH" || true
+          fi
+
+          echo "--- via keytool (legacy v1/JAR signature only, shown for comparison) ---"
+          keytool -printcert -jarfile "$APK_PATH" || true
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
