@@ -65,6 +65,8 @@
     <string name="add_edit_category_none">None</string>
     <string name="add_edit_favorite_marked">Marked as favorite</string>
     <string name="add_edit_favorite_unmarked">Mark as favorite</string>
+    <string name="add_edit_share_to_feed">Share to public Feed</string>
+    <string name="add_edit_share_to_feed_subtitle">Anyone can see and like this quote</string>
 
     <!-- Detail -->
     <string name="detail_title">Quote</string>

@@ -7,6 +7,7 @@ import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.repository.QuoteRepository
+import com.btween.app.domain.repository.SocialQuoteRepository
 import com.btween.app.domain.usecase.category.GetCategoriesUseCase
 import com.btween.app.domain.usecase.quote.AddQuoteUseCase
 import com.btween.app.domain.usecase.quote.UpdateQuoteUseCase
@@ -30,6 +31,7 @@ data class AddEditFormState(
     val tagsInput: String = "",
     val note: String = "",
     val isFavorite: Boolean = false,
+    val shareToFeed: Boolean = false,
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
     val errorMessage: String? = null,
@@ -43,6 +45,7 @@ data class AddEditFormState(
 class AddEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val quoteRepository: QuoteRepository,
+    private val socialQuoteRepository: SocialQuoteRepository,
     private val addQuoteUseCase: AddQuoteUseCase,
     private val updateQuoteUseCase: UpdateQuoteUseCase,
     getCategoriesUseCase: GetCategoriesUseCase
@@ -96,6 +99,7 @@ class AddEditViewModel @Inject constructor(
     fun onTagsInputChanged(value: String) = update { it.copy(tagsInput = value) }
     fun onNoteChanged(value: String) = update { it.copy(note = value) }
     fun onFavoriteToggled() = update { it.copy(isFavorite = !it.isFavorite) }
+    fun onShareToFeedToggled() = update { it.copy(shareToFeed = !it.shareToFeed) }
     fun consumeError() = update { it.copy(errorMessage = null) }
 
     private inline fun update(block: (AddEditFormState) -> AddEditFormState) {
@@ -120,9 +124,31 @@ class AddEditViewModel @Inject constructor(
         viewModelScope.launch {
             _formState.value = _formState.value.copy(isSaving = true)
             val result = if (state.isEditMode) updateQuoteUseCase(quote) else addQuoteUseCase(quote).map { }
+
             result
                 .onSuccess {
-                    _formState.value = _formState.value.copy(isSaving = false, didSave = true)
+                    // The quote is safely stored locally no matter what happens next - sharing
+                    // publicly is a secondary, best-effort step that never undoes the local save.
+                    var shareWarning: String? = null
+                    if (!state.isEditMode && state.shareToFeed) {
+                        socialQuoteRepository.createQuote(
+                            text = quote.text,
+                            sourceTitle = quote.sourceTitle,
+                            sourceType = quote.sourceType,
+                            speaker = quote.speaker,
+                            author = quote.author,
+                            category = quote.category?.name,
+                            tags = quote.tags,
+                            visibility = "PUBLIC"
+                        ).onFailure { error ->
+                            shareWarning = "Saved, but couldn't share to Feed: ${error.message}"
+                        }
+                    }
+                    _formState.value = _formState.value.copy(
+                        isSaving = false,
+                        didSave = true,
+                        errorMessage = shareWarning
+                    )
                 }
                 .onFailure { error ->
                     _formState.value = _formState.value.copy(

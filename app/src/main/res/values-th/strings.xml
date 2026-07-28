@@ -65,6 +65,8 @@
     <string name="add_edit_category_none">ไม่มี</string>
     <string name="add_edit_favorite_marked">ทำเครื่องหมายเป็นรายการโปรดแล้ว</string>
     <string name="add_edit_favorite_unmarked">ทำเครื่องหมายเป็นรายการโปรด</string>
+    <string name="add_edit_share_to_feed">แชร์ไปยังฟีดสาธารณะ</string>
+    <string name="add_edit_share_to_feed_subtitle">ทุกคนจะเห็นและกดไลค์คำคมนี้ได้</string>
 
     <!-- Detail -->
     <string name="detail_title">คำคม</string>
