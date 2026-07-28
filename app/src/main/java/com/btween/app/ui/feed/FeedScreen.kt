@@ -91,7 +91,8 @@ fun FeedScreen(
                     items(uiState.quotes, key = { it.id }) { quote ->
                         SocialQuoteCard(
                             quote = quote,
-                            onToggleLike = { viewModel.onToggleLike(quote) }
+                            onToggleLike = { viewModel.onToggleLike(quote) },
+                            onOwnerClick = { onQuoteOwnerClick(quote.owner.id) }
                         )
                     }
                 }

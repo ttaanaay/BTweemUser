@@ -12,6 +12,8 @@ import com.btween.app.ui.favorites.FavoritesScreen
 import com.btween.app.ui.feed.FeedScreen
 import com.btween.app.ui.home.HomeScreen
 import com.btween.app.ui.library.LibraryScreen
+import com.btween.app.ui.profile.EditProfileScreen
+import com.btween.app.ui.profile.ProfileScreen
 import com.btween.app.ui.search.SearchScreen
 import com.btween.app.ui.settings.SettingsScreen
 
@@ -37,7 +39,25 @@ fun BTweenNavHost(navController: NavHostController) {
 
         composable(Destination.Feed.route) {
             FeedScreen(
-                onQuoteOwnerClick = { /* wired once a Profile screen exists */ }
+                onQuoteOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
+            )
+        }
+
+        composable(
+            route = Destination.Profile.route,
+            arguments = listOf(
+                navArgument(Destination.Profile.ARG_USER_ID) { type = NavType.LongType }
+            )
+        ) {
+            ProfileScreen(
+                onBack = { navController.popBackStack() },
+                onEditProfile = { navController.navigate(Destination.EditProfile.route) }
+            )
+        }
+
+        composable(Destination.EditProfile.route) {
+            EditProfileScreen(
+                onDone = { navController.popBackStack() }
             )
         }
 
@@ -48,7 +68,9 @@ fun BTweenNavHost(navController: NavHostController) {
         }
 
         composable(Destination.Settings.route) {
-            SettingsScreen()
+            SettingsScreen(
+                onNavigateToProfile = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
+            )
         }
 
         composable(Destination.Search.route) {

@@ -95,6 +95,7 @@
     <string name="settings_language_thai">\u0E44\u0E17\u0E22 (Thai)</string>
     <string name="settings_section_about">About</string>
     <string name="settings_section_account">Account</string>
+    <string name="settings_my_profile">My Profile</string>
     <string name="settings_logout">Log out</string>
     <string name="settings_logout_dialog_title">Log out?</string>
     <string name="settings_logout_dialog_message">You\'ll need to log in again to access your account.</string>

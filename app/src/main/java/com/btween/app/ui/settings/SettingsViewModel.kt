@@ -47,4 +47,6 @@ class SettingsViewModel @Inject constructor(
     fun onLogout() {
         authRepository.logout()
     }
+
+    fun getCurrentUserId(): Long? = authRepository.getCurrentUserId()
 }

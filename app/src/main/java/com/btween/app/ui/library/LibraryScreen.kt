@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
@@ -57,7 +58,7 @@ fun LibraryScreen(
                 title = { Text(stringResource(R.string.library_title)) },
                 actions = {
                     IconButton(onClick = { showSortMenu = true }) {
-                        Icon(Icons.Filled.Sort, contentDescription = stringResource(R.string.action_sort))
+                        Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = stringResource(R.string.action_sort))
                     }
                     DropdownMenu(expanded = showSortMenu, onDismissRequest = { showSortMenu = false }) {
                         SortOrder.entries.forEach { order ->

@@ -95,6 +95,7 @@
     <string name="settings_language_thai">ไทย</string>
     <string name="settings_section_about">เกี่ยวกับ</string>
     <string name="settings_section_account">บัญชี</string>
+    <string name="settings_my_profile">โปรไฟล์ของฉัน</string>
     <string name="settings_logout">ออกจากระบบ</string>
     <string name="settings_logout_dialog_title">ออกจากระบบใช่ไหม</string>
     <string name="settings_logout_dialog_message">คุณจะต้องเข้าสู่ระบบใหม่เพื่อใช้งานบัญชีของคุณอีกครั้ง</string>

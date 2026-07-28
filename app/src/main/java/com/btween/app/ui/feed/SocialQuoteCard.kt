@@ -1,6 +1,7 @@
 package com.btween.app.ui.feed
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +35,8 @@ import com.btween.app.ui.util.localizedLabel
 fun SocialQuoteCard(
     quote: SocialQuote,
     onToggleLike: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOwnerClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -42,7 +44,10 @@ fun SocialQuoteCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable(onClick = onOwnerClick)
+            ) {
                 Box(
                     modifier = Modifier
                         .size(32.dp)

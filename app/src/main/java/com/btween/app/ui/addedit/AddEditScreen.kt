@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Favorite
@@ -57,13 +58,15 @@ fun AddEditScreen(
     val categories by viewModel.categories.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(state.didSave) {
-        if (state.didSave) onDone()
-    }
-
-    LaunchedEffect(state.errorMessage) {
-        state.errorMessage?.let {
-            snackbarHostState.showSnackbar(it)
+    // Combined into one effect: if a share-to-feed warning came back alongside a successful
+    // local save, show it *before* leaving the screen (a separate LaunchedEffect per state
+    // field would race - navigation would win and the snackbar would never be seen).
+    LaunchedEffect(state.didSave, state.errorMessage) {
+        if (state.didSave) {
+            state.errorMessage?.let { snackbarHostState.showSnackbar(it) }
+            onDone()
+        } else if (state.errorMessage != null) {
+            snackbarHostState.showSnackbar(state.errorMessage)
             viewModel.consumeError()
         }
     }
@@ -83,7 +86,7 @@ fun AddEditScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onDone) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {

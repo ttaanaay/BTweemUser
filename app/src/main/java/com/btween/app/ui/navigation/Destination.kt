@@ -22,4 +22,11 @@ sealed class Destination(val route: String) {
         const val ARG_QUOTE_ID = "quoteId"
         fun createRoute(quoteId: Long) = "quote_detail/$quoteId"
     }
+
+    data object Profile : Destination("profile/{userId}") {
+        const val ARG_USER_ID = "userId"
+        fun createRoute(userId: Long) = "profile/$userId"
+    }
+
+    data object EditProfile : Destination("edit_profile")
 }

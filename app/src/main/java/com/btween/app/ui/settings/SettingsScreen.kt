@@ -39,6 +39,7 @@ import com.btween.app.domain.model.ThemeMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    onNavigateToProfile: (Long) -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.userSettings.collectAsStateWithLifecycle()
@@ -120,6 +121,17 @@ fun SettingsScreen(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             SettingsSectionTitle(stringResource(R.string.settings_section_account))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = false,
+                        onClick = { viewModel.getCurrentUserId()?.let(onNavigateToProfile) }
+                    )
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+            ) {
+                Text(stringResource(R.string.settings_my_profile))
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
