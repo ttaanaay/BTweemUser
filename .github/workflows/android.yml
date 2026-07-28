@@ -46,7 +46,7 @@ jobs:
         run: ./gradlew testDebugUnitTest --stacktrace
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew clean assembleDebug --stacktrace --rerun-tasks
 
       - name: Print SHA-1 actually embedded in the built APK
         run: |
