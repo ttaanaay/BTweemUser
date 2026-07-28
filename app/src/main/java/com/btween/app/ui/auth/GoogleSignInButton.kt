@@ -24,10 +24,14 @@ import com.google.android.gms.common.api.ApiException
  * Uses the classic (well-proven, still fully supported) GoogleSignInClient flow rather than
  * the newer Credential Manager API - fewer moving parts to configure correctly for a first
  * integration. The ID token it returns is what the backend verifies at /auth/oauth/google.
+ *
+ * [onResult] gets (idToken, null) on success, or (null, humanReadableErrorDetail) on failure -
+ * the detail is shown directly in the on-screen snackbar so diagnosing setup issues (wrong
+ * SHA-1, etc.) doesn't require pulling logcat.
  */
 @Composable
 fun GoogleSignInButton(
-    onIdTokenReceived: (String?) -> Unit,
+    onResult: (idToken: String?, errorDetail: String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -45,21 +49,16 @@ fun GoogleSignInButton(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode != RESULT_OK) {
-            android.util.Log.w("GoogleSignIn", "Result not OK, resultCode=${result.resultCode}")
-            onIdTokenReceived(null)
+            onResult(null, "Google sign-in closed (resultCode=${result.resultCode})")
             return@rememberLauncherForActivityResult
         }
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
             val account = task.getResult(ApiException::class.java)
-            onIdTokenReceived(account.idToken)
+            onResult(account.idToken, null)
         } catch (e: ApiException) {
-            android.util.Log.e(
-                "GoogleSignIn",
-                "Sign-in failed, statusCode=${e.statusCode} (${GoogleSignInStatusCodes.getStatusCodeString(e.statusCode)})",
-                e
-            )
-            onIdTokenReceived(null)
+            val statusName = GoogleSignInStatusCodes.getStatusCodeString(e.statusCode)
+            onResult(null, "Google error ${e.statusCode}: $statusName")
         }
     }
 

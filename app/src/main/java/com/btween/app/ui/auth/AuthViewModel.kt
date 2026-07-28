@@ -68,9 +68,9 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun onGoogleSignInResult(idToken: String?) {
+    fun onGoogleSignInResult(idToken: String?, errorDetail: String?) {
         if (idToken == null) {
-            update { it.copy(errorMessage = "Google sign-in was cancelled or failed") }
+            update { it.copy(errorMessage = errorDetail ?: "Google sign-in was cancelled or failed") }
             return
         }
         viewModelScope.launch {

@@ -134,7 +134,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            GoogleSignInButton(onIdTokenReceived = viewModel::onGoogleSignInResult)
+            GoogleSignInButton(onResult = viewModel::onGoogleSignInResult)
         }
     }
 }

@@ -38,11 +38,21 @@ jobs:
           mkdir -p ~/.android
           echo "${{ secrets.DEBUG_KEYSTORE_BASE64 }}" | base64 -d > ~/.android/debug.keystore
 
+      - name: Print debug keystore SHA-1 (for verifying against Google/Facebook/Microsoft console configs)
+        run: |
+          keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android | grep "SHA1:"
+
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest --stacktrace
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
+
+      - name: Print SHA-1 actually embedded in the built APK
+        run: |
+          APK_PATH=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
+          echo "Checking: $APK_PATH"
+          keytool -printcert -jarfile "$APK_PATH" | grep "SHA1:"
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
