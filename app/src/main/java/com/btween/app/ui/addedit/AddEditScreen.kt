@@ -62,11 +62,12 @@ fun AddEditScreen(
     // local save, show it *before* leaving the screen (a separate LaunchedEffect per state
     // field would race - navigation would win and the snackbar would never be seen).
     LaunchedEffect(state.didSave, state.errorMessage) {
+        val error = state.errorMessage
         if (state.didSave) {
-            state.errorMessage?.let { snackbarHostState.showSnackbar(it) }
+            error?.let { snackbarHostState.showSnackbar(it) }
             onDone()
-        } else if (state.errorMessage != null) {
-            snackbarHostState.showSnackbar(state.errorMessage)
+        } else if (error != null) {
+            snackbarHostState.showSnackbar(error)
             viewModel.consumeError()
         }
     }
