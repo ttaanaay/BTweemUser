@@ -135,6 +135,10 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             GoogleSignInButton(onResult = viewModel::onGoogleSignInResult)
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            FacebookLoginButton(onAccessTokenReceived = viewModel::onFacebookLoginResult)
         }
     }
 }

@@ -128,5 +128,6 @@ dependencies {
     implementation(libs.okhttp.core)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.play.services.auth)
+    implementation(libs.facebook.login)
     implementation(libs.security.crypto)
 }

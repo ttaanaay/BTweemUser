@@ -80,4 +80,17 @@ class AuthViewModel @Inject constructor(
                 .onFailure { error -> update { it.copy(isLoading = false, errorMessage = error.message) } }
         }
     }
+
+    fun onFacebookLoginResult(accessToken: String?) {
+        if (accessToken == null) {
+            update { it.copy(errorMessage = "Facebook sign-in was cancelled or failed") }
+            return
+        }
+        viewModelScope.launch {
+            update { it.copy(isLoading = true) }
+            authRepository.loginWithFacebook(accessToken)
+                .onSuccess { update { it.copy(isLoading = false, didSucceed = true) } }
+                .onFailure { error -> update { it.copy(isLoading = false, errorMessage = error.message) } }
+        }
+    }
 }

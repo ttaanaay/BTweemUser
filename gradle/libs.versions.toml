@@ -20,6 +20,7 @@ appcompat = "1.7.0"
 retrofit = "2.11.0"
 okhttp = "4.12.0"
 playServicesAuth = "21.2.0"
+facebookLogin = "17.0.2"
 securityCrypto = "1.1.0-alpha06"
 
 [libraries]
@@ -63,6 +64,7 @@ retrofit-kotlinx-serialization = { group = "com.jakewharton.retrofit", name = "r
 okhttp-core = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+facebook-login = { group = "com.facebook.android", name = "facebook-login", version.ref = "facebookLogin" }
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 
 [plugins]
