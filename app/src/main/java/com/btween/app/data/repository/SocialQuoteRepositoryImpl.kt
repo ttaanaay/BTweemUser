@@ -1,6 +1,7 @@
 package com.btween.app.data.repository
 
 import com.btween.app.data.remote.api.QuoteApi
+import com.btween.app.data.remote.api.UserApi
 import com.btween.app.data.remote.dto.QuoteRequestDto
 import com.btween.app.data.remote.dto.toDomain
 import com.btween.app.data.remote.safeApiCall
@@ -12,7 +13,8 @@ import javax.inject.Singleton
 
 @Singleton
 class SocialQuoteRepositoryImpl @Inject constructor(
-    private val quoteApi: QuoteApi
+    private val quoteApi: QuoteApi,
+    private val userApi: UserApi
 ) : SocialQuoteRepository {
 
     override suspend fun getFeed(limit: Int, offset: Long): Result<List<SocialQuote>> = safeApiCall {
@@ -25,7 +27,7 @@ class SocialQuoteRepositoryImpl @Inject constructor(
 
     override suspend fun getUserQuotes(userId: Long, limit: Int, offset: Long): Result<List<SocialQuote>> =
         safeApiCall {
-            quoteApi.getUserQuotes(userId, limit, offset).map { it.toDomain() }
+            userApi.getUserQuotes(userId, limit, offset).map { it.toDomain() }
         }
 
     override suspend fun createQuote(
