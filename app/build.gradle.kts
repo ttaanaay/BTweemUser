@@ -24,6 +24,27 @@ android {
         }
     }
 
+    signingConfigs {
+        // Points at a keystore restored into the project directory by CI (see
+        // .github/workflows/android.yml) rather than relying on AGP's implicit default
+        // debug-keystore location - that default proved unreliable across CI runs (the
+        // signing certificate kept changing between builds even with the same source
+        // keystore file, which silently breaks Google/Facebook/Microsoft sign-in since
+        // their consoles are registered against one fixed SHA-1). Falls back to letting
+        // AGP generate its own default debug key if this file isn't present (e.g. on a
+        // fresh local checkout that hasn't restored the CI keystore) so local `assembleDebug`
+        // builds still work out of the box.
+        val ciDebugKeystore = file("debug.keystore")
+        if (ciDebugKeystore.exists()) {
+            create("ciDebug") {
+                storeFile = ciDebugKeystore
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -36,6 +57,7 @@ android {
         debug {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
+            signingConfigs.findByName("ciDebug")?.let { signingConfig = it }
         }
     }
 
