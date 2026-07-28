@@ -185,7 +185,7 @@ fun ProfileScreen(
                 items(uiState.quotes, key = { it.id }) { quote ->
                     SocialQuoteCard(
                         quote = quote,
-                        onToggleLike = { },
+                        onToggleLike = { viewModel.onToggleLike(quote) },
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                     )
                 }

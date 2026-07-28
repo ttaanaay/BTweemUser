@@ -7,6 +7,7 @@ import com.btween.app.domain.model.SocialQuote
 import com.btween.app.domain.model.User
 import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.ProfileRepository
+import com.btween.app.domain.repository.SocialQuoteRepository
 import com.btween.app.ui.navigation.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,7 @@ data class ProfileUiState(
 class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val profileRepository: ProfileRepository,
+    private val socialQuoteRepository: SocialQuoteRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -93,6 +95,31 @@ class ProfileViewModel @Inject constructor(
                         errorMessage = error.message
                     )
                 }
+        }
+    }
+
+    fun onToggleLike(quote: SocialQuote) {
+        val optimistic = quote.copy(
+            isLikedByMe = !quote.isLikedByMe,
+            likeCount = if (quote.isLikedByMe) quote.likeCount - 1 else quote.likeCount + 1
+        )
+        _uiState.value = _uiState.value.copy(
+            quotes = _uiState.value.quotes.map { if (it.id == quote.id) optimistic else it }
+        )
+
+        viewModelScope.launch {
+            val result = if (optimistic.isLikedByMe) {
+                socialQuoteRepository.likeQuote(quote.id)
+            } else {
+                socialQuoteRepository.unlikeQuote(quote.id)
+            }
+            result.onFailure {
+                // Roll back the optimistic update if the request failed.
+                _uiState.value = _uiState.value.copy(
+                    quotes = _uiState.value.quotes.map { if (it.id == quote.id) quote else it },
+                    errorMessage = it.message
+                )
+            }
         }
     }
 }
