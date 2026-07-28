@@ -41,6 +41,12 @@ data class UserResponseDto(
 )
 
 @Serializable
+data class TopContributorResponseDto(
+    val user: UserResponseDto,
+    val quoteCount: Int
+)
+
+@Serializable
 data class UpdateProfileRequestDto(
     val displayName: String? = null,
     val avatarUrl: String? = null,

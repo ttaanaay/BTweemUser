@@ -14,4 +14,8 @@ interface ProfileRepository {
     suspend fun unfollow(id: Long): Result<Unit>
 
     suspend fun getUserQuotes(id: Long, limit: Int = 20, offset: Long = 0): Result<List<SocialQuote>>
+
+    suspend fun getTopContributors(limit: Int = 10): Result<List<TopContributor>>
 }
+
+data class TopContributor(val user: User, val quoteCount: Int)

@@ -25,9 +25,7 @@ fun BTweenNavHost(navController: NavHostController) {
             HomeScreen(
                 onAddQuote = { navController.navigate(Destination.AddEditQuote.createRoute()) },
                 onSearch = { navController.navigate(Destination.Search.route) },
-                onQuoteClick = { id -> navController.navigate(Destination.QuoteDetail.createRoute(id)) },
-                onSeeAllFavorites = { navController.navigate(Destination.Favorites.route) },
-                onSeeAllLibrary = { navController.navigate(Destination.Library.route) }
+                onUserClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
             )
         }
 

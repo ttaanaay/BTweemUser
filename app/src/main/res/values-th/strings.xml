@@ -28,6 +28,12 @@
     <string name="home_section_recently_added">เพิ่มล่าสุด</string>
     <string name="home_section_favorites">รายการโปรด</string>
     <string name="home_section_recently_viewed">ดูล่าสุด</string>
+    <string name="home_section_trending">คำคมยอดนิยม</string>
+    <string name="home_section_categories">หมวดหมู่</string>
+    <string name="home_section_recently_approved">อนุมัติล่าสุด</string>
+    <string name="home_section_top_contributors">ผู้สนับสนุนยอดนิยม</string>
+    <string name="home_daily_quote_badge">คำคมประจำวัน</string>
+    <string name="home_quotes_count">%1$d คำคม</string>
     <string name="home_stat_quotes">คำคม</string>
     <string name="home_stat_favorites">รายการโปรด</string>
     <string name="home_stat_sources">แหล่งที่มา</string>

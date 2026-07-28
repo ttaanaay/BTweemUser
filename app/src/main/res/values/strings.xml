@@ -28,6 +28,12 @@
     <string name="home_section_recently_added">Recently Added</string>
     <string name="home_section_favorites">Favorites</string>
     <string name="home_section_recently_viewed">Recently Viewed</string>
+    <string name="home_section_trending">Trending Quotes</string>
+    <string name="home_section_categories">Categories</string>
+    <string name="home_section_recently_approved">Recently Approved</string>
+    <string name="home_section_top_contributors">Top Contributors</string>
+    <string name="home_daily_quote_badge">Daily Quote</string>
+    <string name="home_quotes_count">%1$d quotes</string>
     <string name="home_stat_quotes">Quotes</string>
     <string name="home_stat_favorites">Favorites</string>
     <string name="home_stat_sources">Sources</string>

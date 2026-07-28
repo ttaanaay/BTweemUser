@@ -7,6 +7,7 @@ import com.btween.app.data.remote.safeApiCall
 import com.btween.app.domain.model.SocialQuote
 import com.btween.app.domain.model.User
 import com.btween.app.domain.repository.ProfileRepository
+import com.btween.app.domain.repository.TopContributor
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,4 +37,8 @@ class ProfileRepositoryImpl @Inject constructor(
         safeApiCall {
             userApi.getUserQuotes(id, limit, offset).map { it.toDomain() }
         }
+
+    override suspend fun getTopContributors(limit: Int): Result<List<TopContributor>> = safeApiCall {
+        userApi.getTopContributors(limit).map { TopContributor(it.user.toDomain(), it.quoteCount) }
+    }
 }

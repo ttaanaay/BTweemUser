@@ -1,6 +1,7 @@
 package com.btween.app.data.remote.api
 
 import com.btween.app.data.remote.dto.QuoteResponseDto
+import com.btween.app.data.remote.dto.TopContributorResponseDto
 import com.btween.app.data.remote.dto.UpdateProfileRequestDto
 import com.btween.app.data.remote.dto.UserResponseDto
 import retrofit2.http.Body
@@ -15,6 +16,9 @@ interface UserApi {
 
     @GET("users/{id}")
     suspend fun getUser(@Path("id") id: Long): UserResponseDto
+
+    @GET("users/top-contributors")
+    suspend fun getTopContributors(@Query("limit") limit: Int = 10): List<TopContributorResponseDto>
 
     @PUT("users/me")
     suspend fun updateProfile(@Body request: UpdateProfileRequestDto): UserResponseDto
