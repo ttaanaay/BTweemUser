@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.btween.app.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
 
 /**
@@ -44,6 +45,7 @@ fun GoogleSignInButton(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode != RESULT_OK) {
+            android.util.Log.w("GoogleSignIn", "Result not OK, resultCode=${result.resultCode}")
             onIdTokenReceived(null)
             return@rememberLauncherForActivityResult
         }
@@ -52,6 +54,11 @@ fun GoogleSignInButton(
             val account = task.getResult(ApiException::class.java)
             onIdTokenReceived(account.idToken)
         } catch (e: ApiException) {
+            android.util.Log.e(
+                "GoogleSignIn",
+                "Sign-in failed, statusCode=${e.statusCode} (${GoogleSignInStatusCodes.getStatusCodeString(e.statusCode)})",
+                e
+            )
             onIdTokenReceived(null)
         }
     }
