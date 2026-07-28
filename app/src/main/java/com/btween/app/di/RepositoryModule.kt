@@ -4,10 +4,12 @@ import com.btween.app.data.repository.AuthRepositoryImpl
 import com.btween.app.data.repository.CategoryRepositoryImpl
 import com.btween.app.data.repository.QuoteRepositoryImpl
 import com.btween.app.data.repository.SettingsRepositoryImpl
+import com.btween.app.data.repository.SocialQuoteRepositoryImpl
 import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.CategoryRepository
 import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.SettingsRepository
+import com.btween.app.domain.repository.SocialQuoteRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,4 +35,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSocialQuoteRepository(impl: SocialQuoteRepositoryImpl): SocialQuoteRepository
 }

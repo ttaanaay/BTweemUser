@@ -5,10 +5,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -33,6 +35,7 @@ data class BottomNavItem(
 
 val bottomNavItems = listOf(
     BottomNavItem(Destination.Home, R.string.nav_home, Icons.Filled.Home, Icons.Outlined.Home),
+    BottomNavItem(Destination.Feed, R.string.nav_feed, Icons.Filled.Public, Icons.Outlined.Public),
     BottomNavItem(Destination.Library, R.string.nav_library, Icons.Filled.Menu, Icons.Outlined.Menu),
     BottomNavItem(Destination.Favorites, R.string.nav_favorites, Icons.Filled.Favorite, Icons.Outlined.Favorite),
     BottomNavItem(Destination.Settings, R.string.nav_settings, Icons.Filled.Settings, Icons.Outlined.Settings)

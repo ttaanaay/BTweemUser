@@ -3,6 +3,7 @@ package com.btween.app.ui.navigation
 sealed class Destination(val route: String) {
 
     data object Home : Destination("home")
+    data object Feed : Destination("feed")
     data object Library : Destination("library")
     data object Favorites : Destination("favorites")
     data object Search : Destination("search")

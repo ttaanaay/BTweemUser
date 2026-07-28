@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.btween.app.ui.addedit.AddEditScreen
 import com.btween.app.ui.detail.DetailScreen
 import com.btween.app.ui.favorites.FavoritesScreen
+import com.btween.app.ui.feed.FeedScreen
 import com.btween.app.ui.home.HomeScreen
 import com.btween.app.ui.library.LibraryScreen
 import com.btween.app.ui.search.SearchScreen
@@ -31,6 +32,12 @@ fun BTweenNavHost(navController: NavHostController) {
         composable(Destination.Library.route) {
             LibraryScreen(
                 onQuoteClick = { id -> navController.navigate(Destination.QuoteDetail.createRoute(id)) }
+            )
+        }
+
+        composable(Destination.Feed.route) {
+            FeedScreen(
+                onQuoteOwnerClick = { /* wired once a Profile screen exists */ }
             )
         }
 

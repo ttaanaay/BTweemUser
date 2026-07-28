@@ -3,6 +3,7 @@
 
     <!-- Bottom navigation -->
     <string name="nav_home">หน้าแรก</string>
+    <string name="nav_feed">ฟีด</string>
     <string name="nav_library">คลังคำคม</string>
     <string name="nav_favorites">รายการโปรด</string>
     <string name="nav_settings">ตั้งค่า</string>
