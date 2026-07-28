@@ -67,4 +67,17 @@ class AuthViewModel @Inject constructor(
                 }
         }
     }
+
+    fun onGoogleSignInResult(idToken: String?) {
+        if (idToken == null) {
+            update { it.copy(errorMessage = "Google sign-in was cancelled or failed") }
+            return
+        }
+        viewModelScope.launch {
+            update { it.copy(isLoading = true) }
+            authRepository.loginWithGoogle(idToken)
+                .onSuccess { update { it.copy(isLoading = false, didSucceed = true) } }
+                .onFailure { error -> update { it.copy(isLoading = false, errorMessage = error.message) } }
+        }
+    }
 }

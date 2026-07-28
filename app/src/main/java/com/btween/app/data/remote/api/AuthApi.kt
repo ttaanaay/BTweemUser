@@ -2,6 +2,7 @@ package com.btween.app.data.remote.api
 
 import com.btween.app.data.remote.dto.AuthResponseDto
 import com.btween.app.data.remote.dto.LoginRequestDto
+import com.btween.app.data.remote.dto.OAuthLoginRequestDto
 import com.btween.app.data.remote.dto.RefreshRequestDto
 import com.btween.app.data.remote.dto.RegisterRequestDto
 import retrofit2.http.Body
@@ -17,4 +18,13 @@ interface AuthApi {
 
     @POST("auth/refresh")
     suspend fun refresh(@Body request: RefreshRequestDto): AuthResponseDto
+
+    @POST("auth/oauth/google")
+    suspend fun loginWithGoogle(@Body request: OAuthLoginRequestDto): AuthResponseDto
+
+    @POST("auth/oauth/facebook")
+    suspend fun loginWithFacebook(@Body request: OAuthLoginRequestDto): AuthResponseDto
+
+    @POST("auth/oauth/microsoft")
+    suspend fun loginWithMicrosoft(@Body request: OAuthLoginRequestDto): AuthResponseDto
 }

@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">BTween</string>
 
+    <!-- Not user-facing text - a config value, so not translated. Web Client ID from Google
+         Cloud Console (see conversation history for setup steps). Client IDs are not secrets. -->
+    <string name="google_web_client_id" translatable="false">966254164469-f8tpfdiu8m3le02ms98kti982f29k409.apps.googleusercontent.com</string>
+
     <!-- Bottom navigation -->
     <string name="nav_home">Home</string>
     <string name="nav_feed">Feed</string>

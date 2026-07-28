@@ -105,5 +105,6 @@ dependencies {
     implementation(libs.retrofit.kotlinx.serialization)
     implementation(libs.okhttp.core)
     implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.play.services.auth)
     implementation(libs.security.crypto)
 }

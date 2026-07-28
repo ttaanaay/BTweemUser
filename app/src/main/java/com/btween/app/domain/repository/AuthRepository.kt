@@ -11,6 +11,12 @@ interface AuthRepository {
 
     suspend fun login(email: String, password: String): Result<User>
 
+    suspend fun loginWithGoogle(idToken: String): Result<User>
+
+    suspend fun loginWithFacebook(accessToken: String): Result<User>
+
+    suspend fun loginWithMicrosoft(accessToken: String): Result<User>
+
     fun logout()
 
     fun getCurrentUserId(): Long?
