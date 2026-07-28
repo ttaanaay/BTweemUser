@@ -1,0 +1,51 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # Safety net: ensure the wrapper is executable even if the checked-out
+      # file mode was lost (e.g. repo committed/edited from Windows).
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # Without this, Gradle auto-generates a brand-new (random SHA-1) debug.keystore on
+      # every single CI run, which silently breaks Google/Facebook/Microsoft sign-in every
+      # time (their consoles are registered against one specific SHA-1). Restoring the same
+      # keystore every run keeps that fingerprint permanently stable.
+      - name: Restore fixed debug keystore
+        run: |
+          mkdir -p ~/.android
+          echo "${{ secrets.DEBUG_KEYSTORE_BASE64 }}" | base64 -d > ~/.android/debug.keystore
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest --stacktrace
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TheQuote-debug-apk
+          path: app/build/outputs/apk/debug/*.apk

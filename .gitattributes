@@ -1,0 +1,17 @@
+# Prevent Git from auto-converting line endings, which is the #1 cause of
+# "./gradlew: Permission denied" / "Could not find or load main class" failures
+# on CI when a repo was committed from Windows with autocrlf enabled.
+
+* text=auto eol=lf
+
+*.jar   binary
+*.png   binary
+*.jpg   binary
+*.webp  binary
+*.ttf   binary
+*.otf   binary
+*.keystore binary
+*.jks   binary
+
+gradlew       text eol=lf
+*.bat         text eol=crlf
