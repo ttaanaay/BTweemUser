@@ -2,6 +2,8 @@ package com.btween.app.data.remote
 
 import android.content.Context
 import android.net.Uri
+import com.btween.app.di.CloudinaryCloudName
+import com.btween.app.di.CloudinaryUploadPreset
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
