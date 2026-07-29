@@ -1,5 +1,6 @@
 package com.btween.app.ui.settings
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +50,7 @@ fun SettingsScreen(
 ) {
     val settings by viewModel.userSettings.collectAsStateWithLifecycle()
     val appLanguage by viewModel.appLanguage.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -112,7 +115,14 @@ fun SettingsScreen(
                 ThemeOptionRow(
                     label = language.label(),
                     selected = appLanguage == language,
-                    onSelect = { viewModel.onLanguageSelected(language) }
+                    onSelect = {
+                        viewModel.onLanguageSelected(language)
+                        // MainActivity is a plain ComponentActivity, not AppCompatActivity -
+                        // AppCompat's automatic recreate-on-locale-change isn't guaranteed to
+                        // kick in reliably in that case (especially pre-API 33), so trigger it
+                        // explicitly to make sure the change actually takes visible effect.
+                        (context as? Activity)?.recreate()
+                    }
                 )
             }
 

@@ -15,7 +15,8 @@ interface QuoteApi {
     @GET("quotes/feed")
     suspend fun getFeed(
         @Query("limit") limit: Int = 20,
-        @Query("offset") offset: Long = 0
+        @Query("offset") offset: Long = 0,
+        @Query("scope") scope: String = "recommended"
     ): List<QuoteResponseDto>
 
     @GET("quotes/{id}")

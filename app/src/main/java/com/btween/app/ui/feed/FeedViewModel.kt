@@ -12,14 +12,29 @@ import javax.inject.Inject
 
 private const val PAGE_SIZE = 20
 
-data class FeedUiState(
+enum class FeedTab(val scopeParam: String) {
+    FOR_YOU("recommended"),
+    FOLLOWING("following")
+}
+
+/** Per-tab feed state, tracked independently so switching tabs doesn't lose scroll position/data. */
+data class FeedTabState(
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val isLoadingMore: Boolean = false,
     val quotes: List<SocialQuote> = emptyList(),
     val endReached: Boolean = false,
-    val errorMessage: String? = null
+    val hasLoadedOnce: Boolean = false
 )
+
+data class FeedUiState(
+    val selectedTab: FeedTab = FeedTab.FOR_YOU,
+    val forYou: FeedTabState = FeedTabState(),
+    val following: FeedTabState = FeedTabState(),
+    val errorMessage: String? = null
+) {
+    val current: FeedTabState get() = if (selectedTab == FeedTab.FOR_YOU) forYou else following
+}
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
@@ -30,67 +45,84 @@ class FeedViewModel @Inject constructor(
     val uiState: StateFlow<FeedUiState> = _uiState
 
     init {
-        loadFeed()
+        loadTab(FeedTab.FOR_YOU)
     }
 
-    private fun loadFeed(isRefresh: Boolean = false) {
+    fun onTabSelected(tab: FeedTab) {
+        _uiState.value = _uiState.value.copy(selectedTab = tab)
+        val tabState = if (tab == FeedTab.FOR_YOU) _uiState.value.forYou else _uiState.value.following
+        if (!tabState.hasLoadedOnce) loadTab(tab)
+    }
+
+    private fun updateTab(tab: FeedTab, block: (FeedTabState) -> FeedTabState) {
+        _uiState.value = if (tab == FeedTab.FOR_YOU) {
+            _uiState.value.copy(forYou = block(_uiState.value.forYou))
+        } else {
+            _uiState.value.copy(following = block(_uiState.value.following))
+        }
+    }
+
+    private fun loadTab(tab: FeedTab, isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = !isRefresh, isRefreshing = isRefresh)
-            socialQuoteRepository.getFeed(limit = PAGE_SIZE, offset = 0)
+            updateTab(tab) { it.copy(isLoading = !isRefresh, isRefreshing = isRefresh) }
+            socialQuoteRepository.getFeed(limit = PAGE_SIZE, offset = 0, scope = tab.scopeParam)
                 .onSuccess { quotes ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        isRefreshing = false,
-                        quotes = quotes,
-                        endReached = quotes.size < PAGE_SIZE,
-                        errorMessage = null
-                    )
+                    updateTab(tab) {
+                        it.copy(
+                            isLoading = false,
+                            isRefreshing = false,
+                            quotes = quotes,
+                            endReached = quotes.size < PAGE_SIZE,
+                            hasLoadedOnce = true
+                        )
+                    }
                 }
                 .onFailure { error ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        isRefreshing = false,
-                        errorMessage = error.message
-                    )
+                    updateTab(tab) { it.copy(isLoading = false, isRefreshing = false, hasLoadedOnce = true) }
+                    _uiState.value = _uiState.value.copy(errorMessage = error.message)
                 }
         }
     }
 
-    /** Called when the user scrolls near the bottom of the list - loads the next page. */
     fun onLoadMore() {
-        val state = _uiState.value
+        val tab = _uiState.value.selectedTab
+        val state = _uiState.value.current
         if (state.isLoadingMore || state.endReached || state.isLoading) return
 
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoadingMore = true)
-            socialQuoteRepository.getFeed(limit = PAGE_SIZE, offset = state.quotes.size.toLong())
+            updateTab(tab) { it.copy(isLoadingMore = true) }
+            socialQuoteRepository.getFeed(limit = PAGE_SIZE, offset = state.quotes.size.toLong(), scope = tab.scopeParam)
                 .onSuccess { newQuotes ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoadingMore = false,
-                        quotes = _uiState.value.quotes + newQuotes,
-                        endReached = newQuotes.size < PAGE_SIZE
-                    )
+                    updateTab(tab) {
+                        it.copy(
+                            isLoadingMore = false,
+                            quotes = it.quotes + newQuotes,
+                            endReached = newQuotes.size < PAGE_SIZE
+                        )
+                    }
                 }
                 .onFailure { error ->
-                    _uiState.value = _uiState.value.copy(isLoadingMore = false, errorMessage = error.message)
+                    updateTab(tab) { it.copy(isLoadingMore = false) }
+                    _uiState.value = _uiState.value.copy(errorMessage = error.message)
                 }
         }
     }
 
-    fun onRefresh() = loadFeed(isRefresh = true)
+    fun onRefresh() = loadTab(_uiState.value.selectedTab, isRefresh = true)
 
     fun consumeError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
     fun onToggleLike(quote: SocialQuote) {
+        val tab = _uiState.value.selectedTab
         val optimistic = quote.copy(
             isLikedByMe = !quote.isLikedByMe,
             likeCount = if (quote.isLikedByMe) quote.likeCount - 1 else quote.likeCount + 1
         )
-        _uiState.value = _uiState.value.copy(
-            quotes = _uiState.value.quotes.map { if (it.id == quote.id) optimistic else it }
-        )
+        updateTab(tab) { state ->
+            state.copy(quotes = state.quotes.map { if (it.id == quote.id) optimistic else it })
+        }
 
         viewModelScope.launch {
             val result = if (optimistic.isLikedByMe) {
@@ -98,12 +130,11 @@ class FeedViewModel @Inject constructor(
             } else {
                 socialQuoteRepository.unlikeQuote(quote.id)
             }
-            // If the request failed, roll the optimistic update back.
-            result.onFailure {
-                _uiState.value = _uiState.value.copy(
-                    quotes = _uiState.value.quotes.map { if (it.id == quote.id) quote else it },
-                    errorMessage = it.message
-                )
+            result.onFailure { error ->
+                updateTab(tab) { state ->
+                    state.copy(quotes = state.quotes.map { if (it.id == quote.id) quote else it })
+                }
+                _uiState.value = _uiState.value.copy(errorMessage = error.message)
             }
         }
     }

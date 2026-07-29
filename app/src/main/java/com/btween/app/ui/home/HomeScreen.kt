@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -99,7 +100,8 @@ fun HomeScreen(
             ExtendedFloatingActionButton(
                 onClick = onAddQuote,
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(stringResource(R.string.action_add_quote)) }
+                text = { Text(stringResource(R.string.action_add_quote)) },
+                modifier = Modifier.offset(y = 12.dp)
             )
         }
     ) { padding ->
