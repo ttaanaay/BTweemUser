@@ -15,6 +15,7 @@ import javax.inject.Inject
 
 data class HomeUiState(
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val dailyQuote: SocialQuote? = null,
     val trending: List<SocialQuote> = emptyList(),
     val recentlyApproved: List<SocialQuote> = emptyList(),
@@ -39,9 +40,9 @@ class HomeViewModel @Inject constructor(
         load()
     }
 
-    fun load() {
+    fun load(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.value = _uiState.value.copy(isLoading = !isRefresh, isRefreshing = isRefresh)
 
             val feedResult = socialQuoteRepository.getFeed(limit = 30)
             val contributors = profileRepository.getTopContributors(limit = 10).getOrDefault(emptyList())
@@ -56,6 +57,7 @@ class HomeViewModel @Inject constructor(
 
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
+                        isRefreshing = false,
                         dailyQuote = daily,
                         trending = trending,
                         recentlyApproved = recentlyApproved,
@@ -67,6 +69,7 @@ class HomeViewModel @Inject constructor(
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
+                        isRefreshing = false,
                         topContributors = contributors,
                         unreadNotificationCount = unreadCount,
                         errorMessage = error.message
@@ -75,7 +78,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onRefresh() = load()
+    fun onRefresh() = load(isRefresh = true)
 
     fun consumeError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)

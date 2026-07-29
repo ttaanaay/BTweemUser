@@ -10,17 +10,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -66,62 +64,54 @@ fun FeedScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(
-                title = { Text("Feed") },
-                actions = {
-                    IconButton(onClick = viewModel::onRefresh) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
-                    }
-                }
-            )
+            TopAppBar(title = { Text("Feed") })
         }
     ) { padding ->
-        when {
-            uiState.isLoading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            uiState.quotes.isEmpty() -> {
-                EmptyState(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    icon = Icons.Outlined.Public,
-                    title = "No public quotes yet",
-                    message = "Be the first to share a quote with everyone \u2014 mark a quote as Public when adding it."
-                )
-            }
-            else -> {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(uiState.quotes, key = { it.id }) { quote ->
-                        SocialQuoteCard(
-                            quote = quote,
-                            onToggleLike = { viewModel.onToggleLike(quote) },
-                            onOwnerClick = { onQuoteOwnerClick(quote.owner.id) }
-                        )
+        PullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = viewModel::onRefresh,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            when {
+                uiState.isLoading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
-                    if (uiState.isLoadingMore) {
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
+                }
+                uiState.quotes.isEmpty() -> {
+                    EmptyState(
+                        modifier = Modifier.fillMaxSize(),
+                        icon = Icons.Outlined.Public,
+                        title = "No public quotes yet",
+                        message = "Be the first to share a quote with everyone \u2014 mark a quote as Public when adding it."
+                    )
+                }
+                else -> {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(uiState.quotes, key = { it.id }) { quote ->
+                            SocialQuoteCard(
+                                quote = quote,
+                                onToggleLike = { viewModel.onToggleLike(quote) },
+                                onOwnerClick = { onQuoteOwnerClick(quote.owner.id) }
+                            )
+                        }
+                        if (uiState.isLoadingMore) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
                             }
                         }
                     }

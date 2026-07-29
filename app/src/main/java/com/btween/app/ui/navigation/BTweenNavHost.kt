@@ -51,7 +51,8 @@ fun BTweenNavHost(navController: NavHostController) {
         ) {
             ProfileScreen(
                 onBack = { navController.popBackStack() },
-                onEditProfile = { navController.navigate(Destination.EditProfile.route) }
+                onEditProfile = { navController.navigate(Destination.EditProfile.route) },
+                onSettingsClick = { navController.navigate(Destination.Settings.route) }
             )
         }
 
@@ -76,7 +77,7 @@ fun BTweenNavHost(navController: NavHostController) {
 
         composable(Destination.Settings.route) {
             SettingsScreen(
-                onNavigateToProfile = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
+                onBack = { navController.popBackStack() }
             )
         }
 

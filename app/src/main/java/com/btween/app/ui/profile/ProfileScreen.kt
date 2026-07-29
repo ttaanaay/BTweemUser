@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -48,6 +50,7 @@ import com.btween.app.ui.feed.SocialQuoteCard
 fun ProfileScreen(
     onBack: () -> Unit,
     onEditProfile: () -> Unit,
+    onSettingsClick: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,125 +72,135 @@ fun ProfileScreen(
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
+                },
+                actions = {
+                    if (uiState.isOwnProfile) {
+                        IconButton(onClick = onSettingsClick) {
+                            Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                        }
+                    }
                 }
             )
         }
     ) { padding ->
         val user = uiState.user
 
-        if (uiState.isLoading || user == null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
-                if (uiState.isLoading) CircularProgressIndicator() else Text("User not found")
-            }
-            return@Scaffold
-        }
-
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = viewModel::onRefresh,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            contentPadding = PaddingValues(bottom = 16.dp)
+                .padding(padding)
         ) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            if (uiState.isLoading || user == null) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(72.dp)
-                            .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = user.displayName.take(1).uppercase(),
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(user.displayName, style = MaterialTheme.typography.titleLarge)
-                    Text(
-                        "@${user.username}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    if (!user.bio.isNullOrBlank()) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            user.bio,
-                            style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(user.followerCount.toString(), style = MaterialTheme.typography.titleMedium)
-                            Text(
-                                "Followers",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(user.followingCount.toString(), style = MaterialTheme.typography.titleMedium)
-                            Text(
-                                "Following",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    if (uiState.isOwnProfile) {
-                        OutlinedButton(onClick = onEditProfile) {
-                            Text("Edit profile")
-                        }
-                    } else {
-                        Button(
-                            onClick = viewModel::onToggleFollow,
-                            enabled = !uiState.isFollowActionInFlight
-                        ) {
-                            Text(if (user.isFollowedByMe) "Following" else "Follow")
-                        }
-                    }
-                }
-            }
-
-            if (uiState.quotes.isEmpty()) {
-                item {
-                    EmptyState(
-                        modifier = Modifier.fillMaxWidth(),
-                        icon = Icons.Outlined.AutoStories,
-                        title = "No quotes yet",
-                        message = if (uiState.isOwnProfile) {
-                            "Quotes you share publicly will show up here."
-                        } else {
-                            "${user.displayName} hasn't shared any quotes yet."
-                        }
-                    )
+                    if (uiState.isLoading) CircularProgressIndicator() else Text("User not found")
                 }
             } else {
-                items(uiState.quotes, key = { it.id }) { quote ->
-                    SocialQuoteCard(
-                        quote = quote,
-                        onToggleLike = { viewModel.onToggleLike(quote) },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
-                    )
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(72.dp)
+                                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = user.displayName.take(1).uppercase(),
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(user.displayName, style = MaterialTheme.typography.titleLarge)
+                            Text(
+                                "@${user.username}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            if (!user.bio.isNullOrBlank()) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    user.bio,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(user.followerCount.toString(), style = MaterialTheme.typography.titleMedium)
+                                    Text(
+                                        "Followers",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(user.followingCount.toString(), style = MaterialTheme.typography.titleMedium)
+                                    Text(
+                                        "Following",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            if (uiState.isOwnProfile) {
+                                OutlinedButton(onClick = onEditProfile) {
+                                    Text("Edit profile")
+                                }
+                            } else {
+                                Button(
+                                    onClick = viewModel::onToggleFollow,
+                                    enabled = !uiState.isFollowActionInFlight
+                                ) {
+                                    Text(if (user.isFollowedByMe) "Following" else "Follow")
+                                }
+                            }
+                        }
+                    }
+
+                    if (uiState.quotes.isEmpty()) {
+                        item {
+                            EmptyState(
+                                modifier = Modifier.fillMaxWidth(),
+                                icon = Icons.Outlined.AutoStories,
+                                title = "No quotes yet",
+                                message = if (uiState.isOwnProfile) {
+                                    "Quotes you share publicly will show up here."
+                                } else {
+                                    "${user.displayName} hasn't shared any quotes yet."
+                                }
+                            )
+                        }
+                    } else {
+                        items(uiState.quotes, key = { it.id }) { quote ->
+                            SocialQuoteCard(
+                                quote = quote,
+                                onToggleLike = { viewModel.onToggleLike(quote) },
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -27,10 +27,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,6 +44,8 @@ import com.btween.app.domain.model.SortOrder
 import com.btween.app.ui.components.EmptyState
 import com.btween.app.ui.components.QuoteListCard
 import com.btween.app.ui.util.localizedLabel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +55,11 @@ fun LibraryScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showSortMenu by remember { mutableStateOf(false) }
+    // This screen is backed by a live Room Flow (always up to date already), so there's no
+    // real network re-fetch to trigger here - this just gives the expected pull gesture a
+    // brief, honest confirmation instead of pretending to hit a server.
+    var isRefreshing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -114,27 +123,39 @@ fun LibraryScreen(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            if (uiState.quotes.isEmpty() && !uiState.isLoading) {
-                EmptyState(
-                    modifier = Modifier.fillMaxSize(),
-                    icon = Icons.Outlined.AutoStories,
-                    title = stringResource(R.string.library_empty_title),
-                    message = stringResource(R.string.library_empty_message)
-                )
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(uiState.quotes, key = { it.id }) { quote ->
-                        QuoteListCard(
-                            quote = quote,
-                            onClick = { onQuoteClick(quote.id) },
-                            onToggleFavorite = {
-                                viewModel.onToggleFavorite(quote.id, !quote.isFavorite)
-                            }
-                        )
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    isRefreshing = true
+                    scope.launch {
+                        delay(400)
+                        isRefreshing = false
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            ) {
+                if (uiState.quotes.isEmpty() && !uiState.isLoading) {
+                    EmptyState(
+                        modifier = Modifier.fillMaxSize(),
+                        icon = Icons.Outlined.AutoStories,
+                        title = stringResource(R.string.library_empty_title),
+                        message = stringResource(R.string.library_empty_message)
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(uiState.quotes, key = { it.id }) { quote ->
+                            QuoteListCard(
+                                quote = quote,
+                                onClick = { onQuoteClick(quote.id) },
+                                onToggleFavorite = {
+                                    viewModel.onToggleFavorite(quote.id, !quote.isFavorite)
+                                }
+                            )
+                        }
                     }
                 }
             }

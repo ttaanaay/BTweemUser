@@ -29,6 +29,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -101,93 +102,101 @@ fun HomeScreen(
             )
         }
     ) { padding ->
-        when {
-            uiState.isLoading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        PullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = viewModel::onRefresh,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            when {
+                uiState.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
-            uiState.isEmpty -> {
-                EmptyState(
-                    modifier = Modifier.fillMaxSize().padding(padding),
-                    icon = Icons.Outlined.AutoStories,
-                    title = stringResource(R.string.home_empty_title),
-                    message = stringResource(R.string.home_empty_message),
-                    actionLabel = stringResource(R.string.home_empty_action),
-                    onAction = onAddQuote
-                )
-            }
-            else -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize().padding(padding),
-                    contentPadding = PaddingValues(vertical = 12.dp)
-                ) {
-                    uiState.dailyQuote?.let { daily ->
-                        item {
-                            HeroQuoteCard(
-                                quote = daily,
-                                onToggleLike = { viewModel.onToggleLike(daily) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 20.dp)
-                            )
-                            Spacer(modifier = Modifier.height(24.dp))
-                        }
-                    }
-
-                    if (uiState.trending.isNotEmpty()) {
-                        item {
-                            SectionHeader(title = stringResource(R.string.home_section_trending))
-                            Spacer(modifier = Modifier.height(8.dp))
-                            LazyRow(
-                                contentPadding = PaddingValues(horizontal = 20.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                items(uiState.trending, key = { it.id }) { quote ->
-                                    CompactGradientQuoteCard(
-                                        quote = quote,
-                                        onToggleLike = { viewModel.onToggleLike(quote) },
-                                        modifier = Modifier.width(240.dp)
-                                    )
-                                }
+                uiState.isEmpty -> {
+                    EmptyState(
+                        modifier = Modifier.fillMaxSize(),
+                        icon = Icons.Outlined.AutoStories,
+                        title = stringResource(R.string.home_empty_title),
+                        message = stringResource(R.string.home_empty_message),
+                        actionLabel = stringResource(R.string.home_empty_action),
+                        onAction = onAddQuote
+                    )
+                }
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(vertical = 12.dp)
+                    ) {
+                        uiState.dailyQuote?.let { daily ->
+                            item {
+                                HeroQuoteCard(
+                                    quote = daily,
+                                    onToggleLike = { viewModel.onToggleLike(daily) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 20.dp)
+                                )
+                                Spacer(modifier = Modifier.height(24.dp))
                             }
+                        }
+
+                        if (uiState.trending.isNotEmpty()) {
+                            item {
+                                SectionHeader(title = stringResource(R.string.home_section_trending))
+                                Spacer(modifier = Modifier.height(8.dp))
+                                LazyRow(
+                                    contentPadding = PaddingValues(horizontal = 20.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    items(uiState.trending, key = { it.id }) { quote ->
+                                        CompactGradientQuoteCard(
+                                            quote = quote,
+                                            onToggleLike = { viewModel.onToggleLike(quote) },
+                                            modifier = Modifier.width(240.dp)
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(24.dp))
+                            }
+                        }
+
+                        item {
+                            SectionHeader(title = stringResource(R.string.home_section_categories))
+                            Spacer(modifier = Modifier.height(8.dp))
+                            CategoryIconsRow()
                             Spacer(modifier = Modifier.height(24.dp))
                         }
-                    }
 
-                    item {
-                        SectionHeader(title = stringResource(R.string.home_section_categories))
-                        Spacer(modifier = Modifier.height(8.dp))
-                        CategoryIconsRow()
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-
-                    if (uiState.recentlyApproved.isNotEmpty()) {
-                        item {
-                            SectionHeader(title = stringResource(R.string.home_section_recently_approved))
-                            Spacer(modifier = Modifier.height(8.dp))
+                        if (uiState.recentlyApproved.isNotEmpty()) {
+                            item {
+                                SectionHeader(title = stringResource(R.string.home_section_recently_approved))
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                            item {
+                                RecentlyApprovedGrid(
+                                    quotes = uiState.recentlyApproved,
+                                    onToggleLike = viewModel::onToggleLike
+                                )
+                                Spacer(modifier = Modifier.height(24.dp))
+                            }
                         }
-                        item {
-                            RecentlyApprovedGrid(
-                                quotes = uiState.recentlyApproved,
-                                onToggleLike = viewModel::onToggleLike
-                            )
-                            Spacer(modifier = Modifier.height(24.dp))
-                        }
-                    }
 
-                    if (uiState.topContributors.isNotEmpty()) {
-                        item {
-                            SectionHeader(title = stringResource(R.string.home_section_top_contributors))
-                            Spacer(modifier = Modifier.height(8.dp))
-                            TopContributorsRow(
-                                contributors = uiState.topContributors,
-                                onContributorClick = onUserClick
-                            )
-                            Spacer(modifier = Modifier.height(12.dp))
+                        if (uiState.topContributors.isNotEmpty()) {
+                            item {
+                                SectionHeader(title = stringResource(R.string.home_section_top_contributors))
+                                Spacer(modifier = Modifier.height(8.dp))
+                                TopContributorsRow(
+                                    contributors = uiState.topContributors,
+                                    onContributorClick = onUserClick
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
                         }
                     }
                 }

@@ -17,6 +17,7 @@ import javax.inject.Inject
 
 data class ProfileUiState(
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val user: User? = null,
     val quotes: List<SocialQuote> = emptyList(),
     val isOwnProfile: Boolean = false,
@@ -41,9 +42,9 @@ class ProfileViewModel @Inject constructor(
         load()
     }
 
-    fun load() {
+    fun load(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.value = _uiState.value.copy(isLoading = !isRefresh, isRefreshing = isRefresh)
             val userResult = profileRepository.getUser(userId)
             val quotesResult = profileRepository.getUserQuotes(userId)
 
@@ -51,6 +52,7 @@ class ProfileViewModel @Inject constructor(
                 .onSuccess { user ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
+                        isRefreshing = false,
                         user = user,
                         quotes = quotesResult.getOrDefault(emptyList()),
                         isOwnProfile = authRepository.getCurrentUserId() == userId,
@@ -58,10 +60,16 @@ class ProfileViewModel @Inject constructor(
                     )
                 }
                 .onFailure { error ->
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = error.message)
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        isRefreshing = false,
+                        errorMessage = error.message
+                    )
                 }
         }
     }
+
+    fun onRefresh() = load(isRefresh = true)
 
     fun consumeError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
