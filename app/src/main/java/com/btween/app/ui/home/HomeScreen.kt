@@ -212,7 +212,8 @@ fun HomeScreen(
 @Composable
 private fun RecentlyApprovedGrid(
     quotes: List<SocialQuote>,
-    onToggleLike: (SocialQuote) -> Unit
+    onToggleLike: (SocialQuote) -> Unit,
+    onQuoteClick: (Long) -> Unit
 ) {
     // A non-scrolling grid nested inside the outer LazyColumn: height is capped and derived
     // from content, avoiding the "infinite height" crash a nested LazyVerticalGrid would
@@ -233,7 +234,8 @@ private fun RecentlyApprovedGrid(
                     CompactGradientQuoteCard(
                         quote = quote,
                         onToggleLike = { onToggleLike(quote) },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        onQuoteClick = { onQuoteClick(quote.id) }
                     )
                 }
                 if (rowQuotes.size == 1) {

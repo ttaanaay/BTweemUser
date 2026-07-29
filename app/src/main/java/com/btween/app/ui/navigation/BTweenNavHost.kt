@@ -30,7 +30,8 @@ fun BTweenNavHost(navController: NavHostController) {
                 onAddQuote = { navController.navigate(Destination.AddEditQuote.createRoute()) },
                 onSearch = { navController.navigate(Destination.Search.route) },
                 onUserClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
-                onNotificationsClick = { navController.navigate(Destination.Notifications.route) }
+                onNotificationsClick = { navController.navigate(Destination.Notifications.route) },
+                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }
             )
         }
 
