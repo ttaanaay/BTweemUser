@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.btween.app.ui.addedit.AddEditScreen
 import com.btween.app.ui.detail.DetailScreen
 import com.btween.app.ui.favorites.FavoritesScreen
+import com.btween.app.ui.feed.CommentsScreen
 import com.btween.app.ui.feed.FeedScreen
 import com.btween.app.ui.feed.SocialQuoteDetailScreen
 import com.btween.app.ui.home.CategoryQuotesScreen
