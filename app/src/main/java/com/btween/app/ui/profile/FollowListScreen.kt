@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.domain.model.User
 import com.btween.app.ui.components.EmptyState
+import com.btween.app.ui.components.UserAvatar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,18 +106,11 @@ private fun FollowUserRow(user: User, onClick: () -> Unit) {
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = user.displayName.take(1).uppercase(),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
+        UserAvatar(
+            avatarUrl = user.avatarUrl,
+            displayName = user.displayName,
+            size = 44.dp
+        )
         Spacer(modifier = Modifier.padding(start = 12.dp))
         Column {
             Text(user.displayName, style = MaterialTheme.typography.bodyLarge)

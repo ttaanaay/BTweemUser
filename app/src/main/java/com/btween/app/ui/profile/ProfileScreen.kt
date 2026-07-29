@@ -52,6 +52,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.ui.components.EmptyState
+import com.btween.app.ui.components.UserAvatar
 import com.btween.app.ui.feed.SocialQuoteCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -135,18 +136,12 @@ fun ProfileScreen(
                                 .padding(20.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(72.dp)
-                                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = user.displayName.take(1).uppercase(),
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
+                            UserAvatar(
+                                avatarUrl = user.avatarUrl,
+                                displayName = user.displayName,
+                                size = 72.dp,
+                                textStyle = MaterialTheme.typography.headlineMedium
+                            )
 
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(user.displayName, style = MaterialTheme.typography.titleLarge)

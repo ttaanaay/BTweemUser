@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.btween.app.R
 import com.btween.app.domain.repository.TopContributor
+import com.btween.app.ui.components.UserAvatar
 
 @Composable
 fun TopContributorsRow(
@@ -41,18 +42,11 @@ fun TopContributorsRow(
                     .width(72.dp)
                     .clickable { onContributorClick(contributor.user.id) }
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = contributor.user.displayName.take(1).uppercase(),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
+                UserAvatar(
+                    avatarUrl = contributor.user.avatarUrl,
+                    displayName = contributor.user.displayName,
+                    size = 56.dp
+                )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = contributor.user.displayName,

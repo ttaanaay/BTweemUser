@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.btween.app.domain.model.SocialQuote
+import com.btween.app.ui.components.UserAvatar
 import com.btween.app.ui.theme.QuoteSerifFontFamily
 import com.btween.app.ui.util.localizedLabel
 
@@ -61,18 +62,12 @@ fun SocialQuoteCard(
                         .weight(1f)
                         .clickable(onClick = onOwnerClick)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = quote.owner.displayName.take(1).uppercase(),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
+                    UserAvatar(
+                        avatarUrl = quote.owner.avatarUrl,
+                        displayName = quote.owner.displayName,
+                        size = 32.dp,
+                        textStyle = MaterialTheme.typography.labelLarge
+                    )
                     Spacer(modifier = Modifier.padding(start = 8.dp))
                     Column {
                         Text(quote.owner.displayName, style = MaterialTheme.typography.labelLarge)
