@@ -16,6 +16,12 @@ interface ProfileRepository {
     suspend fun getUserQuotes(id: Long, limit: Int = 20, offset: Long = 0): Result<List<SocialQuote>>
 
     suspend fun getTopContributors(limit: Int = 10): Result<List<TopContributor>>
+
+    suspend fun searchUsers(query: String, limit: Int = 20): Result<List<User>>
+
+    suspend fun getFollowers(userId: Long, limit: Int = 30, offset: Long = 0): Result<List<User>>
+
+    suspend fun getFollowing(userId: Long, limit: Int = 30, offset: Long = 0): Result<List<User>>
 }
 
 data class TopContributor(val user: User, val quoteCount: Int)

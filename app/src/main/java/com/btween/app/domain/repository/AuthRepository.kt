@@ -17,6 +17,10 @@ interface AuthRepository {
 
     suspend fun loginWithMicrosoft(accessToken: String): Result<User>
 
+    suspend fun forgotPassword(email: String): Result<Unit>
+
+    suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit>
+
     fun logout()
 
     fun getCurrentUserId(): Long?

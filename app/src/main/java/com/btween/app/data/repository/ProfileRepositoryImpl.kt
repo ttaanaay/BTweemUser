@@ -41,4 +41,16 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun getTopContributors(limit: Int): Result<List<TopContributor>> = safeApiCall {
         userApi.getTopContributors(limit).map { TopContributor(it.user.toDomain(), it.quoteCount) }
     }
+
+    override suspend fun searchUsers(query: String, limit: Int): Result<List<User>> = safeApiCall {
+        userApi.searchUsers(query, limit).map { it.toDomain() }
+    }
+
+    override suspend fun getFollowers(userId: Long, limit: Int, offset: Long): Result<List<User>> = safeApiCall {
+        userApi.getFollowers(userId, limit, offset).map { it.toDomain() }
+    }
+
+    override suspend fun getFollowing(userId: Long, limit: Int, offset: Long): Result<List<User>> = safeApiCall {
+        userApi.getFollowing(userId, limit, offset).map { it.toDomain() }
+    }
 }

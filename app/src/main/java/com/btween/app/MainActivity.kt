@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.btween.app.ui.MainViewModel
+import com.btween.app.ui.auth.ForgotPasswordScreen
 import com.btween.app.ui.auth.LoginScreen
 import com.btween.app.ui.auth.RegisterScreen
 import com.btween.app.ui.navigation.BTweenBottomNavBar
@@ -96,13 +97,20 @@ private fun AuthGate() {
         composable(Destination.Login.route) {
             LoginScreen(
                 onLoginSuccess = { /* isLoggedIn flips automatically via TokenManager's StateFlow */ },
-                onNavigateToRegister = { navController.navigate(Destination.Register.route) }
+                onNavigateToRegister = { navController.navigate(Destination.Register.route) },
+                onNavigateToForgotPassword = { navController.navigate(Destination.ForgotPassword.route) }
             )
         }
         composable(Destination.Register.route) {
             RegisterScreen(
                 onRegisterSuccess = { /* isLoggedIn flips automatically via TokenManager's StateFlow */ },
                 onNavigateToLogin = { navController.popBackStack() }
+            )
+        }
+        composable(Destination.ForgotPassword.route) {
+            ForgotPasswordScreen(
+                onBack = { navController.popBackStack() },
+                onResetSuccess = { navController.popBackStack() }
             )
         }
     }

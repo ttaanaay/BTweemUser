@@ -27,6 +27,23 @@ data class OAuthLoginRequestDto(
 )
 
 @Serializable
+data class ForgotPasswordRequestDto(
+    val email: String
+)
+
+@Serializable
+data class ResetPasswordRequestDto(
+    val email: String,
+    val code: String,
+    val newPassword: String
+)
+
+@Serializable
+data class MessageResponseDto(
+    val message: String
+)
+
+@Serializable
 data class AuthResponseDto(
     val accessToken: String,
     val refreshToken: String,

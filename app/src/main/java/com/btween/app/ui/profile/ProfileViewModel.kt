@@ -121,13 +121,28 @@ class ProfileViewModel @Inject constructor(
             } else {
                 socialQuoteRepository.unlikeQuote(quote.id)
             }
-            result.onFailure {
-                // Roll back the optimistic update if the request failed.
-                _uiState.value = _uiState.value.copy(
-                    quotes = _uiState.value.quotes.map { if (it.id == quote.id) quote else it },
-                    errorMessage = it.message
-                )
+            result.onFailure { error ->
+                applyQuoteRollback(quote, error.message)
             }
         }
+    }
+
+    fun onDeleteQuote(quoteId: Long) {
+        val previousQuotes = _uiState.value.quotes
+        _uiState.value = _uiState.value.copy(quotes = previousQuotes.filterNot { it.id == quoteId })
+
+        viewModelScope.launch {
+            socialQuoteRepository.deleteQuote(quoteId).onFailure { error ->
+                // Roll back if the delete failed server-side.
+                _uiState.value = _uiState.value.copy(quotes = previousQuotes, errorMessage = error.message)
+            }
+        }
+    }
+
+    private fun applyQuoteRollback(original: SocialQuote, errorMessage: String?) {
+        _uiState.value = _uiState.value.copy(
+            quotes = _uiState.value.quotes.map { if (it.id == original.id) original else it },
+            errorMessage = errorMessage
+        )
     }
 }

@@ -11,6 +11,7 @@ sealed class Destination(val route: String) {
     data object Settings : Destination("settings")
     data object Login : Destination("login")
     data object Register : Destination("register")
+    data object ForgotPassword : Destination("forgot_password")
 
     data object AddEditQuote : Destination("add_edit_quote?quoteId={quoteId}") {
         const val ARG_QUOTE_ID = "quoteId"
@@ -31,4 +32,15 @@ sealed class Destination(val route: String) {
     data object EditProfile : Destination("edit_profile")
 
     data object Notifications : Destination("notifications")
+
+    data object FollowList : Destination("follow_list/{userId}/{type}") {
+        const val ARG_USER_ID = "userId"
+        const val ARG_TYPE = "type"
+        fun createRoute(userId: Long, type: String) = "follow_list/$userId/$type"
+    }
+
+    data object EditSocialQuote : Destination("edit_social_quote/{quoteId}") {
+        const val ARG_QUOTE_ID = "quoteId"
+        fun createRoute(quoteId: Long) = "edit_social_quote/$quoteId"
+    }
 }

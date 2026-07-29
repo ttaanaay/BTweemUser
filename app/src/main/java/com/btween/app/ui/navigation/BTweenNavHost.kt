@@ -14,6 +14,8 @@ import com.btween.app.ui.home.HomeScreen
 import com.btween.app.ui.library.LibraryScreen
 import com.btween.app.ui.notifications.NotificationScreen
 import com.btween.app.ui.profile.EditProfileScreen
+import com.btween.app.ui.profile.EditSocialQuoteScreen
+import com.btween.app.ui.profile.FollowListScreen
 import com.btween.app.ui.profile.ProfileScreen
 import com.btween.app.ui.search.SearchScreen
 import com.btween.app.ui.settings.SettingsScreen
@@ -52,7 +54,35 @@ fun BTweenNavHost(navController: NavHostController) {
             ProfileScreen(
                 onBack = { navController.popBackStack() },
                 onEditProfile = { navController.navigate(Destination.EditProfile.route) },
-                onSettingsClick = { navController.navigate(Destination.Settings.route) }
+                onSettingsClick = { navController.navigate(Destination.Settings.route) },
+                onFollowListClick = { userId, type ->
+                    navController.navigate(Destination.FollowList.createRoute(userId, type.name))
+                },
+                onEditQuote = { quoteId -> navController.navigate(Destination.EditSocialQuote.createRoute(quoteId)) }
+            )
+        }
+
+        composable(
+            route = Destination.EditSocialQuote.route,
+            arguments = listOf(
+                navArgument(Destination.EditSocialQuote.ARG_QUOTE_ID) { type = NavType.LongType }
+            )
+        ) {
+            EditSocialQuoteScreen(
+                onDone = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Destination.FollowList.route,
+            arguments = listOf(
+                navArgument(Destination.FollowList.ARG_USER_ID) { type = NavType.LongType },
+                navArgument(Destination.FollowList.ARG_TYPE) { type = NavType.StringType }
+            )
+        ) {
+            FollowListScreen(
+                onBack = { navController.popBackStack() },
+                onUserClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
             )
         }
 
@@ -84,7 +114,8 @@ fun BTweenNavHost(navController: NavHostController) {
         composable(Destination.Search.route) {
             SearchScreen(
                 onBack = { navController.popBackStack() },
-                onQuoteClick = { id -> navController.navigate(Destination.QuoteDetail.createRoute(id)) }
+                onQuoteClick = { id -> navController.navigate(Destination.QuoteDetail.createRoute(id)) },
+                onUserClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
             )
         }
 

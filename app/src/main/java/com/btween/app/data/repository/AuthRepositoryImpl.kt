@@ -2,9 +2,11 @@ package com.btween.app.data.repository
 
 import com.btween.app.data.remote.TokenManager
 import com.btween.app.data.remote.api.AuthApi
+import com.btween.app.data.remote.dto.ForgotPasswordRequestDto
 import com.btween.app.data.remote.dto.LoginRequestDto
 import com.btween.app.data.remote.dto.OAuthLoginRequestDto
 import com.btween.app.data.remote.dto.RegisterRequestDto
+import com.btween.app.data.remote.dto.ResetPasswordRequestDto
 import com.btween.app.data.remote.dto.toDomain
 import com.btween.app.data.remote.safeApiCall
 import com.btween.app.domain.model.User
@@ -54,6 +56,16 @@ class AuthRepositoryImpl @Inject constructor(
         val response = authApi.loginWithMicrosoft(OAuthLoginRequestDto(accessToken))
         tokenManager.saveSession(response.accessToken, response.refreshToken, response.user.id)
         response.user.toDomain()
+    }
+
+    override suspend fun forgotPassword(email: String): Result<Unit> = safeApiCall {
+        authApi.forgotPassword(ForgotPasswordRequestDto(email))
+        Unit
+    }
+
+    override suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit> = safeApiCall {
+        authApi.resetPassword(ResetPasswordRequestDto(email, code, newPassword))
+        Unit
     }
 
     override fun logout() {

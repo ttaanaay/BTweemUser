@@ -20,6 +20,23 @@ interface UserApi {
     @GET("users/top-contributors")
     suspend fun getTopContributors(@Query("limit") limit: Int = 10): List<TopContributorResponseDto>
 
+    @GET("users/search")
+    suspend fun searchUsers(@Query("q") query: String, @Query("limit") limit: Int = 20): List<UserResponseDto>
+
+    @GET("users/{id}/followers")
+    suspend fun getFollowers(
+        @Path("id") id: Long,
+        @Query("limit") limit: Int = 30,
+        @Query("offset") offset: Long = 0
+    ): List<UserResponseDto>
+
+    @GET("users/{id}/following")
+    suspend fun getFollowing(
+        @Path("id") id: Long,
+        @Query("limit") limit: Int = 30,
+        @Query("offset") offset: Long = 0
+    ): List<UserResponseDto>
+
     @PUT("users/me")
     suspend fun updateProfile(@Body request: UpdateProfileRequestDto): UserResponseDto
 
