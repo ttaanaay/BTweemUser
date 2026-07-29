@@ -95,6 +95,7 @@ fun FeedScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedTabContent(
     tabState: FeedTabState,
