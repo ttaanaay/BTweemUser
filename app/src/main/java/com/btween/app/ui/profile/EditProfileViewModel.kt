@@ -1,7 +1,9 @@
 package com.btween.app.ui.profile
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.btween.app.data.remote.CloudinaryUploader
 import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +18,7 @@ data class EditProfileUiState(
     val bio: String = "",
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
+    val isUploadingPhoto: Boolean = false,
     val errorMessage: String? = null,
     val didSave: Boolean = false
 )
@@ -23,7 +26,8 @@ data class EditProfileUiState(
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val cloudinaryUploader: CloudinaryUploader
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EditProfileUiState())
@@ -58,6 +62,15 @@ class EditProfileViewModel @Inject constructor(
 
     private inline fun update(block: (EditProfileUiState) -> EditProfileUiState) {
         _uiState.value = block(_uiState.value)
+    }
+
+    fun onPhotoPicked(uri: Uri) {
+        viewModelScope.launch {
+            update { it.copy(isUploadingPhoto = true) }
+            cloudinaryUploader.uploadImage(uri)
+                .onSuccess { url -> update { it.copy(isUploadingPhoto = false, avatarUrl = url) } }
+                .onFailure { error -> update { it.copy(isUploadingPhoto = false, errorMessage = error.message) } }
+        }
     }
 
     fun onSave() {

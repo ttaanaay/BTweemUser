@@ -1,12 +1,18 @@
 package com.btween.app.ui.profile
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -14,6 +20,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -30,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +48,12 @@ fun EditProfileScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val photoPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) viewModel.onPhotoPicked(uri)
+    }
 
     LaunchedEffect(state.didSave) {
         if (state.didSave) onDone()
@@ -89,6 +104,44 @@ fun EditProfileScreen(
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .size(96.dp)
+                        .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (state.isUploadingPhoto) {
+                        CircularProgressIndicator()
+                    } else if (state.avatarUrl.isNotBlank()) {
+                        AsyncImage(
+                            model = state.avatarUrl,
+                            contentDescription = "Profile photo",
+                            modifier = Modifier
+                                .size(96.dp)
+                                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
+                        )
+                    } else {
+                        Text(
+                            state.displayName.take(1).uppercase(),
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+            }
+
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                OutlinedButton(
+                    onClick = {
+                        photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    },
+                    enabled = !state.isUploadingPhoto
+                ) {
+                    Text(if (state.isUploadingPhoto) "Uploading..." else "Choose photo")
+                }
+            }
+
             OutlinedTextField(
                 value = state.displayName,
                 onValueChange = viewModel::onDisplayNameChanged,
@@ -99,7 +152,7 @@ fun EditProfileScreen(
             OutlinedTextField(
                 value = state.avatarUrl,
                 onValueChange = viewModel::onAvatarUrlChanged,
-                label = { Text("Avatar URL (optional)") },
+                label = { Text("Avatar URL (or use \"Choose photo\" above)") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )

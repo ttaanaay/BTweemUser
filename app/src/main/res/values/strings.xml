@@ -7,6 +7,10 @@
     <string name="facebook_app_id" translatable="false">1332851218567333</string>
     <string name="facebook_client_token" translatable="false">1389f6b464272b2b08590e0a18ca00d3</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb1332851218567333</string>
+    <!-- Placeholders - replace with your Cloudinary Cloud Name and unsigned upload preset
+         name once you've signed up. See conversation history for setup steps. -->
+    <string name="cloudinary_cloud_name" translatable="false">zwjwmbb9</string>
+    <string name="cloudinary_upload_preset" translatable="false">btween_avatars</string>
 
     <!-- Bottom navigation -->
     <string name="nav_home">Home</string>
