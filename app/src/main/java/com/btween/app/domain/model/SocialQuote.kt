@@ -9,6 +9,7 @@ data class SocialQuote(
     val author: String? = null,
     val category: String? = null,
     val tags: List<String> = emptyList(),
+    val imageUrl: String? = null,
     val visibility: String,
     val likeCount: Int,
     val isLikedByMe: Boolean,

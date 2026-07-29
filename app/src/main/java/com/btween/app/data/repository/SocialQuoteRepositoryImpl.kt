@@ -38,10 +38,21 @@ class SocialQuoteRepositoryImpl @Inject constructor(
         author: String?,
         category: String?,
         tags: List<String>,
+        imageUrl: String?,
         visibility: String
     ): Result<SocialQuote> = safeApiCall {
         quoteApi.createQuote(
-            QuoteRequestDto(text, sourceTitle, sourceType.name, speaker, author, category, tags, visibility)
+            QuoteRequestDto(
+                text = text,
+                sourceTitle = sourceTitle,
+                sourceType = sourceType.name,
+                speaker = speaker,
+                author = author,
+                category = category,
+                tags = tags,
+                imageUrl = imageUrl,
+                visibility = visibility
+            )
         ).toDomain()
     }
 
@@ -54,11 +65,22 @@ class SocialQuoteRepositoryImpl @Inject constructor(
         author: String?,
         category: String?,
         tags: List<String>,
+        imageUrl: String?,
         visibility: String
     ): Result<SocialQuote> = safeApiCall {
         quoteApi.updateQuote(
             id,
-            QuoteRequestDto(text, sourceTitle, sourceType.name, speaker, author, category, tags, visibility)
+            QuoteRequestDto(
+                text = text,
+                sourceTitle = sourceTitle,
+                sourceType = sourceType.name,
+                speaker = speaker,
+                author = author,
+                category = category,
+                tags = tags,
+                imageUrl = imageUrl,
+                visibility = visibility
+            )
         ).toDomain()
     }
 

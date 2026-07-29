@@ -1,8 +1,10 @@
 package com.btween.app.ui.profile
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.btween.app.data.remote.CloudinaryUploader
 import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.repository.SocialQuoteRepository
 import com.btween.app.ui.navigation.Destination
@@ -21,6 +23,8 @@ data class EditSocialQuoteUiState(
     val visibility: String = "PUBLIC",
     val category: String? = null,
     val tags: List<String> = emptyList(),
+    val imageUrl: String? = null,
+    val isUploadingImage: Boolean = false,
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
     val didSave: Boolean = false,
@@ -30,7 +34,8 @@ data class EditSocialQuoteUiState(
 @HiltViewModel
 class EditSocialQuoteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val socialQuoteRepository: SocialQuoteRepository
+    private val socialQuoteRepository: SocialQuoteRepository,
+    private val cloudinaryUploader: CloudinaryUploader
 ) : ViewModel() {
 
     private val quoteId: Long = checkNotNull(savedStateHandle[Destination.EditSocialQuote.ARG_QUOTE_ID])
@@ -51,7 +56,8 @@ class EditSocialQuoteViewModel @Inject constructor(
                         author = quote.author.orEmpty(),
                         visibility = quote.visibility,
                         category = quote.category,
-                        tags = quote.tags
+                        tags = quote.tags,
+                        imageUrl = quote.imageUrl
                     )
                 }
                 .onFailure { error ->
@@ -65,10 +71,20 @@ class EditSocialQuoteViewModel @Inject constructor(
     fun onSpeakerChanged(value: String) = update { it.copy(speaker = value) }
     fun onAuthorChanged(value: String) = update { it.copy(author = value) }
     fun onSourceTypeChanged(value: SourceType) = update { it.copy(sourceType = value) }
+    fun onRemoveImage() = update { it.copy(imageUrl = null) }
     fun consumeError() = update { it.copy(errorMessage = null) }
 
     private inline fun update(block: (EditSocialQuoteUiState) -> EditSocialQuoteUiState) {
         _uiState.value = block(_uiState.value)
+    }
+
+    fun onImagePicked(uri: Uri) {
+        viewModelScope.launch {
+            update { it.copy(isUploadingImage = true) }
+            cloudinaryUploader.uploadImage(uri)
+                .onSuccess { url -> update { it.copy(isUploadingImage = false, imageUrl = url) } }
+                .onFailure { error -> update { it.copy(isUploadingImage = false, errorMessage = error.message) } }
+        }
     }
 
     fun onSave() {
@@ -84,6 +100,7 @@ class EditSocialQuoteViewModel @Inject constructor(
                 author = state.author.trim().takeIf { it.isNotEmpty() },
                 category = state.category,
                 tags = state.tags,
+                imageUrl = state.imageUrl,
                 visibility = state.visibility
             )
                 .onSuccess { _uiState.value = _uiState.value.copy(isSaving = false, didSave = true) }

@@ -19,6 +19,7 @@ interface SocialQuoteRepository {
         author: String?,
         category: String?,
         tags: List<String>,
+        imageUrl: String?,
         visibility: String
     ): Result<SocialQuote>
 
@@ -31,6 +32,7 @@ interface SocialQuoteRepository {
         author: String?,
         category: String?,
         tags: List<String>,
+        imageUrl: String?,
         visibility: String
     ): Result<SocialQuote>
 

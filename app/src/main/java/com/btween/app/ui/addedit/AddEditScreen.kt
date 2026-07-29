@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -46,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.R
 import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.SourceType
+import com.btween.app.ui.components.QuoteImagePicker
 import com.btween.app.ui.util.localizedLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -214,6 +216,16 @@ fun AddEditScreen(
                     Switch(
                         checked = state.shareToFeed,
                         onCheckedChange = { viewModel.onShareToFeedToggled() }
+                    )
+                }
+
+                if (state.shareToFeed) {
+                    Spacer(modifier = Modifier.padding(top = 4.dp))
+                    QuoteImagePicker(
+                        imageUrl = state.imageUrl,
+                        isUploading = state.isUploadingImage,
+                        onImagePicked = viewModel::onImagePicked,
+                        onRemoveImage = viewModel::onRemoveImage
                     )
                 }
             }

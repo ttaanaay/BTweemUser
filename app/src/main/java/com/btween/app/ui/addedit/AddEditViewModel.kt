@@ -1,8 +1,10 @@
 package com.btween.app.ui.addedit
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.btween.app.data.remote.CloudinaryUploader
 import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.SourceType
@@ -32,6 +34,8 @@ data class AddEditFormState(
     val note: String = "",
     val isFavorite: Boolean = false,
     val shareToFeed: Boolean = false,
+    val imageUrl: String? = null,
+    val isUploadingImage: Boolean = false,
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
     val errorMessage: String? = null,
@@ -48,6 +52,7 @@ class AddEditViewModel @Inject constructor(
     private val socialQuoteRepository: SocialQuoteRepository,
     private val addQuoteUseCase: AddQuoteUseCase,
     private val updateQuoteUseCase: UpdateQuoteUseCase,
+    private val cloudinaryUploader: CloudinaryUploader,
     getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
 
@@ -100,10 +105,20 @@ class AddEditViewModel @Inject constructor(
     fun onNoteChanged(value: String) = update { it.copy(note = value) }
     fun onFavoriteToggled() = update { it.copy(isFavorite = !it.isFavorite) }
     fun onShareToFeedToggled() = update { it.copy(shareToFeed = !it.shareToFeed) }
+    fun onRemoveImage() = update { it.copy(imageUrl = null) }
     fun consumeError() = update { it.copy(errorMessage = null) }
 
     private inline fun update(block: (AddEditFormState) -> AddEditFormState) {
         _formState.value = block(_formState.value)
+    }
+
+    fun onImagePicked(uri: Uri) {
+        viewModelScope.launch {
+            update { it.copy(isUploadingImage = true) }
+            cloudinaryUploader.uploadImage(uri)
+                .onSuccess { url -> update { it.copy(isUploadingImage = false, imageUrl = url) } }
+                .onFailure { error -> update { it.copy(isUploadingImage = false, errorMessage = error.message) } }
+        }
     }
 
     fun onSave() {
@@ -139,6 +154,7 @@ class AddEditViewModel @Inject constructor(
                             author = quote.author,
                             category = quote.category?.name,
                             tags = quote.tags,
+                            imageUrl = state.imageUrl,
                             visibility = "PUBLIC"
                         ).onFailure { error ->
                             shareWarning = "Saved, but couldn't share to Feed: ${error.message}"

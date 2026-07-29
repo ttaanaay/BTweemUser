@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,10 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.btween.app.domain.model.SocialQuote
 import com.btween.app.ui.theme.QuoteSerifFontFamily
 
@@ -42,9 +46,30 @@ fun CompactGradientQuoteCard(
             .height(150.dp)
             .fillMaxWidth()
             .clickable(onClick = onQuoteClick)
-            .background(gradientForSeed(quote.id + 1), MaterialTheme.shapes.medium)
-            .padding(14.dp)
+            .clip(MaterialTheme.shapes.medium)
+            .then(
+                if (quote.imageUrl.isNullOrBlank()) {
+                    Modifier.background(gradientForSeed(quote.id + 1))
+                } else {
+                    Modifier
+                }
+            )
     ) {
+        if (!quote.imageUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = quote.imageUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.35f))
+            )
+        }
+
+        Box(modifier = Modifier.fillMaxSize().padding(14.dp)) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "\u201C${quote.text}\u201D",
@@ -87,6 +112,7 @@ fun CompactGradientQuoteCard(
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White
             )
+        }
         }
     }
 }

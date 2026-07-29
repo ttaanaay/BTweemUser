@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,11 +25,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.btween.app.R
 import com.btween.app.domain.model.SocialQuote
 import com.btween.app.ui.theme.QuoteSerifFontFamily
@@ -49,9 +53,27 @@ fun HeroQuoteCard(
             .fillMaxWidth()
             .height(220.dp)
             .clickable(onClick = onQuoteClick)
-            .background(gradientForSeed(quote.id), MaterialTheme.shapes.large)
-            .padding(20.dp)
+            .clip(MaterialTheme.shapes.large)
+            .then(
+                if (quote.imageUrl.isNullOrBlank()) Modifier.background(gradientForSeed(quote.id)) else Modifier
+            )
     ) {
+        if (!quote.imageUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = quote.imageUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            // Dark scrim so white text stays readable over an arbitrary user photo.
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.35f))
+            )
+        }
+
+        Box(modifier = Modifier.fillMaxSize().padding(20.dp)) {
         Icon(
             imageVector = Icons.Filled.FormatQuote,
             contentDescription = null,
@@ -115,6 +137,7 @@ fun HeroQuoteCard(
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
             )
+        }
         }
     }
 }

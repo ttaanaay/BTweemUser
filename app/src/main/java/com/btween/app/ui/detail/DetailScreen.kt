@@ -168,7 +168,7 @@ fun DetailScreen(
                 ActionIcon(
                     icon = Icons.Filled.Image,
                     label = stringResource(R.string.detail_action_share_image),
-                    onClick = { shareQuoteAsImage(context, quote) }
+                    onClick = { scope.launch { shareQuoteAsImage(context, quote) } }
                 )
             }
         }

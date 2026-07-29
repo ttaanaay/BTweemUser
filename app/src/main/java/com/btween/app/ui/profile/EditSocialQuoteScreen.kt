@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.domain.model.SourceType
+import com.btween.app.ui.components.QuoteImagePicker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,6 +98,13 @@ fun EditSocialQuoteScreen(
                 label = { Text("Quote text") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3
+            )
+
+            QuoteImagePicker(
+                imageUrl = state.imageUrl,
+                isUploading = state.isUploadingImage,
+                onImagePicked = viewModel::onImagePicked,
+                onRemoveImage = viewModel::onRemoveImage
             )
 
             // Box + clickable overlay + DropdownMenu: the same proven-stable pattern used in

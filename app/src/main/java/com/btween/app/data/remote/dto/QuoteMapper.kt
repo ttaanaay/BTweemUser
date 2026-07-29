@@ -12,6 +12,7 @@ fun QuoteResponseDto.toDomain(): SocialQuote = SocialQuote(
     author = author,
     category = category,
     tags = tags,
+    imageUrl = imageUrl,
     visibility = visibility,
     likeCount = likeCount,
     isLikedByMe = isLikedByMe,
