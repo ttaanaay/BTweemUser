@@ -56,6 +56,7 @@ fun HomeScreen(
     onUserClick: (Long) -> Unit,
     onNotificationsClick: () -> Unit,
     onQuoteClick: (Long) -> Unit,
+    onCategoryClick: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -174,7 +175,7 @@ fun HomeScreen(
                         item {
                             SectionHeader(title = stringResource(R.string.home_section_categories))
                             Spacer(modifier = Modifier.height(8.dp))
-                            CategoryIconsRow()
+                            CategoryIconsRow(onCategoryClick = onCategoryClick)
                             Spacer(modifier = Modifier.height(24.dp))
                         }
 

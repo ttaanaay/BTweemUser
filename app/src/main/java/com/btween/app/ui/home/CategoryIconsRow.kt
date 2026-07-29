@@ -1,6 +1,7 @@
 package com.btween.app.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,18 +47,20 @@ private val categoryChips = listOf(
 )
 
 /**
- * Purely decorative category shortcuts, matching the visual language of the reference
- * design. Not wired to filtering yet (the feed API doesn't support category filters), so
- * these are non-interactive for now rather than promising a filter that doesn't work.
+ * Category shortcuts on Home - tapping one opens [com.btween.app.ui.home.CategoryQuotesScreen]
+ * filtered to that category via the feed API's `category` query param.
  */
 @Composable
-fun CategoryIconsRow() {
+fun CategoryIconsRow(onCategoryClick: (String) -> Unit) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(categoryChips) { chip ->
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.clickable { onCategoryClick(chip.label) }
+            ) {
                 Box(
                     modifier = Modifier
                         .size(52.dp)

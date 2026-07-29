@@ -5,7 +5,12 @@ import com.btween.app.domain.model.SourceType
 
 interface SocialQuoteRepository {
 
-    suspend fun getFeed(limit: Int = 20, offset: Long = 0, scope: String = "recommended"): Result<List<SocialQuote>>
+    suspend fun getFeed(
+        limit: Int = 20,
+        offset: Long = 0,
+        scope: String = "recommended",
+        category: String? = null
+    ): Result<List<SocialQuote>>
 
     suspend fun getQuote(id: Long): Result<SocialQuote>
 

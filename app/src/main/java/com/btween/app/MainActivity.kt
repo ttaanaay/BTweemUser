@@ -1,5 +1,6 @@
 package com.btween.app
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,6 +31,7 @@ import com.btween.app.ui.navigation.Destination
 import com.btween.app.ui.navigation.bottomNavItems
 import com.btween.app.ui.resolveIsDark
 import com.btween.app.ui.theme.BTweenTheme
+import com.btween.app.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -42,6 +44,15 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    // AppCompatActivity wires this automatically via its own attachBaseContext override;
+    // plain ComponentActivity does not, so setApplicationLocales() + recreate() alone was a
+    // no-op - the recreated Activity kept reading resources in the OLD locale. Applying the
+    // chosen locale to the base Context by hand here is what actually makes the switch stick.
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleManager.wrapContext(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)

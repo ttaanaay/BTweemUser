@@ -17,8 +17,13 @@ class SocialQuoteRepositoryImpl @Inject constructor(
     private val userApi: UserApi
 ) : SocialQuoteRepository {
 
-    override suspend fun getFeed(limit: Int, offset: Long, scope: String): Result<List<SocialQuote>> = safeApiCall {
-        quoteApi.getFeed(limit, offset, scope).map { it.toDomain() }
+    override suspend fun getFeed(
+        limit: Int,
+        offset: Long,
+        scope: String,
+        category: String?
+    ): Result<List<SocialQuote>> = safeApiCall {
+        quoteApi.getFeed(limit, offset, scope, category).map { it.toDomain() }
     }
 
     override suspend fun getQuote(id: Long): Result<SocialQuote> = safeApiCall {

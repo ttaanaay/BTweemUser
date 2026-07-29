@@ -11,6 +11,7 @@ import com.btween.app.ui.detail.DetailScreen
 import com.btween.app.ui.favorites.FavoritesScreen
 import com.btween.app.ui.feed.FeedScreen
 import com.btween.app.ui.feed.SocialQuoteDetailScreen
+import com.btween.app.ui.home.CategoryQuotesScreen
 import com.btween.app.ui.home.HomeScreen
 import com.btween.app.ui.library.LibraryScreen
 import com.btween.app.ui.notifications.NotificationScreen
@@ -31,7 +32,8 @@ fun BTweenNavHost(navController: NavHostController) {
                 onSearch = { navController.navigate(Destination.Search.route) },
                 onUserClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
                 onNotificationsClick = { navController.navigate(Destination.Notifications.route) },
-                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }
+                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) },
+                onCategoryClick = { category -> navController.navigate(Destination.CategoryQuotes.createRoute(category)) }
             )
         }
 
@@ -57,6 +59,19 @@ fun BTweenNavHost(navController: NavHostController) {
             SocialQuoteDetailScreen(
                 onBack = { navController.popBackStack() },
                 onOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
+            )
+        }
+
+        composable(
+            route = Destination.CategoryQuotes.route,
+            arguments = listOf(
+                navArgument(Destination.CategoryQuotes.ARG_CATEGORY) { type = NavType.StringType }
+            )
+        ) {
+            CategoryQuotesScreen(
+                onBack = { navController.popBackStack() },
+                onQuoteOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
+                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }
             )
         }
 
