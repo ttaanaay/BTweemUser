@@ -28,6 +28,7 @@ data class QuoteResponseDto(
     val imageUrl: String? = null,
     val visibility: String,
     val likeCount: Int,
+    val commentCount: Int = 0,
     val isLikedByMe: Boolean = false,
     val owner: UserResponseDto,
     val createdAt: String,

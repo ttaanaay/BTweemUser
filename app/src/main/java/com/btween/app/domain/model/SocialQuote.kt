@@ -12,6 +12,7 @@ data class SocialQuote(
     val imageUrl: String? = null,
     val visibility: String,
     val likeCount: Int,
+    val commentCount: Int = 0,
     val isLikedByMe: Boolean,
     val owner: User,
     val createdAt: String

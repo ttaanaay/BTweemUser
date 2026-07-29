@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -61,6 +62,7 @@ import kotlinx.coroutines.launch
 fun SocialQuoteDetailScreen(
     onBack: () -> Unit,
     onOwnerClick: (Long) -> Unit,
+    onCommentsClick: (Long) -> Unit,
     viewModel: SocialQuoteDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -213,6 +215,21 @@ fun SocialQuoteDetailScreen(
                 }
                 Text(
                     quote.likeCount.toString(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.padding(start = 16.dp))
+
+                IconButton(onClick = { onCommentsClick(quote.id) }) {
+                    Icon(
+                        Icons.Outlined.ChatBubbleOutline,
+                        contentDescription = "Comments",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Text(
+                    quote.commentCount.toString(),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

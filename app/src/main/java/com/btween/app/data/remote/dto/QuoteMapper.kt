@@ -15,6 +15,7 @@ fun QuoteResponseDto.toDomain(): SocialQuote = SocialQuote(
     imageUrl = imageUrl,
     visibility = visibility,
     likeCount = likeCount,
+    commentCount = commentCount,
     isLikedByMe = isLikedByMe,
     owner = owner.toDomain(),
     createdAt = createdAt

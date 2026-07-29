@@ -1,5 +1,7 @@
 package com.btween.app.data.remote.api
 
+import com.btween.app.data.remote.dto.CommentRequestDto
+import com.btween.app.data.remote.dto.CommentResponseDto
 import com.btween.app.data.remote.dto.QuoteRequestDto
 import com.btween.app.data.remote.dto.QuoteResponseDto
 import retrofit2.http.Body
@@ -37,4 +39,17 @@ interface QuoteApi {
 
     @DELETE("quotes/{id}/like")
     suspend fun unlikeQuote(@Path("id") id: Long)
+
+    @GET("quotes/{id}/comments")
+    suspend fun getComments(
+        @Path("id") quoteId: Long,
+        @Query("limit") limit: Int = 50,
+        @Query("offset") offset: Long = 0
+    ): List<CommentResponseDto>
+
+    @POST("quotes/{id}/comments")
+    suspend fun addComment(@Path("id") quoteId: Long, @Body request: CommentRequestDto): CommentResponseDto
+
+    @DELETE("comments/{id}")
+    suspend fun deleteComment(@Path("id") id: Long)
 }

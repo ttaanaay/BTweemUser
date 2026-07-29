@@ -58,7 +58,8 @@ fun BTweenNavHost(navController: NavHostController) {
         ) {
             SocialQuoteDetailScreen(
                 onBack = { navController.popBackStack() },
-                onOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
+                onOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
+                onCommentsClick = { quoteId -> navController.navigate(Destination.Comments.createRoute(quoteId)) }
             )
         }
 
@@ -72,6 +73,17 @@ fun BTweenNavHost(navController: NavHostController) {
                 onBack = { navController.popBackStack() },
                 onQuoteOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
                 onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }
+            )
+        }
+
+        composable(
+            route = Destination.Comments.route,
+            arguments = listOf(
+                navArgument(Destination.Comments.ARG_QUOTE_ID) { type = NavType.LongType }
+            )
+        ) {
+            CommentsScreen(
+                onBack = { navController.popBackStack() }
             )
         }
 

@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Comment
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.Notifications
@@ -129,7 +131,12 @@ private fun NotificationRow(notification: Notification, onClick: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = if (notification.type == "FOLLOW") Icons.Filled.PersonAdd else Icons.Filled.Favorite,
+                imageVector = when (notification.type) {
+                    "FOLLOW" -> Icons.Filled.PersonAdd
+                    "COMMENT" -> Icons.AutoMirrored.Filled.Comment
+                    "REJECTED" -> Icons.Filled.Block
+                    else -> Icons.Filled.Favorite
+                },
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier.size(20.dp)
@@ -139,11 +146,12 @@ private fun NotificationRow(notification: Notification, onClick: () -> Unit) {
         Spacer(modifier = Modifier.padding(start = 12.dp))
 
         Column {
-            val message = if (notification.type == "FOLLOW") {
-                "${notification.actorDisplayName} started following you"
-            } else {
-                "${notification.actorDisplayName} liked your quote" +
-                    (notification.quoteTextPreview?.let { ": \u201C$it\u201D" } ?: "")
+            val quotePreview = notification.quoteTextPreview?.let { ": \u201C$it\u201D" } ?: ""
+            val message = when (notification.type) {
+                "FOLLOW" -> "${notification.actorDisplayName} started following you"
+                "COMMENT" -> "${notification.actorDisplayName} commented on your quote$quotePreview"
+                "REJECTED" -> "Your quote was rejected by a moderator$quotePreview"
+                else -> "${notification.actorDisplayName} liked your quote$quotePreview"
             }
             Text(message, style = MaterialTheme.typography.bodyMedium)
         }
