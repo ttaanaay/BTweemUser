@@ -3,6 +3,7 @@ package com.btween.app.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btween.app.domain.model.SocialQuote
+import com.btween.app.domain.repository.NotificationRepository
 import com.btween.app.domain.repository.ProfileRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
 import com.btween.app.domain.repository.TopContributor
@@ -18,6 +19,7 @@ data class HomeUiState(
     val trending: List<SocialQuote> = emptyList(),
     val recentlyApproved: List<SocialQuote> = emptyList(),
     val topContributors: List<TopContributor> = emptyList(),
+    val unreadNotificationCount: Long = 0,
     val errorMessage: String? = null
 ) {
     val isEmpty: Boolean get() = !isLoading && dailyQuote == null && trending.isEmpty() && recentlyApproved.isEmpty()
@@ -26,7 +28,8 @@ data class HomeUiState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val socialQuoteRepository: SocialQuoteRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -42,6 +45,7 @@ class HomeViewModel @Inject constructor(
 
             val feedResult = socialQuoteRepository.getFeed(limit = 30)
             val contributors = profileRepository.getTopContributors(limit = 10).getOrDefault(emptyList())
+            val unreadCount = notificationRepository.getUnreadCount().getOrDefault(0)
 
             feedResult
                 .onSuccess { quotes ->
@@ -56,6 +60,7 @@ class HomeViewModel @Inject constructor(
                         trending = trending,
                         recentlyApproved = recentlyApproved,
                         topContributors = contributors,
+                        unreadNotificationCount = unreadCount,
                         errorMessage = null
                     )
                 }
@@ -63,6 +68,7 @@ class HomeViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         topContributors = contributors,
+                        unreadNotificationCount = unreadCount,
                         errorMessage = error.message
                     )
                 }

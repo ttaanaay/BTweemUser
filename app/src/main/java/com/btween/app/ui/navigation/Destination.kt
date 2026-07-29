@@ -29,4 +29,6 @@ sealed class Destination(val route: String) {
     }
 
     data object EditProfile : Destination("edit_profile")
+
+    data object Notifications : Destination("notifications")
 }

@@ -2,12 +2,14 @@ package com.btween.app.di
 
 import com.btween.app.data.repository.AuthRepositoryImpl
 import com.btween.app.data.repository.CategoryRepositoryImpl
+import com.btween.app.data.repository.NotificationRepositoryImpl
 import com.btween.app.data.repository.ProfileRepositoryImpl
 import com.btween.app.data.repository.QuoteRepositoryImpl
 import com.btween.app.data.repository.SettingsRepositoryImpl
 import com.btween.app.data.repository.SocialQuoteRepositoryImpl
 import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.CategoryRepository
+import com.btween.app.domain.repository.NotificationRepository
 import com.btween.app.domain.repository.ProfileRepository
 import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.SettingsRepository
@@ -45,4 +47,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindProfileRepository(impl: ProfileRepositoryImpl): ProfileRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepository(impl: NotificationRepositoryImpl): NotificationRepository
 }

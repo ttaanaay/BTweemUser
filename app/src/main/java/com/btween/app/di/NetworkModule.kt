@@ -3,6 +3,7 @@ package com.btween.app.di
 import com.btween.app.data.remote.AuthInterceptor
 import com.btween.app.data.remote.TokenAuthenticator
 import com.btween.app.data.remote.api.AuthApi
+import com.btween.app.data.remote.api.NotificationApi
 import com.btween.app.data.remote.api.QuoteApi
 import com.btween.app.data.remote.api.UserApi
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -87,4 +88,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideQuoteApi(retrofit: Retrofit): QuoteApi = retrofit.create(QuoteApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNotificationApi(retrofit: Retrofit): NotificationApi = retrofit.create(NotificationApi::class.java)
 }

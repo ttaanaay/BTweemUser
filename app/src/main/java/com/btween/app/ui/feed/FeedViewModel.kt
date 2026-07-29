@@ -10,10 +10,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val PAGE_SIZE = 20
+
 data class FeedUiState(
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
+    val isLoadingMore: Boolean = false,
     val quotes: List<SocialQuote> = emptyList(),
+    val endReached: Boolean = false,
     val errorMessage: String? = null
 )
 
@@ -32,12 +36,13 @@ class FeedViewModel @Inject constructor(
     private fun loadFeed(isRefresh: Boolean = false) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = !isRefresh, isRefreshing = isRefresh)
-            socialQuoteRepository.getFeed()
+            socialQuoteRepository.getFeed(limit = PAGE_SIZE, offset = 0)
                 .onSuccess { quotes ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isRefreshing = false,
                         quotes = quotes,
+                        endReached = quotes.size < PAGE_SIZE,
                         errorMessage = null
                     )
                 }
@@ -47,6 +52,27 @@ class FeedViewModel @Inject constructor(
                         isRefreshing = false,
                         errorMessage = error.message
                     )
+                }
+        }
+    }
+
+    /** Called when the user scrolls near the bottom of the list - loads the next page. */
+    fun onLoadMore() {
+        val state = _uiState.value
+        if (state.isLoadingMore || state.endReached || state.isLoading) return
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoadingMore = true)
+            socialQuoteRepository.getFeed(limit = PAGE_SIZE, offset = state.quotes.size.toLong())
+                .onSuccess { newQuotes ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoadingMore = false,
+                        quotes = _uiState.value.quotes + newQuotes,
+                        endReached = newQuotes.size < PAGE_SIZE
+                    )
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(isLoadingMore = false, errorMessage = error.message)
                 }
         }
     }

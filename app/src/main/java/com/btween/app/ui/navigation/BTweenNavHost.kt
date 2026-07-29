@@ -12,6 +12,7 @@ import com.btween.app.ui.favorites.FavoritesScreen
 import com.btween.app.ui.feed.FeedScreen
 import com.btween.app.ui.home.HomeScreen
 import com.btween.app.ui.library.LibraryScreen
+import com.btween.app.ui.notifications.NotificationScreen
 import com.btween.app.ui.profile.EditProfileScreen
 import com.btween.app.ui.profile.ProfileScreen
 import com.btween.app.ui.search.SearchScreen
@@ -25,7 +26,8 @@ fun BTweenNavHost(navController: NavHostController) {
             HomeScreen(
                 onAddQuote = { navController.navigate(Destination.AddEditQuote.createRoute()) },
                 onSearch = { navController.navigate(Destination.Search.route) },
-                onUserClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
+                onUserClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
+                onNotificationsClick = { navController.navigate(Destination.Notifications.route) }
             )
         }
 
@@ -56,6 +58,13 @@ fun BTweenNavHost(navController: NavHostController) {
         composable(Destination.EditProfile.route) {
             EditProfileScreen(
                 onDone = { navController.popBackStack() }
+            )
+        }
+
+        composable(Destination.Notifications.route) {
+            NotificationScreen(
+                onBack = { navController.popBackStack() },
+                onUserClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
             )
         }
 
