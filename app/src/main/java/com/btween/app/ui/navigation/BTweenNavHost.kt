@@ -10,6 +10,7 @@ import com.btween.app.ui.addedit.AddEditScreen
 import com.btween.app.ui.detail.DetailScreen
 import com.btween.app.ui.favorites.FavoritesScreen
 import com.btween.app.ui.feed.FeedScreen
+import com.btween.app.ui.feed.SocialQuoteDetailScreen
 import com.btween.app.ui.home.HomeScreen
 import com.btween.app.ui.library.LibraryScreen
 import com.btween.app.ui.notifications.NotificationScreen
@@ -41,7 +42,20 @@ fun BTweenNavHost(navController: NavHostController) {
 
         composable(Destination.Feed.route) {
             FeedScreen(
-                onQuoteOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
+                onQuoteOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
+                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }
+            )
+        }
+
+        composable(
+            route = Destination.SocialQuoteDetail.route,
+            arguments = listOf(
+                navArgument(Destination.SocialQuoteDetail.ARG_QUOTE_ID) { type = NavType.LongType }
+            )
+        ) {
+            SocialQuoteDetailScreen(
+                onBack = { navController.popBackStack() },
+                onOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) }
             )
         }
 
@@ -58,7 +72,8 @@ fun BTweenNavHost(navController: NavHostController) {
                 onFollowListClick = { userId, type ->
                     navController.navigate(Destination.FollowList.createRoute(userId, type.name))
                 },
-                onEditQuote = { quoteId -> navController.navigate(Destination.EditSocialQuote.createRoute(quoteId)) }
+                onEditQuote = { quoteId -> navController.navigate(Destination.EditSocialQuote.createRoute(quoteId)) },
+                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }
             )
         }
 

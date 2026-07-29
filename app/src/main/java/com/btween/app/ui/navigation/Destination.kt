@@ -43,4 +43,9 @@ sealed class Destination(val route: String) {
         const val ARG_QUOTE_ID = "quoteId"
         fun createRoute(quoteId: Long) = "edit_social_quote/$quoteId"
     }
+
+    data object SocialQuoteDetail : Destination("social_quote_detail/{quoteId}") {
+        const val ARG_QUOTE_ID = "quoteId"
+        fun createRoute(quoteId: Long) = "social_quote_detail/$quoteId"
+    }
 }

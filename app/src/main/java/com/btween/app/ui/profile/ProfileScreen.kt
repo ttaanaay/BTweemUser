@@ -63,6 +63,7 @@ fun ProfileScreen(
     onSettingsClick: () -> Unit,
     onFollowListClick: (Long, FollowListType) -> Unit,
     onEditQuote: (Long) -> Unit,
+    onQuoteClick: (Long) -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -229,7 +230,8 @@ fun ProfileScreen(
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
                                 showOwnerActions = uiState.isOwnProfile,
                                 onEdit = { onEditQuote(quote.id) },
-                                onDelete = { quoteIdPendingDelete = quote.id }
+                                onDelete = { quoteIdPendingDelete = quote.id },
+                                onQuoteClick = { onQuoteClick(quote.id) }
                             )
                         }
                     }

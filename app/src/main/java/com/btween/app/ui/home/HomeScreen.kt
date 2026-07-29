@@ -54,6 +54,7 @@ fun HomeScreen(
     onSearch: () -> Unit,
     onUserClick: (Long) -> Unit,
     onNotificationsClick: () -> Unit,
+    onQuoteClick: (Long) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -140,7 +141,8 @@ fun HomeScreen(
                                     onToggleLike = { viewModel.onToggleLike(daily) },
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 20.dp)
+                                        .padding(horizontal = 20.dp),
+                                    onQuoteClick = { onQuoteClick(daily.id) }
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
                             }
@@ -158,7 +160,8 @@ fun HomeScreen(
                                         CompactGradientQuoteCard(
                                             quote = quote,
                                             onToggleLike = { viewModel.onToggleLike(quote) },
-                                            modifier = Modifier.width(240.dp)
+                                            modifier = Modifier.width(240.dp),
+                                            onQuoteClick = { onQuoteClick(quote.id) }
                                         )
                                     }
                                 }
@@ -181,7 +184,8 @@ fun HomeScreen(
                             item {
                                 RecentlyApprovedGrid(
                                     quotes = uiState.recentlyApproved,
-                                    onToggleLike = viewModel::onToggleLike
+                                    onToggleLike = viewModel::onToggleLike,
+                                    onQuoteClick = onQuoteClick
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
                             }

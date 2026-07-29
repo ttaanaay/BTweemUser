@@ -12,6 +12,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import androidx.core.content.FileProvider
 import com.btween.app.domain.model.Quote
+import com.btween.app.domain.model.SocialQuote
 import java.io.File
 import java.io.FileOutputStream
 
@@ -19,11 +20,12 @@ private const val IMAGE_WIDTH = 1080
 private const val PADDING = 96f
 
 /**
- * Renders [quote] onto a dark, editorial-style card bitmap suitable for sharing to social
- * apps or messaging. Sizing is dynamic: the canvas height grows to fit the wrapped quote
- * text plus the attribution footer.
+ * Renders the given quote text/attribution onto a dark, editorial-style card bitmap suitable
+ * for sharing to social apps or messaging. Sizing is dynamic: the canvas height grows to fit
+ * the wrapped quote text plus the attribution footer. Works from primitive fields so it's
+ * shared between the local [Quote] model and the online [SocialQuote] model.
  */
-private fun renderQuoteBitmap(quote: Quote): Bitmap {
+private fun renderQuoteBitmap(text: String, speaker: String, sourceTitle: String): Bitmap {
     val quotePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
         textSize = 56f
@@ -41,7 +43,7 @@ private fun renderQuoteBitmap(quote: Quote): Bitmap {
     }
 
     val textWidth = (IMAGE_WIDTH - PADDING * 2).toInt()
-    val quoteText = "\u201C${quote.text}\u201D"
+    val quoteText = "\u201C$text\u201D"
 
     val quoteLayout = StaticLayout.Builder
         .obtain(quoteText, 0, quoteText.length, quotePaint, textWidth)
@@ -50,8 +52,8 @@ private fun renderQuoteBitmap(quote: Quote): Bitmap {
         .build()
 
     val attributionText = buildString {
-        append("\u2014 ${quote.speaker}")
-        if (quote.sourceTitle.isNotBlank()) append(", ${quote.sourceTitle}")
+        append("\u2014 $speaker")
+        if (sourceTitle.isNotBlank()) append(", $sourceTitle")
     }
     val attributionLayout = StaticLayout.Builder
         .obtain(attributionText, 0, attributionText.length, attributionPaint, textWidth)
@@ -79,10 +81,9 @@ private fun renderQuoteBitmap(quote: Quote): Bitmap {
     return bitmap
 }
 
-fun shareQuoteAsImage(context: Context, quote: Quote) {
-    val bitmap = renderQuoteBitmap(quote)
+private fun shareBitmap(context: Context, bitmap: Bitmap, fileIdForName: String) {
     val directory = File(context.cacheDir, "shared_images").apply { mkdirs() }
-    val file = File(directory, "quote_${quote.id}_${System.currentTimeMillis()}.png")
+    val file = File(directory, "quote_${fileIdForName}_${System.currentTimeMillis()}.png")
     FileOutputStream(file).use { out ->
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
     }
@@ -94,4 +95,14 @@ fun shareQuoteAsImage(context: Context, quote: Quote) {
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
     context.startActivity(Intent.createChooser(intent, "Share quote image"))
+}
+
+fun shareQuoteAsImage(context: Context, quote: Quote) {
+    val bitmap = renderQuoteBitmap(quote.text, quote.speaker, quote.sourceTitle)
+    shareBitmap(context, bitmap, quote.id.toString())
+}
+
+fun shareQuoteAsImage(context: Context, quote: SocialQuote) {
+    val bitmap = renderQuoteBitmap(quote.text, quote.speaker, quote.sourceTitle)
+    shareBitmap(context, bitmap, quote.id.toString())
 }

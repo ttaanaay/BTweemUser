@@ -35,6 +35,7 @@ import com.btween.app.ui.components.EmptyState
 @Composable
 fun FeedScreen(
     onQuoteOwnerClick: (Long) -> Unit,
+    onQuoteClick: (Long) -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -99,7 +100,8 @@ fun FeedScreen(
                             SocialQuoteCard(
                                 quote = quote,
                                 onToggleLike = { viewModel.onToggleLike(quote) },
-                                onOwnerClick = { onQuoteOwnerClick(quote.owner.id) }
+                                onOwnerClick = { onQuoteOwnerClick(quote.owner.id) },
+                                onQuoteClick = { onQuoteClick(quote.id) }
                             )
                         }
                         if (uiState.isLoadingMore) {

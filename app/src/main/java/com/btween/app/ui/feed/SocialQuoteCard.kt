@@ -45,12 +45,13 @@ fun SocialQuoteCard(
     onToggleLike: () -> Unit,
     modifier: Modifier = Modifier,
     onOwnerClick: () -> Unit = {},
+    onQuoteClick: () -> Unit = {},
     showOwnerActions: Boolean = false,
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {}
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().clickable(onClick = onQuoteClick),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {

@@ -1,6 +1,7 @@
 package com.btween.app.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,12 +41,14 @@ import com.btween.app.ui.theme.QuoteSerifFontFamily
 fun HeroQuoteCard(
     quote: SocialQuote,
     onToggleLike: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onQuoteClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(220.dp)
+            .clickable(onClick = onQuoteClick)
             .background(gradientForSeed(quote.id), MaterialTheme.shapes.large)
             .padding(20.dp)
     ) {

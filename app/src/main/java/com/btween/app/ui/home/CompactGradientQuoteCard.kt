@@ -34,12 +34,14 @@ import com.btween.app.ui.theme.QuoteSerifFontFamily
 fun CompactGradientQuoteCard(
     quote: SocialQuote,
     onToggleLike: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onQuoteClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
             .height(150.dp)
             .fillMaxWidth()
+            .clickable(onClick = onQuoteClick)
             .background(gradientForSeed(quote.id + 1), MaterialTheme.shapes.medium)
             .padding(14.dp)
     ) {
