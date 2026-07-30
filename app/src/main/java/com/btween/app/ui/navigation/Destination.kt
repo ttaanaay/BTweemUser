@@ -58,4 +58,11 @@ sealed class Destination(val route: String) {
         const val ARG_QUOTE_ID = "quoteId"
         fun createRoute(quoteId: Long) = "comments/$quoteId"
     }
+
+    data object Collections : Destination("collections")
+
+    data object CollectionDetail : Destination("collection_detail/{collectionId}") {
+        const val ARG_COLLECTION_ID = "collectionId"
+        fun createRoute(collectionId: Long) = "collection_detail/$collectionId"
+    }
 }

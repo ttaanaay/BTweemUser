@@ -48,6 +48,19 @@ class TokenManager @Inject constructor(
         _isLoggedIn.value = true
     }
 
+    /**
+     * The server's public UserResponse never includes email (other users shouldn't see it),
+     * so there's no way to fetch it back from the API for the signed-in user's own Settings
+     * screen. Persisting it locally at register/login time (email/password path only - the
+     * OAuth paths never have a locally-typed email, but those accounts start out
+     * pre-verified anyway so this is never needed for them) avoids needing a new endpoint.
+     */
+    fun saveEmail(email: String) {
+        prefs.edit().putString(KEY_EMAIL, email).apply()
+    }
+
+    fun getEmail(): String? = prefs.getString(KEY_EMAIL, null)
+
     fun updateAccessToken(accessToken: String) {
         prefs.edit().putString(KEY_ACCESS_TOKEN, accessToken).apply()
     }
@@ -67,5 +80,6 @@ class TokenManager @Inject constructor(
         const val KEY_ACCESS_TOKEN = "access_token"
         const val KEY_REFRESH_TOKEN = "refresh_token"
         const val KEY_USER_ID = "user_id"
+        const val KEY_EMAIL = "email"
     }
 }

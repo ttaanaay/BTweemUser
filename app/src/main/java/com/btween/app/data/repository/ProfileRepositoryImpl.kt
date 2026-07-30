@@ -25,6 +25,10 @@ class ProfileRepositoryImpl @Inject constructor(
             userApi.updateProfile(UpdateProfileRequestDto(displayName, avatarUrl, bio)).toDomain()
         }
 
+    override suspend fun deleteAccount(): Result<Unit> = safeApiCall {
+        userApi.deleteAccount()
+    }
+
     override suspend fun follow(id: Long): Result<Unit> = safeApiCall {
         userApi.follow(id)
     }

@@ -8,5 +8,6 @@ data class User(
     val bio: String? = null,
     val followerCount: Int = 0,
     val followingCount: Int = 0,
-    val isFollowedByMe: Boolean = false
+    val isFollowedByMe: Boolean = false,
+    val emailVerified: Boolean = true
 )

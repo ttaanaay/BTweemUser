@@ -3,8 +3,10 @@ package com.btween.app.ui.feed
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.btween.app.domain.model.QuoteCollection
 import com.btween.app.domain.model.SocialQuote
 import com.btween.app.domain.repository.AuthRepository
+import com.btween.app.domain.repository.CollectionRepository
 import com.btween.app.domain.repository.ProfileRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
 import com.btween.app.ui.navigation.Destination
@@ -19,7 +21,12 @@ data class SocialQuoteDetailUiState(
     val quote: SocialQuote? = null,
     val isOwnQuote: Boolean = false,
     val isFollowActionInFlight: Boolean = false,
-    val errorMessage: String? = null
+    val showCollectionPicker: Boolean = false,
+    val collections: List<QuoteCollection> = emptyList(),
+    val isLoadingCollections: Boolean = false,
+    val addedToCollectionId: Long? = null,
+    val errorMessage: String? = null,
+    val infoMessage: String? = null
 )
 
 @HiltViewModel
@@ -27,7 +34,8 @@ class SocialQuoteDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val socialQuoteRepository: SocialQuoteRepository,
     private val profileRepository: ProfileRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val collectionRepository: CollectionRepository
 ) : ViewModel() {
 
     private val quoteId: Long = checkNotNull(savedStateHandle[Destination.SocialQuoteDetail.ARG_QUOTE_ID])
@@ -113,5 +121,58 @@ class SocialQuoteDetailViewModel @Inject constructor(
                     )
                 }
         }
+    }
+
+    fun onShowCollectionPicker() {
+        _uiState.value = _uiState.value.copy(showCollectionPicker = true, isLoadingCollections = true)
+        viewModelScope.launch {
+            collectionRepository.getCollections()
+                .onSuccess { collections ->
+                    _uiState.value = _uiState.value.copy(isLoadingCollections = false, collections = collections)
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(isLoadingCollections = false, errorMessage = error.message)
+                }
+        }
+    }
+
+    fun onDismissCollectionPicker() {
+        _uiState.value = _uiState.value.copy(showCollectionPicker = false)
+    }
+
+    fun onAddToCollection(collectionId: Long) {
+        val quote = _uiState.value.quote ?: return
+        viewModelScope.launch {
+            collectionRepository.addItem(collectionId, quote.id)
+                .onSuccess {
+                    _uiState.value = _uiState.value.copy(
+                        showCollectionPicker = false,
+                        infoMessage = "Added to collection"
+                    )
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                }
+        }
+    }
+
+    fun onCreateCollectionAndAdd(name: String) {
+        val quote = _uiState.value.quote ?: return
+        val trimmed = name.trim()
+        if (trimmed.isEmpty()) return
+
+        viewModelScope.launch {
+            collectionRepository.createCollection(trimmed)
+                .onSuccess { collection ->
+                    onAddToCollection(collection.id)
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                }
+        }
+    }
+
+    fun consumeInfo() {
+        _uiState.value = _uiState.value.copy(infoMessage = null)
     }
 }

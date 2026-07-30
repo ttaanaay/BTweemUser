@@ -39,6 +39,17 @@ data class ResetPasswordRequestDto(
 )
 
 @Serializable
+data class VerifyEmailRequestDto(
+    val email: String,
+    val code: String
+)
+
+@Serializable
+data class ResendVerificationRequestDto(
+    val email: String
+)
+
+@Serializable
 data class MessageResponseDto(
     val message: String
 )
@@ -59,7 +70,8 @@ data class UserResponseDto(
     val bio: String? = null,
     val followerCount: Int = 0,
     val followingCount: Int = 0,
-    val isFollowedByMe: Boolean = false
+    val isFollowedByMe: Boolean = false,
+    val emailVerified: Boolean = true
 )
 
 @Serializable

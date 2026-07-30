@@ -16,22 +16,28 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +56,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.btween.app.domain.model.QuoteCollection
+import com.btween.app.domain.repository.ReportTargetType
+import com.btween.app.ui.components.ReportDialog
 import com.btween.app.ui.components.UserAvatar
 import com.btween.app.ui.theme.QuoteSerifFontFamily
 import com.btween.app.ui.util.localizedLabel
@@ -70,11 +79,18 @@ fun SocialQuoteDetailScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var showShareMenu by remember { mutableStateOf(false) }
+    var showReportDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.consumeError()
+        }
+    }
+    LaunchedEffect(uiState.infoMessage) {
+        uiState.infoMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.consumeInfo()
         }
     }
 
@@ -109,6 +125,23 @@ fun SocialQuoteDetailScreen(
                                         scope.launch { shareQuoteAsImage(context, quote) }
                                     }
                                 )
+                            }
+                        }
+                        if (!uiState.isOwnQuote) {
+                            var showMoreMenu by remember { mutableStateOf(false) }
+                            Box {
+                                IconButton(onClick = { showMoreMenu = true }) {
+                                    Icon(Icons.Filled.MoreVert, contentDescription = "More options")
+                                }
+                                DropdownMenu(expanded = showMoreMenu, onDismissRequest = { showMoreMenu = false }) {
+                                    DropdownMenuItem(
+                                        text = { Text("Report") },
+                                        onClick = {
+                                            showMoreMenu = false
+                                            showReportDialog = true
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -233,7 +266,89 @@ fun SocialQuoteDetailScreen(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+
+                Spacer(modifier = Modifier.padding(start = 16.dp))
+
+                IconButton(onClick = viewModel::onShowCollectionPicker) {
+                    Icon(
+                        Icons.Outlined.BookmarkBorder,
+                        contentDescription = "Add to collection",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
+
+    if (uiState.showCollectionPicker) {
+        AddToCollectionDialog(
+            collections = uiState.collections,
+            isLoading = uiState.isLoadingCollections,
+            onDismiss = viewModel::onDismissCollectionPicker,
+            onPick = viewModel::onAddToCollection,
+            onCreateNew = viewModel::onCreateCollectionAndAdd
+        )
+    }
+
+    if (showReportDialog) {
+        uiState.quote?.let { quote ->
+            ReportDialog(
+                targetType = ReportTargetType.QUOTE,
+                targetId = quote.id,
+                onDismiss = { showReportDialog = false }
+            )
+        }
+    }
+}
+
+@Composable
+private fun AddToCollectionDialog(
+    collections: List<QuoteCollection>,
+    isLoading: Boolean,
+    onDismiss: () -> Unit,
+    onPick: (Long) -> Unit,
+    onCreateNew: (String) -> Unit
+) {
+    var newName by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add to collection") },
+        text = {
+            Column {
+                if (isLoading) {
+                    Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    collections.forEach { collection ->
+                        Text(
+                            collection.name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onPick(collection.id) }
+                                .padding(vertical = 12.dp)
+                        )
+                    }
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    OutlinedTextField(
+                        value = newName,
+                        onValueChange = { newName = it },
+                        label = { Text("New collection name") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { onCreateNew(newName) },
+                enabled = newName.isNotBlank()
+            ) { Text("Create & add") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        }
+    )
 }

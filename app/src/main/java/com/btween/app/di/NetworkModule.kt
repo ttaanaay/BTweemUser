@@ -5,8 +5,10 @@ import com.btween.app.R
 import com.btween.app.data.remote.AuthInterceptor
 import com.btween.app.data.remote.TokenAuthenticator
 import com.btween.app.data.remote.api.AuthApi
+import com.btween.app.data.remote.api.CollectionApi
 import com.btween.app.data.remote.api.NotificationApi
 import com.btween.app.data.remote.api.QuoteApi
+import com.btween.app.data.remote.api.ReportApi
 import com.btween.app.data.remote.api.UserApi
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -115,4 +117,12 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideNotificationApi(retrofit: Retrofit): NotificationApi = retrofit.create(NotificationApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCollectionApi(retrofit: Retrofit): CollectionApi = retrofit.create(CollectionApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideReportApi(retrofit: Retrofit): ReportApi = retrofit.create(ReportApi::class.java)
 }

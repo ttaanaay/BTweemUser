@@ -7,7 +7,9 @@ import com.btween.app.data.remote.dto.MessageResponseDto
 import com.btween.app.data.remote.dto.OAuthLoginRequestDto
 import com.btween.app.data.remote.dto.RefreshRequestDto
 import com.btween.app.data.remote.dto.RegisterRequestDto
+import com.btween.app.data.remote.dto.ResendVerificationRequestDto
 import com.btween.app.data.remote.dto.ResetPasswordRequestDto
+import com.btween.app.data.remote.dto.VerifyEmailRequestDto
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -36,4 +38,10 @@ interface AuthApi {
 
     @POST("auth/reset-password")
     suspend fun resetPassword(@Body request: ResetPasswordRequestDto): MessageResponseDto
+
+    @POST("auth/verify-email")
+    suspend fun verifyEmail(@Body request: VerifyEmailRequestDto): MessageResponseDto
+
+    @POST("auth/resend-verification")
+    suspend fun resendVerification(@Body request: ResendVerificationRequestDto): MessageResponseDto
 }
