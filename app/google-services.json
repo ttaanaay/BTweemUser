@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "879936804838",
+    "project_id": "btween-649cc",
+    "storage_bucket": "btween-649cc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:879936804838:android:0d9487100fc62a308ae827",
+        "android_client_info": {
+          "package_name": "com.btween.app.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5uUbSTVFI1O394Kv2TbwI2Q4J8Ejl4WQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

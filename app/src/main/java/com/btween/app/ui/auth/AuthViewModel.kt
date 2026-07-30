@@ -3,6 +3,7 @@ package com.btween.app.ui.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btween.app.domain.repository.AuthRepository
+import com.btween.app.push.DeviceTokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,8 @@ data class AuthUiState(
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val deviceTokenRepository: DeviceTokenRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -37,6 +39,12 @@ class AuthViewModel @Inject constructor(
         _uiState.value = block(_uiState.value)
     }
 
+    /** Registers this device for push notifications right after a successful sign-in - no
+     * need to wait for FCM's own token-rotation timing to eventually deliver it. */
+    private fun registerDeviceForPush() {
+        viewModelScope.launch { deviceTokenRepository.registerCurrentToken() }
+    }
+
     fun onRegister() {
         val state = _uiState.value
         viewModelScope.launch {
@@ -48,6 +56,7 @@ class AuthViewModel @Inject constructor(
                 displayName = state.displayName.trim()
             ).onSuccess {
                 update { it.copy(isLoading = false, didSucceed = true) }
+                registerDeviceForPush()
             }.onFailure { error ->
                 update { it.copy(isLoading = false, errorMessage = error.message) }
             }
@@ -61,6 +70,7 @@ class AuthViewModel @Inject constructor(
             authRepository.login(state.email.trim(), state.password)
                 .onSuccess {
                     update { it.copy(isLoading = false, didSucceed = true) }
+                    registerDeviceForPush()
                 }
                 .onFailure { error ->
                     update { it.copy(isLoading = false, errorMessage = error.message) }
@@ -76,7 +86,10 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             update { it.copy(isLoading = true) }
             authRepository.loginWithGoogle(idToken)
-                .onSuccess { update { it.copy(isLoading = false, didSucceed = true) } }
+                .onSuccess {
+                    update { it.copy(isLoading = false, didSucceed = true) }
+                    registerDeviceForPush()
+                }
                 .onFailure { error -> update { it.copy(isLoading = false, errorMessage = error.message) } }
         }
     }
@@ -89,7 +102,10 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             update { it.copy(isLoading = true) }
             authRepository.loginWithFacebook(accessToken)
-                .onSuccess { update { it.copy(isLoading = false, didSucceed = true) } }
+                .onSuccess {
+                    update { it.copy(isLoading = false, didSucceed = true) }
+                    registerDeviceForPush()
+                }
                 .onFailure { error -> update { it.copy(isLoading = false, errorMessage = error.message) } }
         }
     }

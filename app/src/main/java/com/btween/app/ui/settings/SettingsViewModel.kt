@@ -8,6 +8,7 @@ import com.btween.app.domain.model.UserSettings
 import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.ProfileRepository
 import com.btween.app.domain.repository.SettingsRepository
+import com.btween.app.push.DeviceTokenRepository
 import com.btween.app.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +31,8 @@ data class EmailVerificationUiState(
 class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val authRepository: AuthRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val deviceTokenRepository: DeviceTokenRepository
 ) : ViewModel() {
 
     val userSettings: StateFlow<UserSettings> = settingsRepository.userSettings.stateIn(
@@ -76,6 +78,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onLogout() {
+        viewModelScope.launch { deviceTokenRepository.unregisterCurrentToken() }
         authRepository.logout()
     }
 
