@@ -3,7 +3,7 @@
 
     <!-- Not user-facing text - a config value, so not translated. Web Client ID from Google
          Cloud Console (see conversation history for setup steps). Client IDs are not secrets. -->
-    <string name="google_web_client_id" translatable="false">966254164469-f8tpfdiu8m3le02ms98kti982f29k409.apps.googleusercontent.com</string>
+    <string name="google_web_client_id" translatable="false">1008578001079-pnoto17hsu4ens1b3q5n07mm7iufi9au.apps.googleusercontent.com</string>
     <string name="facebook_app_id" translatable="false">1332851218567333</string>
     <string name="facebook_client_token" translatable="false">1389f6b464272b2b08590e0a18ca00d3</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb1332851218567333</string>
