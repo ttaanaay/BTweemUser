@@ -9,6 +9,8 @@ import androidx.navigation.navArgument
 import com.btween.app.ui.addedit.AddEditScreen
 import com.btween.app.ui.detail.DetailScreen
 import com.btween.app.ui.favorites.FavoritesScreen
+import com.btween.app.ui.collections.CollectionDetailScreen
+import com.btween.app.ui.collections.CollectionsScreen
 import com.btween.app.ui.feed.CommentsScreen
 import com.btween.app.ui.feed.FeedScreen
 import com.btween.app.ui.feed.SocialQuoteDetailScreen
@@ -88,6 +90,26 @@ fun BTweenNavHost(navController: NavHostController) {
             )
         }
 
+        composable(Destination.Collections.route) {
+            CollectionsScreen(
+                onBack = { navController.popBackStack() },
+                onCollectionClick = { id -> navController.navigate(Destination.CollectionDetail.createRoute(id)) }
+            )
+        }
+
+        composable(
+            route = Destination.CollectionDetail.route,
+            arguments = listOf(
+                navArgument(Destination.CollectionDetail.ARG_COLLECTION_ID) { type = NavType.LongType }
+            )
+        ) {
+            CollectionDetailScreen(
+                onBack = { navController.popBackStack() },
+                onQuoteOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
+                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }
+            )
+        }
+
         composable(
             route = Destination.Profile.route,
             arguments = listOf(
@@ -102,7 +124,8 @@ fun BTweenNavHost(navController: NavHostController) {
                     navController.navigate(Destination.FollowList.createRoute(userId, type.name))
                 },
                 onEditQuote = { quoteId -> navController.navigate(Destination.EditSocialQuote.createRoute(quoteId)) },
-                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }
+                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) },
+                onCollectionsClick = { navController.navigate(Destination.Collections.route) }
             )
         }
 

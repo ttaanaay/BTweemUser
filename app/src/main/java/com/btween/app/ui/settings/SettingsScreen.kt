@@ -5,8 +5,10 @@ import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -14,18 +16,24 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,10 +58,29 @@ fun SettingsScreen(
 ) {
     val settings by viewModel.userSettings.collectAsStateWithLifecycle()
     val appLanguage by viewModel.appLanguage.collectAsStateWithLifecycle()
+    val isDeletingAccount by viewModel.isDeletingAccount.collectAsStateWithLifecycle()
+    val deleteAccountError by viewModel.deleteAccountError.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var showDeleteAccountDialog by remember { mutableStateOf(false) }
+    val emailVerification by viewModel.emailVerification.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(deleteAccountError) {
+        deleteAccountError?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.consumeDeleteAccountError()
+        }
+    }
+    LaunchedEffect(emailVerification.infoMessage) {
+        emailVerification.infoMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.consumeInfoMessage()
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.settings_title)) },
@@ -71,6 +98,32 @@ fun SettingsScreen(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
+            if (!emailVerification.isEmailVerified) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            "Verify your email",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                        Text(
+                            "Confirm your email address to secure your account.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
+                        )
+                        TextButton(onClick = viewModel::onShowVerifyDialog) {
+                            Text("Verify now")
+                        }
+                    }
+                }
+            }
+
             SettingsSectionTitle(stringResource(R.string.settings_section_appearance))
 
             ThemeMode.entries.forEach { mode ->
@@ -155,6 +208,17 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.error
                 )
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(selected = false, onClick = { showDeleteAccountDialog = true })
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    "Delete account",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 
@@ -173,6 +237,74 @@ fun SettingsScreen(
                 TextButton(onClick = { showLogoutDialog = false }) {
                     Text(stringResource(R.string.action_cancel))
                 }
+            }
+        )
+    }
+
+    if (showDeleteAccountDialog) {
+        AlertDialog(
+            onDismissRequest = { if (!isDeletingAccount) showDeleteAccountDialog = false },
+            title = { Text("Delete your account?") },
+            text = {
+                Text(
+                    "This permanently deletes your profile, quotes, comments, likes, follows, " +
+                        "and collections. This can't be undone."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.onDeleteAccount(onDeleted = {
+                            showDeleteAccountDialog = false
+                        })
+                    },
+                    enabled = !isDeletingAccount
+                ) {
+                    Text(
+                        if (isDeletingAccount) "Deleting..." else "Delete permanently",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteAccountDialog = false },
+                    enabled = !isDeletingAccount
+                ) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
+    }
+
+    if (emailVerification.showVerifyDialog) {
+        AlertDialog(
+            onDismissRequest = viewModel::onDismissVerifyDialog,
+            title = { Text("Verify your email") },
+            text = {
+                Column {
+                    Text("Enter the code we sent to your email.")
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = emailVerification.code,
+                        onValueChange = viewModel::onCodeChanged,
+                        label = { Text("6-digit code") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    TextButton(onClick = viewModel::onResendCode, enabled = !emailVerification.isResending) {
+                        Text(if (emailVerification.isResending) "Sending..." else "Resend code")
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = viewModel::onSubmitCode,
+                    enabled = !emailVerification.isSubmitting && emailVerification.code.isNotBlank()
+                ) { Text("Verify") }
+            },
+            dismissButton = {
+                TextButton(onClick = viewModel::onDismissVerifyDialog) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }

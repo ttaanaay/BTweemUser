@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material3.Button
@@ -27,6 +28,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -52,6 +55,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.ui.components.EmptyState
+import com.btween.app.domain.repository.ReportTargetType
+import com.btween.app.ui.components.ReportDialog
 import com.btween.app.ui.components.UserAvatar
 import com.btween.app.ui.feed.SocialQuoteCard
 
@@ -64,11 +69,14 @@ fun ProfileScreen(
     onFollowListClick: (Long, FollowListType) -> Unit,
     onEditQuote: (Long) -> Unit,
     onQuoteClick: (Long) -> Unit,
+    onCollectionsClick: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var quoteIdPendingDelete by remember { mutableStateOf<Long?>(null) }
+    var showMoreMenu by remember { mutableStateOf(false) }
+    var showReportDialog by remember { mutableStateOf(false) }
 
     // Reload whenever this screen comes back into view (e.g. returning from Edit Profile
     // after changing the avatar) - the ViewModel/composition survives the round trip, so
@@ -103,6 +111,21 @@ fun ProfileScreen(
                     if (uiState.isOwnProfile) {
                         IconButton(onClick = onSettingsClick) {
                             Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                        }
+                    } else {
+                        Box {
+                            IconButton(onClick = { showMoreMenu = true }) {
+                                Icon(Icons.Filled.MoreVert, contentDescription = "More options")
+                            }
+                            DropdownMenu(expanded = showMoreMenu, onDismissRequest = { showMoreMenu = false }) {
+                                DropdownMenuItem(
+                                    text = { Text("Report user") },
+                                    onClick = {
+                                        showMoreMenu = false
+                                        showReportDialog = true
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -195,8 +218,13 @@ fun ProfileScreen(
                             Spacer(modifier = Modifier.height(16.dp))
 
                             if (uiState.isOwnProfile) {
-                                OutlinedButton(onClick = onEditProfile) {
-                                    Text("Edit profile")
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    OutlinedButton(onClick = onEditProfile) {
+                                        Text("Edit profile")
+                                    }
+                                    OutlinedButton(onClick = onCollectionsClick) {
+                                        Text("Collections")
+                                    }
                                 }
                             } else {
                                 Button(
@@ -255,5 +283,15 @@ fun ProfileScreen(
                 TextButton(onClick = { quoteIdPendingDelete = null }) { Text("Cancel") }
             }
         )
+    }
+
+    if (showReportDialog) {
+        uiState.user?.let { user ->
+            ReportDialog(
+                targetType = ReportTargetType.USER,
+                targetId = user.id,
+                onDismiss = { showReportDialog = false }
+            )
+        }
     }
 }

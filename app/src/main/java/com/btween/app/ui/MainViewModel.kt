@@ -6,16 +6,19 @@ import com.btween.app.domain.model.ThemeMode
 import com.btween.app.domain.model.UserSettings
 import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.SettingsRepository
+import com.btween.app.push.DeviceTokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     settingsRepository: SettingsRepository,
-    authRepository: AuthRepository
+    authRepository: AuthRepository,
+    deviceTokenRepository: DeviceTokenRepository
 ) : ViewModel() {
 
     val userSettings: StateFlow<UserSettings> = settingsRepository.userSettings
@@ -26,6 +29,14 @@ class MainViewModel @Inject constructor(
         )
 
     val isLoggedIn: StateFlow<Boolean> = authRepository.isLoggedIn
+
+    init {
+        // Covers the "already logged in, app was just reopened" case - login/register cover
+        // the fresh-sign-in case themselves right after succeeding.
+        if (authRepository.getCurrentUserId() != null) {
+            viewModelScope.launch { deviceTokenRepository.registerCurrentToken() }
+        }
+    }
 }
 
 /**

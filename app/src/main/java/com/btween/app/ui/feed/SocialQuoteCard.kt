@@ -52,7 +52,8 @@ fun SocialQuoteCard(
     onQuoteClick: () -> Unit = {},
     showOwnerActions: Boolean = false,
     onEdit: () -> Unit = {},
-    onDelete: () -> Unit = {}
+    onDelete: () -> Unit = {},
+    onReport: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth().clickable(onClick = onQuoteClick),
@@ -84,13 +85,13 @@ fun SocialQuoteCard(
                     }
                 }
 
-                if (showOwnerActions) {
-                    var showMenu by remember { mutableStateOf(false) }
-                    Box {
-                        IconButton(onClick = { showMenu = true }) {
-                            Icon(Icons.Filled.MoreVert, contentDescription = "More options")
-                        }
-                        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                var showMenu by remember { mutableStateOf(false) }
+                Box {
+                    IconButton(onClick = { showMenu = true }) {
+                        Icon(Icons.Filled.MoreVert, contentDescription = "More options")
+                    }
+                    DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                        if (showOwnerActions) {
                             DropdownMenuItem(
                                 text = { Text("Edit") },
                                 onClick = { showMenu = false; onEdit() }
@@ -98,6 +99,11 @@ fun SocialQuoteCard(
                             DropdownMenuItem(
                                 text = { Text("Delete") },
                                 onClick = { showMenu = false; onDelete() }
+                            )
+                        } else {
+                            DropdownMenuItem(
+                                text = { Text("Report") },
+                                onClick = { showMenu = false; onReport() }
                             )
                         }
                     }

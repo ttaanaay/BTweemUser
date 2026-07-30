@@ -9,6 +9,8 @@ interface ProfileRepository {
 
     suspend fun updateProfile(displayName: String?, avatarUrl: String?, bio: String?): Result<User>
 
+    suspend fun deleteAccount(): Result<Unit>
+
     suspend fun follow(id: Long): Result<Unit>
 
     suspend fun unfollow(id: Long): Result<Unit>

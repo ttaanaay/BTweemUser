@@ -28,14 +28,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.domain.model.SocialQuote
+import com.btween.app.domain.repository.ReportTargetType
 import com.btween.app.ui.components.EmptyState
+import com.btween.app.ui.components.ReportDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +50,7 @@ fun FeedScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    var reportQuoteId by remember { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
@@ -87,11 +92,20 @@ fun FeedScreen(
                         onLoadMore = viewModel::onLoadMore,
                         onToggleLike = viewModel::onToggleLike,
                         onQuoteOwnerClick = onQuoteOwnerClick,
-                        onQuoteClick = onQuoteClick
+                        onQuoteClick = onQuoteClick,
+                        onReport = { quoteId -> reportQuoteId = quoteId }
                     )
                 }
             }
         }
+    }
+
+    reportQuoteId?.let { quoteId ->
+        ReportDialog(
+            targetType = ReportTargetType.QUOTE,
+            targetId = quoteId,
+            onDismiss = { reportQuoteId = null }
+        )
     }
 }
 
@@ -104,7 +118,8 @@ private fun FeedTabContent(
     onLoadMore: () -> Unit,
     onToggleLike: (SocialQuote) -> Unit,
     onQuoteOwnerClick: (Long) -> Unit,
-    onQuoteClick: (Long) -> Unit
+    onQuoteClick: (Long) -> Unit,
+    onReport: (Long) -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -160,7 +175,8 @@ private fun FeedTabContent(
                             quote = quote,
                             onToggleLike = { onToggleLike(quote) },
                             onOwnerClick = { onQuoteOwnerClick(quote.owner.id) },
-                            onQuoteClick = { onQuoteClick(quote.id) }
+                            onQuoteClick = { onQuoteClick(quote.id) },
+                            onReport = { onReport(quote.id) }
                         )
                     }
                     if (tabState.isLoadingMore) {

@@ -10,5 +10,6 @@ fun UserResponseDto.toDomain(): User = User(
     bio = bio,
     followerCount = followerCount,
     followingCount = followingCount,
-    isFollowedByMe = isFollowedByMe
+    isFollowedByMe = isFollowedByMe,
+    emailVerified = emailVerified
 )

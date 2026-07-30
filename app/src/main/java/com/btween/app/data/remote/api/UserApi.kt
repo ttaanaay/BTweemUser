@@ -40,6 +40,9 @@ interface UserApi {
     @PUT("users/me")
     suspend fun updateProfile(@Body request: UpdateProfileRequestDto): UserResponseDto
 
+    @DELETE("users/me")
+    suspend fun deleteAccount()
+
     @GET("users/{id}/quotes")
     suspend fun getUserQuotes(
         @Path("id") id: Long,
