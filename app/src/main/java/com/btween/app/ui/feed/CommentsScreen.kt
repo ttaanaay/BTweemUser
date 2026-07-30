@@ -16,7 +16,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +32,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -95,31 +99,46 @@ fun CommentsScreen(
             }
         }
     ) { padding ->
-        when {
-            uiState.isLoading -> {
-                Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+        PullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = viewModel::onRefresh,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            when {
+                uiState.isLoading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
-            uiState.comments.isEmpty() -> {
-                EmptyState(
-                    modifier = Modifier.fillMaxSize().padding(padding),
-                    icon = Icons.Outlined.ChatBubbleOutline,
-                    title = "No comments yet",
-                    message = "Be the first to say something about this quote."
-                )
-            }
-            else -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize().padding(padding),
-                    contentPadding = PaddingValues(vertical = 8.dp)
-                ) {
-                    items(uiState.comments, key = { it.id }) { comment ->
-                        CommentRow(
-                            comment = comment,
-                            canDelete = comment.author.id == uiState.currentUserId,
-                            onDelete = { viewModel.onDeleteComment(comment.id) }
-                        )
+                uiState.comments.isEmpty() -> {
+                    EmptyState(
+                        modifier = Modifier.fillMaxSize(),
+                        icon = Icons.Outlined.ChatBubbleOutline,
+                        title = "No comments yet",
+                        message = "Be the first to say something about this quote."
+                    )
+                }
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(vertical = 8.dp)
+                    ) {
+                        items(uiState.comments, key = { it.id }) { comment ->
+                            CommentRow(
+                                comment = comment,
+                                canModify = comment.author.id == uiState.currentUserId,
+                                isEditing = uiState.editingCommentId == comment.id,
+                                editingText = uiState.editingText,
+                                isSavingEdit = uiState.isSavingEdit,
+                                onEditingTextChanged = viewModel::onEditingTextChanged,
+                                onStartEdit = { viewModel.onStartEdit(comment) },
+                                onCancelEdit = viewModel::onCancelEdit,
+                                onSaveEdit = viewModel::onSaveEdit,
+                                onDelete = { viewModel.onDeleteComment(comment.id) }
+                            )
+                        }
                     }
                 }
             }
@@ -128,7 +147,18 @@ fun CommentsScreen(
 }
 
 @Composable
-private fun CommentRow(comment: Comment, canDelete: Boolean, onDelete: () -> Unit) {
+private fun CommentRow(
+    comment: Comment,
+    canModify: Boolean,
+    isEditing: Boolean,
+    editingText: String,
+    isSavingEdit: Boolean,
+    onEditingTextChanged: (String) -> Unit,
+    onStartEdit: () -> Unit,
+    onCancelEdit: () -> Unit,
+    onSaveEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -143,9 +173,41 @@ private fun CommentRow(comment: Comment, canDelete: Boolean, onDelete: () -> Uni
         Spacer(modifier = Modifier.padding(start = 10.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(comment.author.displayName, style = MaterialTheme.typography.labelLarge)
-            Text(comment.text, style = MaterialTheme.typography.bodyMedium)
+
+            if (isEditing) {
+                OutlinedTextField(
+                    value = editingText,
+                    onValueChange = onEditingTextChanged,
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 4
+                )
+                Row {
+                    IconButton(onClick = onSaveEdit, enabled = !isSavingEdit && editingText.isNotBlank()) {
+                        Icon(Icons.Filled.Check, contentDescription = "Save")
+                    }
+                    IconButton(onClick = onCancelEdit, enabled = !isSavingEdit) {
+                        Icon(Icons.Filled.Close, contentDescription = "Cancel")
+                    }
+                }
+            } else {
+                Text(comment.text, style = MaterialTheme.typography.bodyMedium)
+                if (comment.isEdited) {
+                    Text(
+                        "(edited)",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         }
-        if (canDelete) {
+        if (canModify && !isEditing) {
+            IconButton(onClick = onStartEdit) {
+                Icon(
+                    Icons.Filled.Edit,
+                    contentDescription = "Edit comment",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
             IconButton(onClick = onDelete) {
                 Icon(
                     Icons.Filled.Delete,

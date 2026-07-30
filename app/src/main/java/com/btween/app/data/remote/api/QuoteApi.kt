@@ -50,6 +50,9 @@ interface QuoteApi {
     @POST("quotes/{id}/comments")
     suspend fun addComment(@Path("id") quoteId: Long, @Body request: CommentRequestDto): CommentResponseDto
 
+    @PUT("comments/{id}")
+    suspend fun editComment(@Path("id") id: Long, @Body request: CommentRequestDto): CommentResponseDto
+
     @DELETE("comments/{id}")
     suspend fun deleteComment(@Path("id") id: Long)
 }

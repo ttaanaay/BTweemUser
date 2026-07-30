@@ -15,9 +15,13 @@ import javax.inject.Inject
 
 data class CommentsUiState(
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val comments: List<Comment> = emptyList(),
     val draftText: String = "",
     val isPosting: Boolean = false,
+    val editingCommentId: Long? = null,
+    val editingText: String = "",
+    val isSavingEdit: Boolean = false,
     val currentUserId: Long? = null,
     val errorMessage: String? = null
 )
@@ -38,18 +42,25 @@ class CommentsViewModel @Inject constructor(
         load()
     }
 
-    private fun load() {
+    private fun load(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.value = _uiState.value.copy(isLoading = !isRefresh, isRefreshing = isRefresh)
             commentRepository.getComments(quoteId)
                 .onSuccess { comments ->
-                    _uiState.value = _uiState.value.copy(isLoading = false, comments = comments, errorMessage = null)
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        isRefreshing = false,
+                        comments = comments,
+                        errorMessage = null
+                    )
                 }
                 .onFailure { error ->
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = error.message)
+                    _uiState.value = _uiState.value.copy(isLoading = false, isRefreshing = false, errorMessage = error.message)
                 }
         }
     }
+
+    fun onRefresh() = load(isRefresh = true)
 
     fun onDraftChanged(value: String) {
         _uiState.value = _uiState.value.copy(draftText = value)
@@ -87,6 +98,40 @@ class CommentsViewModel @Inject constructor(
             commentRepository.deleteComment(id).onFailure { error ->
                 _uiState.value = _uiState.value.copy(comments = previousComments, errorMessage = error.message)
             }
+        }
+    }
+
+    fun onStartEdit(comment: Comment) {
+        _uiState.value = _uiState.value.copy(editingCommentId = comment.id, editingText = comment.text)
+    }
+
+    fun onEditingTextChanged(value: String) {
+        _uiState.value = _uiState.value.copy(editingText = value)
+    }
+
+    fun onCancelEdit() {
+        _uiState.value = _uiState.value.copy(editingCommentId = null, editingText = "")
+    }
+
+    fun onSaveEdit() {
+        val id = _uiState.value.editingCommentId ?: return
+        val text = _uiState.value.editingText.trim()
+        if (text.isEmpty()) return
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSavingEdit = true)
+            commentRepository.editComment(id, text)
+                .onSuccess { updated ->
+                    _uiState.value = _uiState.value.copy(
+                        isSavingEdit = false,
+                        editingCommentId = null,
+                        editingText = "",
+                        comments = _uiState.value.comments.map { if (it.id == id) updated else it }
+                    )
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(isSavingEdit = false, errorMessage = error.message)
+                }
         }
     }
 }

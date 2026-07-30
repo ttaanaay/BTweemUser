@@ -8,5 +8,7 @@ interface CommentRepository {
 
     suspend fun addComment(quoteId: Long, text: String): Result<Comment>
 
+    suspend fun editComment(id: Long, text: String): Result<Comment>
+
     suspend fun deleteComment(id: Long): Result<Unit>
 }

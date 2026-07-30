@@ -13,5 +13,6 @@ data class CommentResponseDto(
     val quoteId: Long,
     val text: String,
     val author: UserResponseDto,
+    val isEdited: Boolean = false,
     val createdAt: String
 )
