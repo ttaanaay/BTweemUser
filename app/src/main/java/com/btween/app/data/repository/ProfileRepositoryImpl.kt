@@ -1,6 +1,7 @@
 package com.btween.app.data.repository
 
 import com.btween.app.data.remote.api.UserApi
+import com.btween.app.data.remote.dto.DeleteAccountRequestDto
 import com.btween.app.data.remote.dto.UpdateProfileRequestDto
 import com.btween.app.data.remote.dto.toDomain
 import com.btween.app.data.remote.safeApiCall
@@ -25,8 +26,8 @@ class ProfileRepositoryImpl @Inject constructor(
             userApi.updateProfile(UpdateProfileRequestDto(displayName, avatarUrl, bio)).toDomain()
         }
 
-    override suspend fun deleteAccount(): Result<Unit> = safeApiCall {
-        userApi.deleteAccount()
+    override suspend fun deleteAccount(password: String): Result<Unit> = safeApiCall {
+        userApi.deleteAccount(DeleteAccountRequestDto(password))
     }
 
     override suspend fun follow(id: Long): Result<Unit> = safeApiCall {

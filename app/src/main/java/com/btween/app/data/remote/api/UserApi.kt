@@ -1,5 +1,6 @@
 package com.btween.app.data.remote.api
 
+import com.btween.app.data.remote.dto.DeleteAccountRequestDto
 import com.btween.app.data.remote.dto.QuoteResponseDto
 import com.btween.app.data.remote.dto.TopContributorResponseDto
 import com.btween.app.data.remote.dto.UpdateProfileRequestDto
@@ -41,7 +42,7 @@ interface UserApi {
     suspend fun updateProfile(@Body request: UpdateProfileRequestDto): UserResponseDto
 
     @DELETE("users/me")
-    suspend fun deleteAccount()
+    suspend fun deleteAccount(@Body request: DeleteAccountRequestDto)
 
     @GET("users/{id}/quotes")
     suspend fun getUserQuotes(

@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.ui.components.PasswordTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -119,15 +120,12 @@ fun ForgotPasswordScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                OutlinedTextField(
+                PasswordTextField(
                     value = state.newPassword,
                     onValueChange = viewModel::onNewPasswordChanged,
-                    label = { Text("New password") },
+                    label = "New password",
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    supportingText = { Text("At least 8 characters") }
+                    supportingText = "At least 8 characters"
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(

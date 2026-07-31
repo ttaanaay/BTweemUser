@@ -1,6 +1,7 @@
 package com.btween.app.data.remote.api
 
 import com.btween.app.data.remote.dto.AuthResponseDto
+import com.btween.app.data.remote.dto.ChangePasswordRequestDto
 import com.btween.app.data.remote.dto.ForgotPasswordRequestDto
 import com.btween.app.data.remote.dto.LoginRequestDto
 import com.btween.app.data.remote.dto.MessageResponseDto
@@ -44,4 +45,7 @@ interface AuthApi {
 
     @POST("auth/resend-verification")
     suspend fun resendVerification(@Body request: ResendVerificationRequestDto): MessageResponseDto
+
+    @POST("auth/change-password")
+    suspend fun changePassword(@Body request: ChangePasswordRequestDto): MessageResponseDto
 }

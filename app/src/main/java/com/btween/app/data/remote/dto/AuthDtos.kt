@@ -50,6 +50,12 @@ data class ResendVerificationRequestDto(
 )
 
 @Serializable
+data class ChangePasswordRequestDto(
+    val currentPassword: String,
+    val newPassword: String
+)
+
+@Serializable
 data class MessageResponseDto(
     val message: String
 )
@@ -85,6 +91,11 @@ data class UpdateProfileRequestDto(
     val displayName: String? = null,
     val avatarUrl: String? = null,
     val bio: String? = null
+)
+
+@Serializable
+data class DeleteAccountRequestDto(
+    val password: String
 )
 
 @Serializable

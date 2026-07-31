@@ -49,11 +49,13 @@ import com.btween.app.BuildConfig
 import com.btween.app.R
 import com.btween.app.domain.model.AppLanguage
 import com.btween.app.domain.model.ThemeMode
+import com.btween.app.ui.components.PasswordTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
+    onChangePasswordClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.userSettings.collectAsStateWithLifecycle()
@@ -200,6 +202,14 @@ fun SettingsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .selectable(selected = false, onClick = onChangePasswordClick)
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+            ) {
+                Text("Change password")
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
                     .selectable(selected = false, onClick = { showLogoutDialog = true })
                     .padding(horizontal = 20.dp, vertical = 12.dp)
             ) {
@@ -242,23 +252,33 @@ fun SettingsScreen(
     }
 
     if (showDeleteAccountDialog) {
+        var deletePassword by remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { if (!isDeletingAccount) showDeleteAccountDialog = false },
             title = { Text("Delete your account?") },
             text = {
-                Text(
-                    "This permanently deletes your profile, quotes, comments, likes, follows, " +
-                        "and collections. This can't be undone."
-                )
+                Column {
+                    Text(
+                        "This permanently deletes your profile, quotes, comments, likes, follows, " +
+                            "and collections. This can't be undone."
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    PasswordTextField(
+                        value = deletePassword,
+                        onValueChange = { deletePassword = it },
+                        label = "Enter your password to confirm",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.onDeleteAccount(onDeleted = {
+                        viewModel.onDeleteAccount(password = deletePassword, onDeleted = {
                             showDeleteAccountDialog = false
                         })
                     },
-                    enabled = !isDeletingAccount
+                    enabled = !isDeletingAccount && deletePassword.isNotBlank()
                 ) {
                     Text(
                         if (isDeletingAccount) "Deleting..." else "Delete permanently",

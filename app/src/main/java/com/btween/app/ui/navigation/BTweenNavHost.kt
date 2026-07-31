@@ -23,6 +23,7 @@ import com.btween.app.ui.profile.EditSocialQuoteScreen
 import com.btween.app.ui.profile.FollowListScreen
 import com.btween.app.ui.profile.ProfileScreen
 import com.btween.app.ui.search.SearchScreen
+import com.btween.app.ui.settings.ChangePasswordScreen
 import com.btween.app.ui.settings.SettingsScreen
 
 @Composable
@@ -175,6 +176,13 @@ fun BTweenNavHost(navController: NavHostController) {
 
         composable(Destination.Settings.route) {
             SettingsScreen(
+                onBack = { navController.popBackStack() },
+                onChangePasswordClick = { navController.navigate(Destination.ChangePassword.route) }
+            )
+        }
+
+        composable(Destination.ChangePassword.route) {
+            ChangePasswordScreen(
                 onBack = { navController.popBackStack() }
             )
         }

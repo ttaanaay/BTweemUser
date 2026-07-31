@@ -2,6 +2,7 @@ package com.btween.app.data.repository
 
 import com.btween.app.data.remote.TokenManager
 import com.btween.app.data.remote.api.AuthApi
+import com.btween.app.data.remote.dto.ChangePasswordRequestDto
 import com.btween.app.data.remote.dto.ForgotPasswordRequestDto
 import com.btween.app.data.remote.dto.LoginRequestDto
 import com.btween.app.data.remote.dto.OAuthLoginRequestDto
@@ -83,6 +84,11 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun resendVerification(email: String): Result<Unit> = safeApiCall {
         authApi.resendVerification(ResendVerificationRequestDto(email))
+        Unit
+    }
+
+    override suspend fun changePassword(currentPassword: String, newPassword: String): Result<Unit> = safeApiCall {
+        authApi.changePassword(ChangePasswordRequestDto(currentPassword, newPassword))
         Unit
     }
 

@@ -88,10 +88,10 @@ class SettingsViewModel @Inject constructor(
 
     /** On success, the caller's onDeleted callback should navigate back to the login gate -
      * logout() clears the session so AuthGate takes over automatically either way. */
-    fun onDeleteAccount(onDeleted: () -> Unit) {
+    fun onDeleteAccount(password: String, onDeleted: () -> Unit) {
         viewModelScope.launch {
             _isDeletingAccount.value = true
-            profileRepository.deleteAccount()
+            profileRepository.deleteAccount(password)
                 .onSuccess {
                     _isDeletingAccount.value = false
                     authRepository.logout()

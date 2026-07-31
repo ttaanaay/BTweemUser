@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.ui.components.PasswordTextField
 import com.btween.app.ui.theme.QuoteSerifFontFamily
 
 @Composable
@@ -107,15 +108,12 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedTextField(
+            PasswordTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChanged,
-                label = { Text("Password") },
+                label = "Password",
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                supportingText = { Text("At least 8 characters") }
+                supportingText = "At least 8 characters"
             )
 
             Spacer(modifier = Modifier.height(24.dp))

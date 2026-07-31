@@ -31,6 +31,8 @@ sealed class Destination(val route: String) {
 
     data object EditProfile : Destination("edit_profile")
 
+    data object ChangePassword : Destination("change_password")
+
     data object Notifications : Destination("notifications")
 
     data object FollowList : Destination("follow_list/{userId}/{type}") {

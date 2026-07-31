@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.ui.components.PasswordTextField
 import com.btween.app.ui.theme.QuoteSerifFontFamily
 
 @Composable
@@ -89,14 +90,11 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedTextField(
+            PasswordTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChanged,
-                label = { Text("Password") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                label = "Password",
+                modifier = Modifier.fillMaxWidth()
             )
 
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
