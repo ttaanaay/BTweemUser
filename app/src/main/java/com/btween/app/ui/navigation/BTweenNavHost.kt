@@ -62,7 +62,8 @@ fun BTweenNavHost(navController: NavHostController) {
             SocialQuoteDetailScreen(
                 onBack = { navController.popBackStack() },
                 onOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
-                onCommentsClick = { quoteId -> navController.navigate(Destination.Comments.createRoute(quoteId)) }
+                onCommentsClick = { quoteId -> navController.navigate(Destination.Comments.createRoute(quoteId)) },
+                onEditQuote = { quoteId -> navController.navigate(Destination.EditSocialQuote.createRoute(quoteId)) }
             )
         }
 

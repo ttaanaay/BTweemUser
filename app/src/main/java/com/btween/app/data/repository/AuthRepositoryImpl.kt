@@ -32,9 +32,12 @@ class AuthRepositoryImpl @Inject constructor(
         displayName: String
     ): Result<User> = safeApiCall {
         val response = authApi.register(RegisterRequestDto(username, email, password, displayName))
+        // Must be set before saveSession(): saveSession() flips isLoggedIn to true, which
+        // MainViewModel reacts to immediately by checking this same flag - if it ran after,
+        // that check would race and read the stale "false" value.
+        tokenManager.setOnboardingPending(true)
         tokenManager.saveSession(response.accessToken, response.refreshToken, response.user.id)
         tokenManager.saveEmail(email)
-        tokenManager.setOnboardingPending(true)
         response.user.toDomain()
     }
 
