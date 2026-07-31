@@ -8,6 +8,7 @@ import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.SettingsRepository
 import com.btween.app.push.DeviceTokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     settingsRepository: SettingsRepository,
-    authRepository: AuthRepository,
+    private val authRepository: AuthRepository,
     deviceTokenRepository: DeviceTokenRepository
 ) : ViewModel() {
 
@@ -30,7 +31,24 @@ class MainViewModel @Inject constructor(
 
     val isLoggedIn: StateFlow<Boolean> = authRepository.isLoggedIn
 
+    // Reads the pending-onboarding flag whenever the login state changes - covers both a
+    // fresh registration (flag was just set) and returning to an existing session (flag is
+    // false, so this stays false and onboarding never re-shows).
+    private val _shouldShowOnboarding = MutableStateFlow(authRepository.isOnboardingPending())
+    val shouldShowOnboarding: StateFlow<Boolean> = _shouldShowOnboarding
+
+    fun onOnboardingCompleted() {
+        authRepository.onOnboardingCompleted()
+        _shouldShowOnboarding.value = false
+    }
+
     init {
+        viewModelScope.launch {
+            isLoggedIn.collect { loggedIn ->
+                _shouldShowOnboarding.value = loggedIn && authRepository.isOnboardingPending()
+            }
+        }
+
         // Covers the "already logged in, app was just reopened" case - login/register cover
         // the fresh-sign-in case themselves right after succeeding.
         if (authRepository.getCurrentUserId() != null) {

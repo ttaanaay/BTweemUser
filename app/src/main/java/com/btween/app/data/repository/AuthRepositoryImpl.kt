@@ -34,6 +34,7 @@ class AuthRepositoryImpl @Inject constructor(
         val response = authApi.register(RegisterRequestDto(username, email, password, displayName))
         tokenManager.saveSession(response.accessToken, response.refreshToken, response.user.id)
         tokenManager.saveEmail(email)
+        tokenManager.setOnboardingPending(true)
         response.user.toDomain()
     }
 
@@ -89,4 +90,10 @@ class AuthRepositoryImpl @Inject constructor(
     override fun getCurrentUserId(): Long? = tokenManager.getUserId()
 
     override fun getCurrentEmail(): String? = tokenManager.getEmail()
+
+    override fun isOnboardingPending(): Boolean = tokenManager.isOnboardingPending()
+
+    override fun onOnboardingCompleted() {
+        tokenManager.setOnboardingPending(false)
+    }
 }

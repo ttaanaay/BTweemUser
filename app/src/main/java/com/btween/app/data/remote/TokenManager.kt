@@ -61,6 +61,15 @@ class TokenManager @Inject constructor(
 
     fun getEmail(): String? = prefs.getString(KEY_EMAIL, null)
 
+    /** Set right after a fresh registration succeeds, so the app shows the one-time
+     * onboarding flow (pick interests, follow suggestions) before landing on Home. Existing
+     * users logging in normally never have this set, so they skip straight to the app. */
+    fun setOnboardingPending(pending: Boolean) {
+        prefs.edit().putBoolean(KEY_ONBOARDING_PENDING, pending).apply()
+    }
+
+    fun isOnboardingPending(): Boolean = prefs.getBoolean(KEY_ONBOARDING_PENDING, false)
+
     fun updateAccessToken(accessToken: String) {
         prefs.edit().putString(KEY_ACCESS_TOKEN, accessToken).apply()
     }
@@ -81,5 +90,6 @@ class TokenManager @Inject constructor(
         const val KEY_REFRESH_TOKEN = "refresh_token"
         const val KEY_USER_ID = "user_id"
         const val KEY_EMAIL = "email"
+        const val KEY_ONBOARDING_PENDING = "onboarding_pending"
     }
 }

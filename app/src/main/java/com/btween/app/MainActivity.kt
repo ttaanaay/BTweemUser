@@ -37,6 +37,7 @@ import com.btween.app.ui.navigation.BTweenBottomNavBar
 import com.btween.app.ui.navigation.BTweenNavHost
 import com.btween.app.ui.navigation.Destination
 import com.btween.app.ui.navigation.bottomNavItems
+import com.btween.app.ui.onboarding.OnboardingScreen
 import com.btween.app.ui.resolveIsDark
 import com.btween.app.ui.theme.BTweenTheme
 import com.btween.app.util.LocaleManager
@@ -77,10 +78,11 @@ class MainActivity : ComponentActivity() {
                 dynamicColor = userSettings.useDynamicColor
             ) {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    if (isLoggedIn) {
-                        MainAppContent()
-                    } else {
-                        AuthGate()
+                    val shouldShowOnboarding by mainViewModel.shouldShowOnboarding.collectAsStateWithLifecycle()
+                    when {
+                        !isLoggedIn -> AuthGate()
+                        shouldShowOnboarding -> OnboardingScreen(onFinished = mainViewModel::onOnboardingCompleted)
+                        else -> MainAppContent()
                     }
                 }
             }

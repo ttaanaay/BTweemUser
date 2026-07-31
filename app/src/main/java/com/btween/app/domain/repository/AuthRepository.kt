@@ -30,4 +30,8 @@ interface AuthRepository {
     fun getCurrentUserId(): Long?
 
     fun getCurrentEmail(): String?
+
+    fun isOnboardingPending(): Boolean
+
+    fun onOnboardingCompleted()
 }
