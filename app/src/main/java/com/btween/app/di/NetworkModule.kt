@@ -5,6 +5,7 @@ import com.btween.app.R
 import com.btween.app.data.remote.AuthInterceptor
 import com.btween.app.data.remote.TokenAuthenticator
 import com.btween.app.data.remote.api.AuthApi
+import com.btween.app.data.remote.api.CategoryApi
 import com.btween.app.data.remote.api.CollectionApi
 import com.btween.app.data.remote.api.DeviceApi
 import com.btween.app.data.remote.api.NotificationApi
@@ -130,4 +131,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideDeviceApi(retrofit: Retrofit): DeviceApi = retrofit.create(DeviceApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCategoryApi(retrofit: Retrofit): CategoryApi = retrofit.create(CategoryApi::class.java)
 }

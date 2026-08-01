@@ -8,19 +8,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -64,14 +60,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.btween.app.R
 import com.btween.app.domain.model.QuoteCollection
-import com.btween.app.domain.model.SocialQuote
 import com.btween.app.domain.repository.ReportTargetType
 import com.btween.app.ui.components.EmptyState
 import com.btween.app.ui.components.ReportDialog
 import com.btween.app.ui.components.UserAvatar
+import com.btween.app.ui.feed.SocialQuoteCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,6 +83,7 @@ fun ProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    var quoteIdPendingDelete by remember { mutableStateOf<Long?>(null) }
     var showMoreMenu by remember { mutableStateOf(false) }
     var showReportDialog by remember { mutableStateOf(false) }
 
@@ -162,14 +158,11 @@ fun ProfileScreen(
                     if (uiState.isLoading) CircularProgressIndicator() else Text(stringResource(R.string.profile_user_not_found))
                 }
             } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
+                LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
+                    item {
                         ProfileHeader(
                             displayName = user.displayName,
                             username = user.username,
@@ -189,7 +182,7 @@ fun ProfileScreen(
                     }
 
                     if (uiState.isOwnProfile && uiState.collections.isNotEmpty()) {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
+                        item {
                             CollectionHighlightsRow(
                                 collections = uiState.collections,
                                 onCollectionClick = onCollectionDetailClick
@@ -198,9 +191,9 @@ fun ProfileScreen(
                     }
 
                     if (uiState.quotes.isEmpty()) {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
+                        item {
                             EmptyState(
-                                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                                modifier = Modifier.fillMaxWidth(),
                                 icon = Icons.Outlined.AutoStories,
                                 title = stringResource(R.string.profile_empty_quotes_title),
                                 message = if (uiState.isOwnProfile) {
@@ -212,15 +205,37 @@ fun ProfileScreen(
                         }
                     } else {
                         items(uiState.quotes, key = { it.id }) { quote ->
-                            QuoteGridTile(
+                            SocialQuoteCard(
                                 quote = quote,
-                                onClick = { onQuoteClick(quote.id) }
+                                onToggleLike = { viewModel.onToggleLike(quote) },
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                                showOwnerActions = uiState.isOwnProfile,
+                                onEdit = { onEditQuote(quote.id) },
+                                onDelete = { quoteIdPendingDelete = quote.id },
+                                onQuoteClick = { onQuoteClick(quote.id) }
                             )
                         }
                     }
                 }
             }
         }
+    }
+
+    quoteIdPendingDelete?.let { pendingId ->
+        AlertDialog(
+            onDismissRequest = { quoteIdPendingDelete = null },
+            title = { Text(stringResource(R.string.profile_delete_quote_title)) },
+            text = { Text(stringResource(R.string.profile_delete_quote_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.onDeleteQuote(pendingId)
+                    quoteIdPendingDelete = null
+                }) { Text(stringResource(R.string.action_delete)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { quoteIdPendingDelete = null }) { Text(stringResource(R.string.action_cancel)) }
+            }
+        )
     }
 
     if (showReportDialog) {
@@ -367,43 +382,6 @@ private fun CollectionHighlightsRow(collections: List<QuoteCollection>, onCollec
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center
-                )
-            }
-        }
-    }
-}
-
-/** A single square tile in the Instagram-style grid: the attached photo if the quote has
- * one, otherwise the quote text itself set small inside a colored tile so the grid still
- * reads as a grid rather than leaving blank squares. */
-@Composable
-private fun QuoteGridTile(quote: SocialQuote, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .clickable(onClick = onClick)
-    ) {
-        if (!quote.imageUrl.isNullOrBlank()) {
-            AsyncImage(
-                model = quote.imageUrl,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize()
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(10.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    quote.text,
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 5,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
