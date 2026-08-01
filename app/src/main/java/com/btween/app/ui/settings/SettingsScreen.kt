@@ -253,6 +253,7 @@ fun SettingsScreen(
 
     if (showDeleteAccountDialog) {
         var deletePassword by remember { mutableStateOf("") }
+        val hasPassword by viewModel.hasPassword.collectAsStateWithLifecycle()
         AlertDialog(
             onDismissRequest = { if (!isDeletingAccount) showDeleteAccountDialog = false },
             title = { Text("Delete your account?") },
@@ -263,12 +264,17 @@ fun SettingsScreen(
                             "and collections. This can't be undone."
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    PasswordTextField(
-                        value = deletePassword,
-                        onValueChange = { deletePassword = it },
-                        label = "Enter your password to confirm",
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    // Accounts signed in via Google/Facebook/Microsoft never set a password,
+                    // so there's nothing to confirm with - being signed in is already the
+                    // strongest check available for them.
+                    if (hasPassword != false) {
+                        PasswordTextField(
+                            value = deletePassword,
+                            onValueChange = { deletePassword = it },
+                            label = "Enter your password to confirm",
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             },
             confirmButton = {
@@ -278,7 +284,7 @@ fun SettingsScreen(
                             showDeleteAccountDialog = false
                         })
                     },
-                    enabled = !isDeletingAccount && deletePassword.isNotBlank()
+                    enabled = !isDeletingAccount && (hasPassword == false || deletePassword.isNotBlank())
                 ) {
                     Text(
                         if (isDeletingAccount) "Deleting..." else "Delete permanently",

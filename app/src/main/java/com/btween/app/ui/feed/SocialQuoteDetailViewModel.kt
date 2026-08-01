@@ -18,6 +18,7 @@ import javax.inject.Inject
 
 data class SocialQuoteDetailUiState(
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val quote: SocialQuote? = null,
     val isOwnQuote: Boolean = false,
     val isFollowActionInFlight: Boolean = false,
@@ -61,6 +62,24 @@ class SocialQuoteDetailViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = error.message)
+                }
+        }
+    }
+
+    fun onRefresh() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isRefreshing = true)
+            socialQuoteRepository.getQuote(quoteId)
+                .onSuccess { quote ->
+                    _uiState.value = _uiState.value.copy(
+                        isRefreshing = false,
+                        quote = quote,
+                        isOwnQuote = authRepository.getCurrentUserId() == quote.owner.id,
+                        errorMessage = null
+                    )
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(isRefreshing = false, errorMessage = error.message)
                 }
         }
     }

@@ -3,9 +3,11 @@ package com.btween.app.ui.profile
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.btween.app.domain.model.QuoteCollection
 import com.btween.app.domain.model.SocialQuote
 import com.btween.app.domain.model.User
 import com.btween.app.domain.repository.AuthRepository
+import com.btween.app.domain.repository.CollectionRepository
 import com.btween.app.domain.repository.ProfileRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
 import com.btween.app.ui.navigation.Destination
@@ -20,6 +22,7 @@ data class ProfileUiState(
     val isRefreshing: Boolean = false,
     val user: User? = null,
     val quotes: List<SocialQuote> = emptyList(),
+    val collections: List<QuoteCollection> = emptyList(),
     val isOwnProfile: Boolean = false,
     val isFollowActionInFlight: Boolean = false,
     val errorMessage: String? = null
@@ -30,6 +33,7 @@ class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val profileRepository: ProfileRepository,
     private val socialQuoteRepository: SocialQuoteRepository,
+    private val collectionRepository: CollectionRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -45,8 +49,16 @@ class ProfileViewModel @Inject constructor(
     fun load(isRefresh: Boolean = false) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = !isRefresh, isRefreshing = isRefresh)
+            val isOwnProfile = authRepository.getCurrentUserId() == userId
             val userResult = profileRepository.getUser(userId)
             val quotesResult = profileRepository.getUserQuotes(userId)
+            // Collections are personal, so only fetch them for the signed-in person's own
+            // profile - there's no API to view someone else's collections, nor should there be.
+            val collections = if (isOwnProfile) {
+                collectionRepository.getCollections().getOrDefault(emptyList())
+            } else {
+                emptyList()
+            }
 
             userResult
                 .onSuccess { user ->
@@ -55,7 +67,8 @@ class ProfileViewModel @Inject constructor(
                         isRefreshing = false,
                         user = user,
                         quotes = quotesResult.getOrDefault(emptyList()),
-                        isOwnProfile = authRepository.getCurrentUserId() == userId,
+                        collections = collections,
+                        isOwnProfile = isOwnProfile,
                         errorMessage = null
                     )
                 }

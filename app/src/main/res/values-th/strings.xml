@@ -124,4 +124,20 @@
     <string name="sort_oldest">เก่าที่สุด</string>
     <string name="sort_alphabetical">ตามตัวอักษร</string>
     <string name="sort_favorite">รายการโปรดก่อน</string>
+
+    <!-- Profile -->
+    <string name="profile_followers">ผู้ติดตาม</string>
+    <string name="profile_following">กำลังติดตาม</string>
+    <string name="profile_edit_profile">แก้ไขโปรไฟล์</string>
+    <string name="profile_collections">คอลเลกชัน</string>
+    <string name="profile_follow_action">ติดตาม</string>
+    <string name="profile_following_action">กำลังติดตาม</string>
+    <string name="profile_report_user">รายงานผู้ใช้</string>
+    <string name="profile_empty_quotes_title">ยังไม่มีคำคม</string>
+    <string name="profile_empty_quotes_own">คำคมที่คุณแชร์สู่สาธารณะจะแสดงที่นี่</string>
+    <string name="profile_empty_quotes_other">%1$s ยังไม่ได้แชร์คำคมเลย</string>
+    <string name="profile_delete_quote_title">ลบคำคมนี้?</string>
+    <string name="profile_delete_quote_message">คำคมนี้จะถูกลบออกจากฟีดของทุกคน และไม่สามารถกู้คืนได้</string>
+    <string name="profile_user_not_found">ไม่พบผู้ใช้</string>
+    <string name="profile_quotes_count">%1$d คำคม</string>
 </resources>

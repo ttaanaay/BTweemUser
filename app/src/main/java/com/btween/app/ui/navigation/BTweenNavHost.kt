@@ -127,7 +127,10 @@ fun BTweenNavHost(navController: NavHostController) {
                 },
                 onEditQuote = { quoteId -> navController.navigate(Destination.EditSocialQuote.createRoute(quoteId)) },
                 onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) },
-                onCollectionsClick = { navController.navigate(Destination.Collections.route) }
+                onCollectionsClick = { navController.navigate(Destination.Collections.route) },
+                onCollectionDetailClick = { collectionId ->
+                    navController.navigate(Destination.CollectionDetail.createRoute(collectionId))
+                }
             )
         }
 

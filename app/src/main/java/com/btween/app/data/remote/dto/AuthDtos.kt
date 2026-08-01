@@ -77,7 +77,8 @@ data class UserResponseDto(
     val followerCount: Int = 0,
     val followingCount: Int = 0,
     val isFollowedByMe: Boolean = false,
-    val emailVerified: Boolean = true
+    val emailVerified: Boolean = true,
+    val authProvider: String? = null
 )
 
 @Serializable

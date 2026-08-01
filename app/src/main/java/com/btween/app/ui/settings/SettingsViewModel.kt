@@ -53,12 +53,19 @@ class SettingsViewModel @Inject constructor(
     private val _emailVerification = MutableStateFlow(EmailVerificationUiState())
     val emailVerification: StateFlow<EmailVerificationUiState> = _emailVerification
 
+    // null while still loading; true for local email/password accounts, false for
+    // Google/Facebook/Microsoft accounts that never set a password. Used to skip requiring a
+    // password confirmation when deleting an OAuth-only account, since there isn't one.
+    private val _hasPassword = MutableStateFlow<Boolean?>(null)
+    val hasPassword: StateFlow<Boolean?> = _hasPassword
+
     init {
         val userId = authRepository.getCurrentUserId()
         if (userId != null) {
             viewModelScope.launch {
                 profileRepository.getUser(userId).onSuccess { user ->
                     _emailVerification.value = _emailVerification.value.copy(isEmailVerified = user.emailVerified)
+                    _hasPassword.value = user.authProvider == null
                 }
             }
         }

@@ -135,4 +135,20 @@
     <string name="sort_oldest">Oldest</string>
     <string name="sort_alphabetical">Alphabetical</string>
     <string name="sort_favorite">Favorite first</string>
+
+    <!-- Profile -->
+    <string name="profile_followers">Followers</string>
+    <string name="profile_following">Following</string>
+    <string name="profile_edit_profile">Edit profile</string>
+    <string name="profile_collections">Collections</string>
+    <string name="profile_follow_action">Follow</string>
+    <string name="profile_following_action">Following</string>
+    <string name="profile_report_user">Report user</string>
+    <string name="profile_empty_quotes_title">No quotes yet</string>
+    <string name="profile_empty_quotes_own">Quotes you share publicly will show up here.</string>
+    <string name="profile_empty_quotes_other">%1$s hasn\'t shared any quotes yet.</string>
+    <string name="profile_delete_quote_title">Delete quote?</string>
+    <string name="profile_delete_quote_message">This will remove it from the feed for everyone. This can\'t be undone.</string>
+    <string name="profile_user_not_found">User not found</string>
+    <string name="profile_quotes_count">%1$d quotes</string>
 </resources>
