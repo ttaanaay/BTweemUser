@@ -18,7 +18,7 @@ class CollectionRepositoryImpl @Inject constructor(
 
     override suspend fun getCollections(): Result<List<QuoteCollection>> = safeApiCall {
         collectionApi.getCollections().map {
-            QuoteCollection(id = it.id, name = it.name, quoteCount = it.quoteCount, createdAt = it.createdAt)
+            QuoteCollection(id = it.id, name = it.name, quoteCount = it.quoteCount, coverImageUrl = it.coverImageUrl, createdAt = it.createdAt)
         }
     }
 

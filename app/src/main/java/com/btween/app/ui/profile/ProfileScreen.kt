@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AutoStories
@@ -42,6 +43,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -60,6 +63,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.btween.app.R
 import com.btween.app.domain.model.QuoteCollection
 import com.btween.app.domain.repository.ReportTargetType
@@ -181,11 +185,12 @@ fun ProfileScreen(
                         )
                     }
 
-                    if (uiState.isOwnProfile && uiState.collections.isNotEmpty()) {
+                    if (uiState.isOwnProfile) {
                         item {
                             CollectionHighlightsRow(
                                 collections = uiState.collections,
-                                onCollectionClick = onCollectionDetailClick
+                                onCollectionClick = onCollectionDetailClick,
+                                onNewCollectionClick = onCollectionsClick
                             )
                         }
                     }
@@ -348,7 +353,11 @@ private fun ProfileHeader(
  * below, horizontally scrollable. Collections have no cover image of their own, so each
  * circle uses a plain icon rather than trying to fake a thumbnail from an arbitrary quote. */
 @Composable
-private fun CollectionHighlightsRow(collections: List<QuoteCollection>, onCollectionClick: (Long) -> Unit) {
+private fun CollectionHighlightsRow(
+    collections: List<QuoteCollection>,
+    onCollectionClick: (Long) -> Unit,
+    onNewCollectionClick: () -> Unit
+) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -356,6 +365,36 @@ private fun CollectionHighlightsRow(collections: List<QuoteCollection>, onCollec
             .fillMaxWidth()
             .padding(bottom = 16.dp)
     ) {
+        item {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .width(72.dp)
+                    .clickable(onClick = onNewCollectionClick)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Filled.Add,
+                        contentDescription = stringResource(R.string.profile_new_collection),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    stringResource(R.string.profile_new_collection),
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
         items(collections, key = { it.id }) { collection ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -369,11 +408,22 @@ private fun CollectionHighlightsRow(collections: List<QuoteCollection>, onCollec
                         .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        Icons.Outlined.Collections,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                    if (!collection.coverImageUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            model = collection.coverImageUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape)
+                        )
+                    } else {
+                        Icon(
+                            Icons.Outlined.Collections,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(

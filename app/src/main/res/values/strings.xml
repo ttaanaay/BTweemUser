@@ -151,4 +151,5 @@
     <string name="profile_delete_quote_message">This will remove it from the feed for everyone. This can\'t be undone.</string>
     <string name="profile_user_not_found">User not found</string>
     <string name="profile_quotes_count">%1$d quotes</string>
+    <string name="profile_new_collection">New</string>
 </resources>

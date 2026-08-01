@@ -17,6 +17,7 @@ data class CollectionResponseDto(
     val id: Long,
     val name: String,
     val quoteCount: Int,
+    val coverImageUrl: String? = null,
     val createdAt: String
 )
 

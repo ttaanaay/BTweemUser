@@ -140,4 +140,5 @@
     <string name="profile_delete_quote_message">คำคมนี้จะถูกลบออกจากฟีดของทุกคน และไม่สามารถกู้คืนได้</string>
     <string name="profile_user_not_found">ไม่พบผู้ใช้</string>
     <string name="profile_quotes_count">%1$d คำคม</string>
+    <string name="profile_new_collection">สร้างใหม่</string>
 </resources>
