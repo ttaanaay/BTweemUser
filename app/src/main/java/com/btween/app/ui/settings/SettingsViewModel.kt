@@ -78,8 +78,10 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onLogout() {
-        viewModelScope.launch { deviceTokenRepository.unregisterCurrentToken() }
-        authRepository.logout()
+        viewModelScope.launch {
+            deviceTokenRepository.unregisterCurrentToken()
+            authRepository.logout()
+        }
     }
 
     fun consumeDeleteAccountError() {

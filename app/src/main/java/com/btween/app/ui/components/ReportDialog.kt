@@ -54,7 +54,15 @@ fun ReportDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (targetType == ReportTargetType.QUOTE) "Report quote" else "Report user") },
+        title = {
+            Text(
+                when (targetType) {
+                    ReportTargetType.QUOTE -> "Report quote"
+                    ReportTargetType.COMMENT -> "Report comment"
+                    ReportTargetType.USER -> "Report user"
+                }
+            )
+        },
         text = {
             Column {
                 if (uiState.isSubmitting) {

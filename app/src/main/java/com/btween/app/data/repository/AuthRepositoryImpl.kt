@@ -6,6 +6,7 @@ import com.btween.app.data.remote.dto.ChangePasswordRequestDto
 import com.btween.app.data.remote.dto.ForgotPasswordRequestDto
 import com.btween.app.data.remote.dto.LoginRequestDto
 import com.btween.app.data.remote.dto.OAuthLoginRequestDto
+import com.btween.app.data.remote.dto.RefreshRequestDto
 import com.btween.app.data.remote.dto.RegisterRequestDto
 import com.btween.app.data.remote.dto.ResendVerificationRequestDto
 import com.btween.app.data.remote.dto.ResetPasswordRequestDto
@@ -92,7 +93,18 @@ class AuthRepositoryImpl @Inject constructor(
         Unit
     }
 
-    override fun logout() {
+    override suspend fun logout() {
+        // Best-effort: revoke the refresh token server-side so it can't be replayed even if
+        // it leaked. If this fails (offline, server down, token already invalid) that's
+        // fine - clearing the local session below still logs the user out on this device
+        // either way, and an already-expired/invalid token has nothing useful left to revoke.
+        try {
+            tokenManager.getRefreshToken()?.let { refreshToken ->
+                authApi.logout(RefreshRequestDto(refreshToken))
+            }
+        } catch (e: Exception) {
+            // Ignored - see comment above.
+        }
         tokenManager.clearSession()
     }
 

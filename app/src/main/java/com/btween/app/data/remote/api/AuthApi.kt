@@ -48,4 +48,7 @@ interface AuthApi {
 
     @POST("auth/change-password")
     suspend fun changePassword(@Body request: ChangePasswordRequestDto): MessageResponseDto
+
+    @POST("auth/logout")
+    suspend fun logout(@Body request: RefreshRequestDto): MessageResponseDto
 }

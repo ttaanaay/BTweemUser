@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,13 +37,17 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.domain.model.Comment
+import com.btween.app.domain.repository.ReportTargetType
+import com.btween.app.ui.components.ReportDialog
 import com.btween.app.ui.components.EmptyState
 import com.btween.app.ui.components.UserAvatar
 
@@ -54,6 +59,7 @@ fun CommentsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    var reportCommentId by remember { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
@@ -136,13 +142,22 @@ fun CommentsScreen(
                                 onStartEdit = { viewModel.onStartEdit(comment) },
                                 onCancelEdit = viewModel::onCancelEdit,
                                 onSaveEdit = viewModel::onSaveEdit,
-                                onDelete = { viewModel.onDeleteComment(comment.id) }
+                                onDelete = { viewModel.onDeleteComment(comment.id) },
+                                onReport = { reportCommentId = comment.id }
                             )
                         }
                     }
                 }
             }
         }
+    }
+
+    reportCommentId?.let { commentId ->
+        ReportDialog(
+            targetType = ReportTargetType.COMMENT,
+            targetId = commentId,
+            onDismiss = { reportCommentId = null }
+        )
     }
 }
 
@@ -157,7 +172,8 @@ private fun CommentRow(
     onStartEdit: () -> Unit,
     onCancelEdit: () -> Unit,
     onSaveEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onReport: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -212,6 +228,14 @@ private fun CommentRow(
                 Icon(
                     Icons.Filled.Delete,
                     contentDescription = "Delete comment",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        } else if (!canModify) {
+            IconButton(onClick = onReport) {
+                Icon(
+                    Icons.Filled.Flag,
+                    contentDescription = "Report comment",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

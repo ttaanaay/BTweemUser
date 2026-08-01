@@ -27,7 +27,7 @@ interface AuthRepository {
 
     suspend fun changePassword(currentPassword: String, newPassword: String): Result<Unit>
 
-    fun logout()
+    suspend fun logout()
 
     fun getCurrentUserId(): Long?
 
