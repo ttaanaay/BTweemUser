@@ -25,17 +25,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.btween.app.ui.MainViewModel
-import com.btween.app.ui.auth.ForgotPasswordScreen
-import com.btween.app.ui.auth.LoginScreen
-import com.btween.app.ui.auth.RegisterScreen
 import com.btween.app.ui.navigation.BTweenBottomNavBar
 import com.btween.app.ui.navigation.BTweenNavHost
-import com.btween.app.ui.navigation.Destination
 import com.btween.app.ui.navigation.bottomNavItems
 import com.btween.app.ui.onboarding.OnboardingScreen
 import com.btween.app.ui.resolveIsDark
@@ -70,7 +64,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val mainViewModel: MainViewModel = hiltViewModel()
             val userSettings by mainViewModel.userSettings.collectAsStateWithLifecycle()
-            val isLoggedIn by mainViewModel.isLoggedIn.collectAsStateWithLifecycle()
             val systemInDarkTheme = isSystemInDarkTheme()
 
             BTweenTheme(
@@ -79,10 +72,10 @@ class MainActivity : ComponentActivity() {
             ) {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val shouldShowOnboarding by mainViewModel.shouldShowOnboarding.collectAsStateWithLifecycle()
-                    when {
-                        !isLoggedIn -> AuthGate()
-                        shouldShowOnboarding -> OnboardingScreen(onFinished = mainViewModel::onOnboardingCompleted)
-                        else -> MainAppContent()
+                    if (shouldShowOnboarding) {
+                        OnboardingScreen(onFinished = mainViewModel::onOnboardingCompleted)
+                    } else {
+                        MainAppContent()
                     }
                 }
             }
@@ -127,32 +120,6 @@ private fun MainAppContent() {
     ) { padding ->
         Surface(modifier = Modifier.padding(padding)) {
             BTweenNavHost(navController = navController)
-        }
-    }
-}
-
-@Composable
-private fun AuthGate() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Destination.Login.route) {
-        composable(Destination.Login.route) {
-            LoginScreen(
-                onLoginSuccess = { /* isLoggedIn flips automatically via TokenManager's StateFlow */ },
-                onNavigateToRegister = { navController.navigate(Destination.Register.route) },
-                onNavigateToForgotPassword = { navController.navigate(Destination.ForgotPassword.route) }
-            )
-        }
-        composable(Destination.Register.route) {
-            RegisterScreen(
-                onRegisterSuccess = { /* isLoggedIn flips automatically via TokenManager's StateFlow */ },
-                onNavigateToLogin = { navController.popBackStack() }
-            )
-        }
-        composable(Destination.ForgotPassword.route) {
-            ForgotPasswordScreen(
-                onBack = { navController.popBackStack() },
-                onResetSuccess = { navController.popBackStack() }
-            )
         }
     }
 }

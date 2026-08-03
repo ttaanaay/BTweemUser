@@ -29,11 +29,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.ui.components.PasswordTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,10 +68,10 @@ fun ForgotPasswordScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Reset password") },
+                title = { Text(stringResource(R.string.auth_reset_password_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -84,14 +86,14 @@ fun ForgotPasswordScreen(
         ) {
             if (!state.codeRequested) {
                 Text(
-                    "Enter your account email and we'll send you a reset code.",
+                    stringResource(R.string.auth_reset_password_intro),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = state.email,
                     onValueChange = viewModel::onEmailChanged,
-                    label = { Text("Email") },
+                    label = { Text(stringResource(R.string.auth_label_email)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -103,18 +105,18 @@ fun ForgotPasswordScreen(
                     enabled = !state.isLoading && state.email.isNotBlank()
                 ) {
                     if (state.isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp))
-                    else Text("Send reset code")
+                    else Text(stringResource(R.string.auth_send_reset_code))
                 }
             } else {
                 Text(
-                    "Check the reset code sent to ${state.email}, then set a new password.",
+                    stringResource(R.string.auth_reset_password_code_intro, state.email),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = state.code,
                     onValueChange = viewModel::onCodeChanged,
-                    label = { Text("6-digit code") },
+                    label = { Text(stringResource(R.string.auth_label_code)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
@@ -123,9 +125,9 @@ fun ForgotPasswordScreen(
                 PasswordTextField(
                     value = state.newPassword,
                     onValueChange = viewModel::onNewPasswordChanged,
-                    label = "New password",
+                    label = stringResource(R.string.auth_label_new_password),
                     modifier = Modifier.fillMaxWidth(),
-                    supportingText = "At least 8 characters"
+                    supportingText = stringResource(R.string.auth_password_supporting)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
@@ -134,7 +136,7 @@ fun ForgotPasswordScreen(
                     enabled = !state.isLoading && state.code.isNotBlank() && state.newPassword.length >= 8
                 ) {
                     if (state.isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp))
-                    else Text("Reset password")
+                    else Text(stringResource(R.string.auth_reset_password_action))
                 }
             }
         }

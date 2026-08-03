@@ -60,6 +60,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.btween.app.domain.model.QuoteCollection
 import com.btween.app.domain.repository.ReportTargetType
+import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.ReportDialog
 import com.btween.app.ui.components.UserAvatar
 import com.btween.app.ui.theme.QuoteSerifFontFamily
@@ -75,6 +76,7 @@ fun SocialQuoteDetailScreen(
     onOwnerClick: (Long) -> Unit,
     onCommentsClick: (Long) -> Unit,
     onEditQuote: (Long) -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: SocialQuoteDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -312,6 +314,16 @@ fun SocialQuoteDetailScreen(
                 onDismiss = { showReportDialog = false }
             )
         }
+    }
+
+    if (uiState.needsLogin) {
+        LoginRequiredDialog(
+            onDismiss = viewModel::consumeNeedsLogin,
+            onLogIn = {
+                viewModel.consumeNeedsLogin()
+                onNavigateToLogin()
+            }
+        )
     }
 }
 

@@ -3,6 +3,7 @@ package com.btween.app.ui.feed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btween.app.domain.model.SocialQuote
+import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,14 +32,16 @@ data class FeedUiState(
     val selectedTab: FeedTab = FeedTab.FOR_YOU,
     val forYou: FeedTabState = FeedTabState(),
     val following: FeedTabState = FeedTabState(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val needsLogin: Boolean = false
 ) {
     val current: FeedTabState get() = if (selectedTab == FeedTab.FOR_YOU) forYou else following
 }
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
-    private val socialQuoteRepository: SocialQuoteRepository
+    private val socialQuoteRepository: SocialQuoteRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedUiState())
@@ -49,6 +52,10 @@ class FeedViewModel @Inject constructor(
     }
 
     fun onTabSelected(tab: FeedTab) {
+        if (tab == FeedTab.FOLLOWING && authRepository.getCurrentUserId() == null) {
+            _uiState.value = _uiState.value.copy(needsLogin = true)
+            return
+        }
         _uiState.value = _uiState.value.copy(selectedTab = tab)
         val tabState = if (tab == FeedTab.FOR_YOU) _uiState.value.forYou else _uiState.value.following
         if (!tabState.hasLoadedOnce) loadTab(tab)
@@ -114,7 +121,16 @@ class FeedViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
+    fun consumeNeedsLogin() {
+        _uiState.value = _uiState.value.copy(needsLogin = false)
+    }
+
     fun onToggleLike(quote: SocialQuote) {
+        if (authRepository.getCurrentUserId() == null) {
+            _uiState.value = _uiState.value.copy(needsLogin = true)
+            return
+        }
+
         val tab = _uiState.value.selectedTab
         val optimistic = quote.copy(
             isLikedByMe = !quote.isLikedByMe,

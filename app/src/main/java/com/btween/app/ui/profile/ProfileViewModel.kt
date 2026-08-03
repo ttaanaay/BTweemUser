@@ -25,7 +25,8 @@ data class ProfileUiState(
     val collections: List<QuoteCollection> = emptyList(),
     val isOwnProfile: Boolean = false,
     val isFollowActionInFlight: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val needsLogin: Boolean = false
 )
 
 @HiltViewModel
@@ -88,7 +89,15 @@ class ProfileViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
+    fun consumeNeedsLogin() {
+        _uiState.value = _uiState.value.copy(needsLogin = false)
+    }
+
     fun onToggleFollow() {
+        if (authRepository.getCurrentUserId() == null) {
+            _uiState.value = _uiState.value.copy(needsLogin = true)
+            return
+        }
         val user = _uiState.value.user ?: return
         if (_uiState.value.isFollowActionInFlight) return
 
@@ -120,6 +129,10 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onToggleLike(quote: SocialQuote) {
+        if (authRepository.getCurrentUserId() == null) {
+            _uiState.value = _uiState.value.copy(needsLogin = true)
+            return
+        }
         val optimistic = quote.copy(
             isLikedByMe = !quote.isLikedByMe,
             likeCount = if (quote.isLikedByMe) quote.likeCount - 1 else quote.likeCount + 1

@@ -63,8 +63,8 @@ fun BTweenBottomNavBar(navController: NavHostController) {
                 selected = selected,
                 onClick = {
                     val route = if (item.destination == Destination.Profile) {
-                        val userId = bottomNavViewModel.getCurrentUserId() ?: return@NavigationBarItem
-                        Destination.Profile.createRoute(userId)
+                        val userId = bottomNavViewModel.getCurrentUserId()
+                        if (userId != null) Destination.Profile.createRoute(userId) else Destination.Login.route
                     } else {
                         item.destination.route
                     }

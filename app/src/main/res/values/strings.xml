@@ -152,4 +152,34 @@
     <string name="profile_user_not_found">User not found</string>
     <string name="profile_quotes_count">%1$d quotes</string>
     <string name="profile_new_collection">New</string>
+
+    <!-- Auth -->
+    <string name="auth_welcome_back">Welcome back</string>
+    <string name="auth_label_email">Email</string>
+    <string name="auth_label_password">Password</string>
+    <string name="auth_forgot_password">Forgot password?</string>
+    <string name="auth_log_in">Log in</string>
+    <string name="auth_no_account_sign_up">Don\'t have an account? Sign up</string>
+    <string name="auth_or_divider">  or  </string>
+    <string name="auth_create_account_title">Create your account</string>
+    <string name="auth_create_account_subtitle">Join BTween and start sharing quotes</string>
+    <string name="auth_label_display_name">Display name</string>
+    <string name="auth_label_username">Username</string>
+    <string name="auth_username_supporting">3-20 characters: letters, numbers, underscore only</string>
+    <string name="auth_password_supporting">At least 8 characters</string>
+    <string name="auth_sign_up">Sign up</string>
+    <string name="auth_have_account_log_in">Already have an account? Log in</string>
+
+    <!-- Forgot / reset password -->
+    <string name="auth_reset_password_title">Reset password</string>
+    <string name="auth_reset_password_intro">Enter your account email and we\'ll send you a reset code.</string>
+    <string name="auth_send_reset_code">Send reset code</string>
+    <string name="auth_reset_password_code_intro">Check the reset code sent to %1$s, then set a new password.</string>
+    <string name="auth_label_code">6-digit code</string>
+    <string name="auth_label_new_password">New password</string>
+    <string name="auth_reset_password_action">Reset password</string>
+
+    <!-- Guest mode -->
+    <string name="guest_login_required_title">Log in to continue</string>
+    <string name="guest_login_required_message">You\'ll need an account to do that. It only takes a moment to sign up.</string>
 </resources>

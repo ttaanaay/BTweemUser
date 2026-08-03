@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.domain.model.SocialQuote
 import com.btween.app.domain.repository.ReportTargetType
 import com.btween.app.ui.components.EmptyState
+import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.ReportDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,6 +47,7 @@ import com.btween.app.ui.components.ReportDialog
 fun FeedScreen(
     onQuoteOwnerClick: (Long) -> Unit,
     onQuoteClick: (Long) -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -105,6 +107,16 @@ fun FeedScreen(
             targetType = ReportTargetType.QUOTE,
             targetId = quoteId,
             onDismiss = { reportQuoteId = null }
+        )
+    }
+
+    if (uiState.needsLogin) {
+        LoginRequiredDialog(
+            onDismiss = viewModel::consumeNeedsLogin,
+            onLogIn = {
+                viewModel.consumeNeedsLogin()
+                onNavigateToLogin()
+            }
         )
     }
 }

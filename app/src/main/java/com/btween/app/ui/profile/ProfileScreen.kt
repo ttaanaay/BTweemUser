@@ -68,6 +68,7 @@ import com.btween.app.R
 import com.btween.app.domain.model.QuoteCollection
 import com.btween.app.domain.repository.ReportTargetType
 import com.btween.app.ui.components.EmptyState
+import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.ReportDialog
 import com.btween.app.ui.components.UserAvatar
 import com.btween.app.ui.feed.SocialQuoteCard
@@ -83,6 +84,7 @@ fun ProfileScreen(
     onQuoteClick: (Long) -> Unit,
     onCollectionsClick: () -> Unit,
     onCollectionDetailClick: (Long) -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -251,6 +253,16 @@ fun ProfileScreen(
                 onDismiss = { showReportDialog = false }
             )
         }
+    }
+
+    if (uiState.needsLogin) {
+        LoginRequiredDialog(
+            onDismiss = viewModel::consumeNeedsLogin,
+            onLogIn = {
+                viewModel.consumeNeedsLogin()
+                onNavigateToLogin()
+            }
+        )
     }
 }
 

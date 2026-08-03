@@ -27,7 +27,8 @@ data class SocialQuoteDetailUiState(
     val isLoadingCollections: Boolean = false,
     val addedToCollectionId: Long? = null,
     val errorMessage: String? = null,
-    val infoMessage: String? = null
+    val infoMessage: String? = null,
+    val needsLogin: Boolean = false
 )
 
 @HiltViewModel
@@ -88,7 +89,15 @@ class SocialQuoteDetailViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
+    fun consumeNeedsLogin() {
+        _uiState.value = _uiState.value.copy(needsLogin = false)
+    }
+
     fun onToggleLike() {
+        if (authRepository.getCurrentUserId() == null) {
+            _uiState.value = _uiState.value.copy(needsLogin = true)
+            return
+        }
         val quote = _uiState.value.quote ?: return
         val optimistic = quote.copy(
             isLikedByMe = !quote.isLikedByMe,
@@ -109,6 +118,10 @@ class SocialQuoteDetailViewModel @Inject constructor(
     }
 
     fun onToggleFollow() {
+        if (authRepository.getCurrentUserId() == null) {
+            _uiState.value = _uiState.value.copy(needsLogin = true)
+            return
+        }
         val quote = _uiState.value.quote ?: return
         if (_uiState.value.isFollowActionInFlight) return
         val owner = quote.owner
@@ -143,6 +156,10 @@ class SocialQuoteDetailViewModel @Inject constructor(
     }
 
     fun onShowCollectionPicker() {
+        if (authRepository.getCurrentUserId() == null) {
+            _uiState.value = _uiState.value.copy(needsLogin = true)
+            return
+        }
         _uiState.value = _uiState.value.copy(showCollectionPicker = true, isLoadingCollections = true)
         viewModelScope.launch {
             collectionRepository.getCollections()

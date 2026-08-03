@@ -27,11 +27,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.ui.components.PasswordTextField
 import com.btween.app.ui.theme.QuoteSerifFontFamily
 
@@ -65,11 +67,11 @@ fun RegisterScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Create your account",
+                text = stringResource(R.string.auth_create_account_title),
                 style = MaterialTheme.typography.headlineMedium.copy(fontFamily = QuoteSerifFontFamily)
             )
             Text(
-                text = "Join BTween and start sharing quotes",
+                text = stringResource(R.string.auth_create_account_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -79,7 +81,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = state.displayName,
                 onValueChange = viewModel::onDisplayNameChanged,
-                label = { Text("Display name") },
+                label = { Text(stringResource(R.string.auth_label_display_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -89,10 +91,10 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = state.username,
                 onValueChange = viewModel::onUsernameChanged,
-                label = { Text("Username") },
+                label = { Text(stringResource(R.string.auth_label_username)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                supportingText = { Text("3-20 characters: letters, numbers, underscore only") }
+                supportingText = { Text(stringResource(R.string.auth_username_supporting)) }
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -100,7 +102,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = state.email,
                 onValueChange = viewModel::onEmailChanged,
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.auth_label_email)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -111,9 +113,9 @@ fun RegisterScreen(
             PasswordTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChanged,
-                label = "Password",
+                label = stringResource(R.string.auth_label_password),
                 modifier = Modifier.fillMaxWidth(),
-                supportingText = "At least 8 characters"
+                supportingText = stringResource(R.string.auth_password_supporting)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -130,7 +132,7 @@ fun RegisterScreen(
                 if (state.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp))
                 } else {
-                    Text("Sign up")
+                    Text(stringResource(R.string.auth_sign_up))
                 }
             }
 
@@ -138,7 +140,7 @@ fun RegisterScreen(
 
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 TextButton(onClick = onNavigateToLogin) {
-                    Text("Already have an account? Log in")
+                    Text(stringResource(R.string.auth_have_account_log_in))
                 }
             }
         }

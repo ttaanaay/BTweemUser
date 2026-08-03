@@ -116,7 +116,7 @@ private fun renderQuoteBitmap(text: String, speaker: String, sourceTitle: String
     return bitmap
 }
 
-private fun shareBitmap(context: Context, bitmap: Bitmap, fileIdForName: String) {
+private fun shareBitmap(context: Context, bitmap: Bitmap, fileIdForName: String, linkText: String? = null) {
     val directory = File(context.cacheDir, "shared_images").apply { mkdirs() }
     val file = File(directory, "quote_${fileIdForName}_${System.currentTimeMillis()}.png")
     FileOutputStream(file).use { out ->
@@ -127,6 +127,7 @@ private fun shareBitmap(context: Context, bitmap: Bitmap, fileIdForName: String)
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "image/png"
         putExtra(Intent.EXTRA_STREAM, uri)
+        if (linkText != null) putExtra(Intent.EXTRA_TEXT, linkText)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
     context.startActivity(Intent.createChooser(intent, "Share quote image"))
@@ -158,5 +159,5 @@ suspend fun shareQuoteAsImage(context: Context, quote: Quote) {
 suspend fun shareQuoteAsImage(context: Context, quote: SocialQuote) {
     val bg = loadBitmap(context, quote.imageUrl)
     val bitmap = renderQuoteBitmap(quote.text, quote.speaker, quote.sourceTitle, bg)
-    shareBitmap(context, bitmap, quote.id.toString())
+    shareBitmap(context, bitmap, quote.id.toString(), linkText = "btween://quote/${quote.id}")
 }

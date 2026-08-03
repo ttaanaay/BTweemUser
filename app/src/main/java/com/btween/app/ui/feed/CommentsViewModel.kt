@@ -23,7 +23,8 @@ data class CommentsUiState(
     val editingText: String = "",
     val isSavingEdit: Boolean = false,
     val currentUserId: Long? = null,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val needsLogin: Boolean = false
 )
 
 @HiltViewModel
@@ -70,7 +71,15 @@ class CommentsViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
+    fun consumeNeedsLogin() {
+        _uiState.value = _uiState.value.copy(needsLogin = false)
+    }
+
     fun onPostComment() {
+        if (_uiState.value.currentUserId == null) {
+            _uiState.value = _uiState.value.copy(needsLogin = true)
+            return
+        }
         val text = _uiState.value.draftText.trim()
         if (text.isEmpty()) return
 

@@ -3,10 +3,14 @@ package com.btween.app.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.navDeepLink
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.btween.app.ui.addedit.AddEditScreen
+import com.btween.app.ui.auth.ForgotPasswordScreen
+import com.btween.app.ui.auth.LoginScreen
+import com.btween.app.ui.auth.RegisterScreen
 import com.btween.app.ui.detail.DetailScreen
 import com.btween.app.ui.favorites.FavoritesScreen
 import com.btween.app.ui.collections.CollectionDetailScreen
@@ -41,6 +45,29 @@ fun BTweenNavHost(navController: NavHostController) {
             )
         }
 
+        // Reachable from anywhere while browsing as a guest (e.g. tapping the Profile tab,
+        // or a "log in to like/comment/follow" prompt) - popping back on success returns to
+        // wherever the person was, since isLoggedIn flipping doesn't remount this nav graph.
+        composable(Destination.Login.route) {
+            LoginScreen(
+                onLoginSuccess = { navController.popBackStack() },
+                onNavigateToRegister = { navController.navigate(Destination.Register.route) },
+                onNavigateToForgotPassword = { navController.navigate(Destination.ForgotPassword.route) }
+            )
+        }
+        composable(Destination.Register.route) {
+            RegisterScreen(
+                onRegisterSuccess = { navController.popBackStack() },
+                onNavigateToLogin = { navController.popBackStack() }
+            )
+        }
+        composable(Destination.ForgotPassword.route) {
+            ForgotPasswordScreen(
+                onBack = { navController.popBackStack() },
+                onResetSuccess = { navController.popBackStack() }
+            )
+        }
+
         composable(Destination.Library.route) {
             LibraryScreen(
                 onQuoteClick = { id -> navController.navigate(Destination.QuoteDetail.createRoute(id)) }
@@ -50,7 +77,8 @@ fun BTweenNavHost(navController: NavHostController) {
         composable(Destination.Feed.route) {
             FeedScreen(
                 onQuoteOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
-                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }
+                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) },
+                onNavigateToLogin = { navController.navigate(Destination.Login.route) }
             )
         }
 
@@ -58,13 +86,17 @@ fun BTweenNavHost(navController: NavHostController) {
             route = Destination.SocialQuoteDetail.route,
             arguments = listOf(
                 navArgument(Destination.SocialQuoteDetail.ARG_QUOTE_ID) { type = NavType.LongType }
+            ),
+            deepLinks = listOf(
+                navDeepLink { uriPattern = "btween://quote/{${Destination.SocialQuoteDetail.ARG_QUOTE_ID}}" }
             )
         ) {
             SocialQuoteDetailScreen(
                 onBack = { navController.popBackStack() },
                 onOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
                 onCommentsClick = { quoteId -> navController.navigate(Destination.Comments.createRoute(quoteId)) },
-                onEditQuote = { quoteId -> navController.navigate(Destination.EditSocialQuote.createRoute(quoteId)) }
+                onEditQuote = { quoteId -> navController.navigate(Destination.EditSocialQuote.createRoute(quoteId)) },
+                onNavigateToLogin = { navController.navigate(Destination.Login.route) }
             )
         }
 
@@ -88,7 +120,8 @@ fun BTweenNavHost(navController: NavHostController) {
             )
         ) {
             CommentsScreen(
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onNavigateToLogin = { navController.navigate(Destination.Login.route) }
             )
         }
 
@@ -116,6 +149,9 @@ fun BTweenNavHost(navController: NavHostController) {
             route = Destination.Profile.route,
             arguments = listOf(
                 navArgument(Destination.Profile.ARG_USER_ID) { type = NavType.LongType }
+            ),
+            deepLinks = listOf(
+                navDeepLink { uriPattern = "btween://profile/{${Destination.Profile.ARG_USER_ID}}" }
             )
         ) {
             ProfileScreen(
@@ -130,7 +166,8 @@ fun BTweenNavHost(navController: NavHostController) {
                 onCollectionsClick = { navController.navigate(Destination.Collections.route) },
                 onCollectionDetailClick = { collectionId ->
                     navController.navigate(Destination.CollectionDetail.createRoute(collectionId))
-                }
+                },
+                onNavigateToLogin = { navController.navigate(Destination.Login.route) }
             )
         }
 
@@ -208,7 +245,8 @@ fun BTweenNavHost(navController: NavHostController) {
             )
         ) {
             AddEditScreen(
-                onDone = { navController.popBackStack() }
+                onDone = { navController.popBackStack() },
+                onNavigateToLogin = { navController.navigate(Destination.Login.route) }
             )
         }
 

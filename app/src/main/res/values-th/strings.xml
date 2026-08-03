@@ -141,4 +141,34 @@
     <string name="profile_user_not_found">ไม่พบผู้ใช้</string>
     <string name="profile_quotes_count">%1$d คำคม</string>
     <string name="profile_new_collection">สร้างใหม่</string>
+
+    <!-- Auth -->
+    <string name="auth_welcome_back">ยินดีต้อนรับกลับมา</string>
+    <string name="auth_label_email">อีเมล</string>
+    <string name="auth_label_password">รหัสผ่าน</string>
+    <string name="auth_forgot_password">ลืมรหัสผ่าน?</string>
+    <string name="auth_log_in">เข้าสู่ระบบ</string>
+    <string name="auth_no_account_sign_up">ยังไม่มีบัญชี? สมัครสมาชิก</string>
+    <string name="auth_or_divider">  หรือ  </string>
+    <string name="auth_create_account_title">สร้างบัญชีของคุณ</string>
+    <string name="auth_create_account_subtitle">เข้าร่วม BTween แล้วเริ่มแชร์คำคม</string>
+    <string name="auth_label_display_name">ชื่อที่แสดง</string>
+    <string name="auth_label_username">ชื่อผู้ใช้</string>
+    <string name="auth_username_supporting">3-20 ตัวอักษร: ตัวอักษรภาษาอังกฤษ ตัวเลข หรือขีดล่างเท่านั้น</string>
+    <string name="auth_password_supporting">อย่างน้อย 8 ตัวอักษร</string>
+    <string name="auth_sign_up">สมัครสมาชิก</string>
+    <string name="auth_have_account_log_in">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ</string>
+
+    <!-- Forgot / reset password -->
+    <string name="auth_reset_password_title">รีเซ็ตรหัสผ่าน</string>
+    <string name="auth_reset_password_intro">กรอกอีเมลบัญชีของคุณ แล้วเราจะส่งรหัสยืนยันไปให้</string>
+    <string name="auth_send_reset_code">ส่งรหัสยืนยัน</string>
+    <string name="auth_reset_password_code_intro">เช็ครหัสยืนยันที่ส่งไปที่ %1$s แล้วตั้งรหัสผ่านใหม่</string>
+    <string name="auth_label_code">รหัส 6 หลัก</string>
+    <string name="auth_label_new_password">รหัสผ่านใหม่</string>
+    <string name="auth_reset_password_action">รีเซ็ตรหัสผ่าน</string>
+
+    <!-- Guest mode -->
+    <string name="guest_login_required_title">เข้าสู่ระบบเพื่อดำเนินการต่อ</string>
+    <string name="guest_login_required_message">ต้องมีบัญชีก่อนถึงจะทำแบบนี้ได้ สมัครใช้เวลาแค่แป๊บเดียว</string>
 </resources>

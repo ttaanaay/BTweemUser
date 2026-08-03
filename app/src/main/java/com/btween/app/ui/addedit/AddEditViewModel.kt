@@ -8,6 +8,7 @@ import com.btween.app.data.remote.CloudinaryUploader
 import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.SourceType
+import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
 import com.btween.app.domain.usecase.category.GetCategoriesUseCase
@@ -39,7 +40,8 @@ data class AddEditFormState(
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
     val errorMessage: String? = null,
-    val didSave: Boolean = false
+    val didSave: Boolean = false,
+    val needsLogin: Boolean = false
 ) {
     val isEditMode: Boolean get() = quoteId != null
     val tags: List<String> get() = tagsInput.split(",").map { it.trim() }.filter { it.isNotEmpty() }
@@ -53,6 +55,7 @@ class AddEditViewModel @Inject constructor(
     private val addQuoteUseCase: AddQuoteUseCase,
     private val updateQuoteUseCase: UpdateQuoteUseCase,
     private val cloudinaryUploader: CloudinaryUploader,
+    private val authRepository: AuthRepository,
     getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
 
@@ -104,9 +107,16 @@ class AddEditViewModel @Inject constructor(
     fun onTagsInputChanged(value: String) = update { it.copy(tagsInput = value) }
     fun onNoteChanged(value: String) = update { it.copy(note = value) }
     fun onFavoriteToggled() = update { it.copy(isFavorite = !it.isFavorite) }
-    fun onShareToFeedToggled() = update { it.copy(shareToFeed = !it.shareToFeed) }
+    fun onShareToFeedToggled() {
+        if (!_formState.value.shareToFeed && authRepository.getCurrentUserId() == null) {
+            update { it.copy(needsLogin = true) }
+            return
+        }
+        update { it.copy(shareToFeed = !it.shareToFeed) }
+    }
     fun onRemoveImage() = update { it.copy(imageUrl = null) }
     fun consumeError() = update { it.copy(errorMessage = null) }
+    fun consumeNeedsLogin() = update { it.copy(needsLogin = false) }
 
     private inline fun update(block: (AddEditFormState) -> AddEditFormState) {
         _formState.value = block(_formState.value)

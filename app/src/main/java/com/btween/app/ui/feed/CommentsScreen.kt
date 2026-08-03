@@ -47,6 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.domain.model.Comment
 import com.btween.app.domain.repository.ReportTargetType
+import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.ReportDialog
 import com.btween.app.ui.components.EmptyState
 import com.btween.app.ui.components.UserAvatar
@@ -55,6 +56,7 @@ import com.btween.app.ui.components.UserAvatar
 @Composable
 fun CommentsScreen(
     onBack: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: CommentsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -157,6 +159,16 @@ fun CommentsScreen(
             targetType = ReportTargetType.COMMENT,
             targetId = commentId,
             onDismiss = { reportCommentId = null }
+        )
+    }
+
+    if (uiState.needsLogin) {
+        LoginRequiredDialog(
+            onDismiss = viewModel::consumeNeedsLogin,
+            onLogIn = {
+                viewModel.consumeNeedsLogin()
+                onNavigateToLogin()
+            }
         )
     }
 }

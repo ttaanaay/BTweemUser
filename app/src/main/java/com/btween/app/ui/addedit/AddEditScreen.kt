@@ -47,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.R
 import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.SourceType
+import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.QuoteImagePicker
 import com.btween.app.ui.util.localizedLabel
 
@@ -54,6 +55,7 @@ import com.btween.app.ui.util.localizedLabel
 @Composable
 fun AddEditScreen(
     onDone: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: AddEditViewModel = hiltViewModel()
 ) {
     val state by viewModel.formState.collectAsStateWithLifecycle()
@@ -230,6 +232,16 @@ fun AddEditScreen(
                 }
             }
         }
+    }
+
+    if (state.needsLogin) {
+        LoginRequiredDialog(
+            onDismiss = viewModel::consumeNeedsLogin,
+            onLogIn = {
+                viewModel.consumeNeedsLogin()
+                onNavigateToLogin()
+            }
+        )
     }
 }
 

@@ -29,11 +29,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.ui.components.PasswordTextField
 import com.btween.app.ui.theme.QuoteSerifFontFamily
 
@@ -72,7 +74,7 @@ fun LoginScreen(
                 style = MaterialTheme.typography.displayMedium.copy(fontFamily = QuoteSerifFontFamily)
             )
             Text(
-                text = "Welcome back",
+                text = stringResource(R.string.auth_welcome_back),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -82,7 +84,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = state.email,
                 onValueChange = viewModel::onEmailChanged,
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.auth_label_email)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -93,13 +95,13 @@ fun LoginScreen(
             PasswordTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChanged,
-                label = "Password",
+                label = stringResource(R.string.auth_label_password),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                 TextButton(onClick = onNavigateToForgotPassword) {
-                    Text("Forgot password?")
+                    Text(stringResource(R.string.auth_forgot_password))
                 }
             }
 
@@ -113,7 +115,7 @@ fun LoginScreen(
                 if (state.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp))
                 } else {
-                    Text("Log in")
+                    Text(stringResource(R.string.auth_log_in))
                 }
             }
 
@@ -121,7 +123,7 @@ fun LoginScreen(
 
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 TextButton(onClick = onNavigateToRegister) {
-                    Text("Don't have an account? Sign up")
+                    Text(stringResource(R.string.auth_no_account_sign_up))
                 }
             }
 
@@ -130,7 +132,7 @@ fun LoginScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 HorizontalDivider(modifier = Modifier.weight(1f))
                 Text(
-                    text = "  or  ",
+                    text = stringResource(R.string.auth_or_divider),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
