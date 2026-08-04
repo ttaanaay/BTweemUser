@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Public
@@ -27,7 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,6 +44,7 @@ import com.btween.app.domain.repository.ReportTargetType
 import com.btween.app.ui.components.EmptyState
 import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.ReportDialog
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,23 +77,54 @@ fun FeedScreen(
                 .padding(padding)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
+                val coroutineScope = rememberCoroutineScope()
+                val pagerState = rememberPagerState(
+                    initialPage = uiState.selectedTab.ordinal,
+                    pageCount = { FeedTab.entries.size }
+                )
+
                 TabRow(selectedTabIndex = uiState.selectedTab.ordinal) {
                     Tab(
                         selected = uiState.selectedTab == FeedTab.FOR_YOU,
-                        onClick = { viewModel.onTabSelected(FeedTab.FOR_YOU) },
+                        onClick = {
+                            coroutineScope.launch { pagerState.animateScrollToPage(FeedTab.FOR_YOU.ordinal) }
+                        },
                         text = { Text("For You") }
                     )
                     Tab(
                         selected = uiState.selectedTab == FeedTab.FOLLOWING,
-                        onClick = { viewModel.onTabSelected(FeedTab.FOLLOWING) },
+                        onClick = {
+                            coroutineScope.launch { pagerState.animateScrollToPage(FeedTab.FOLLOWING.ordinal) }
+                        },
                         text = { Text("Following") }
                     )
                 }
 
-                key(uiState.selectedTab) {
+                // Swiping settles on a page - tell the ViewModel, which may reject it (e.g.
+                // Following requires login for guests). The second effect below snaps the
+                // pager back in that case, since a rejected swipe shouldn't visually "stick".
+                LaunchedEffect(pagerState) {
+                    snapshotFlow { pagerState.currentPage }.collect { page ->
+                        val tab = FeedTab.entries[page]
+                        if (tab != uiState.selectedTab) viewModel.onTabSelected(tab)
+                    }
+                }
+                LaunchedEffect(uiState.selectedTab, uiState.needsLogin) {
+                    val targetPage = uiState.selectedTab.ordinal
+                    if (pagerState.currentPage != targetPage) {
+                        pagerState.animateScrollToPage(targetPage)
+                    }
+                }
+
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize()
+                ) { page ->
+                    val tab = FeedTab.entries[page]
+                    val tabState = if (tab == FeedTab.FOR_YOU) uiState.forYou else uiState.following
                     FeedTabContent(
-                        tabState = uiState.current,
-                        isFollowingTab = uiState.selectedTab == FeedTab.FOLLOWING,
+                        tabState = tabState,
+                        isFollowingTab = tab == FeedTab.FOLLOWING,
                         onRefresh = viewModel::onRefresh,
                         onLoadMore = viewModel::onLoadMore,
                         onToggleLike = viewModel::onToggleLike,

@@ -182,4 +182,14 @@
     <!-- Guest mode -->
     <string name="guest_login_required_title">Log in to continue</string>
     <string name="guest_login_required_message">You\'ll need an account to do that. It only takes a moment to sign up.</string>
+
+    <!-- Comments -->
+    <string name="comments_delete_title">Delete comment?</string>
+    <string name="comments_delete_message">This can\'t be undone.</string>
+
+    <!-- Collections -->
+    <string name="collections_remove_item_title">Remove from collection?</string>
+    <string name="collections_remove_item_message">This only removes it from this collection - the quote itself won\'t be deleted.</string>
+    <string name="collections_delete_title">Delete this collection?</string>
+    <string name="collections_delete_message">This can\'t be undone. The quotes inside won\'t be deleted, just removed from this collection.</string>
 </resources>

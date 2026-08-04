@@ -38,12 +38,16 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.domain.model.QuoteCollection
 import com.btween.app.ui.components.EmptyState
 
@@ -55,6 +59,7 @@ fun CollectionsScreen(
     viewModel: CollectionsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var collectionIdPendingDelete by remember { mutableStateOf<Long?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(uiState.errorMessage) {
@@ -110,7 +115,7 @@ fun CollectionsScreen(
                             CollectionRow(
                                 collection = collection,
                                 onClick = { onCollectionClick(collection.id) },
-                                onDelete = { viewModel.onDeleteCollection(collection.id) }
+                                onDelete = { collectionIdPendingDelete = collection.id }
                             )
                         }
                     }
@@ -140,6 +145,23 @@ fun CollectionsScreen(
             },
             dismissButton = {
                 TextButton(onClick = viewModel::onDismissCreateDialog) { Text("Cancel") }
+            }
+        )
+    }
+
+    collectionIdPendingDelete?.let { pendingId ->
+        AlertDialog(
+            onDismissRequest = { collectionIdPendingDelete = null },
+            title = { Text(stringResource(R.string.collections_delete_title)) },
+            text = { Text(stringResource(R.string.collections_delete_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.onDeleteCollection(pendingId)
+                    collectionIdPendingDelete = null
+                }) { Text(stringResource(R.string.action_delete)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { collectionIdPendingDelete = null }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }

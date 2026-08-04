@@ -84,10 +84,11 @@ class SettingsViewModel @Inject constructor(
         LocaleManager.applyLanguage(language)
     }
 
-    fun onLogout() {
+    fun onLogout(onDone: () -> Unit) {
         viewModelScope.launch {
             deviceTokenRepository.unregisterCurrentToken()
             authRepository.logout()
+            onDone()
         }
     }
 

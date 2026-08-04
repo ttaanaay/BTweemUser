@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -32,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -42,9 +44,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.domain.model.Comment
 import com.btween.app.domain.repository.ReportTargetType
 import com.btween.app.ui.components.LoginRequiredDialog
@@ -62,6 +66,7 @@ fun CommentsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var reportCommentId by remember { mutableStateOf<Long?>(null) }
+    var commentIdPendingDelete by remember { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
@@ -144,7 +149,7 @@ fun CommentsScreen(
                                 onStartEdit = { viewModel.onStartEdit(comment) },
                                 onCancelEdit = viewModel::onCancelEdit,
                                 onSaveEdit = viewModel::onSaveEdit,
-                                onDelete = { viewModel.onDeleteComment(comment.id) },
+                                onDelete = { commentIdPendingDelete = comment.id },
                                 onReport = { reportCommentId = comment.id }
                             )
                         }
@@ -159,6 +164,23 @@ fun CommentsScreen(
             targetType = ReportTargetType.COMMENT,
             targetId = commentId,
             onDismiss = { reportCommentId = null }
+        )
+    }
+
+    commentIdPendingDelete?.let { pendingId ->
+        AlertDialog(
+            onDismissRequest = { commentIdPendingDelete = null },
+            title = { Text(stringResource(R.string.comments_delete_title)) },
+            text = { Text(stringResource(R.string.comments_delete_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.onDeleteComment(pendingId)
+                    commentIdPendingDelete = null
+                }) { Text(stringResource(R.string.action_delete)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { commentIdPendingDelete = null }) { Text(stringResource(R.string.action_cancel)) }
+            }
         )
     }
 

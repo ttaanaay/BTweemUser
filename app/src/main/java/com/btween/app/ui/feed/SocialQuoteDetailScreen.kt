@@ -2,6 +2,8 @@ package com.btween.app.ui.feed
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +30,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,7 +72,7 @@ import com.btween.app.util.shareQuoteAsImage
 import com.btween.app.util.shareQuoteAsText
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SocialQuoteDetailScreen(
     onBack: () -> Unit,
@@ -250,6 +253,18 @@ fun SocialQuoteDetailScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
+            if (quote.tags.isNotEmpty()) {
+                Spacer(modifier = Modifier.padding(top = 12.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    quote.tags.forEach { tag ->
+                        AssistChip(
+                            onClick = {},
+                            label = { Text("#$tag", style = MaterialTheme.typography.labelMedium) }
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.padding(top = 20.dp))
 

@@ -56,6 +56,7 @@ import com.btween.app.ui.components.PasswordTextField
 fun SettingsScreen(
     onBack: () -> Unit,
     onChangePasswordClick: () -> Unit,
+    onLoggedOut: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.userSettings.collectAsStateWithLifecycle()
@@ -240,7 +241,7 @@ fun SettingsScreen(
             confirmButton = {
                 TextButton(onClick = {
                     showLogoutDialog = false
-                    viewModel.onLogout()
+                    viewModel.onLogout(onDone = onLoggedOut)
                 }) { Text(stringResource(R.string.settings_logout)) }
             },
             dismissButton = {

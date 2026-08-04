@@ -38,8 +38,12 @@ class BTweenMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        val title = message.notification?.title ?: getString(R.string.app_name)
-        val body = message.notification?.body ?: return
+        // Read from message.data, not message.notification - the server sends a data-only
+        // payload specifically so this function always runs (foreground, background, or
+        // killed), rather than Android silently auto-displaying a notification payload and
+        // skipping this code while the app isn't in the foreground.
+        val title = message.data["title"] ?: getString(R.string.app_name)
+        val body = message.data["body"] ?: return
         showNotification(title, body)
     }
 

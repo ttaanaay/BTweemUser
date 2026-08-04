@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,9 +31,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.domain.repository.ReportTargetType
 import com.btween.app.ui.components.EmptyState
 import com.btween.app.ui.components.ReportDialog
@@ -49,6 +52,7 @@ fun CollectionDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var reportQuoteId by remember { mutableStateOf<Long?>(null) }
+    var quoteIdPendingRemoval by remember { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
@@ -105,7 +109,7 @@ fun CollectionDetailScreen(
                                     onReport = { reportQuoteId = quote.id }
                                 )
                                 TextButton(
-                                    onClick = { viewModel.onRemoveFromCollection(quote.id) },
+                                    onClick = { quoteIdPendingRemoval = quote.id },
                                     modifier = Modifier.align(Alignment.End)
                                 ) {
                                     Text("Remove from collection")
@@ -123,6 +127,23 @@ fun CollectionDetailScreen(
             targetType = ReportTargetType.QUOTE,
             targetId = quoteId,
             onDismiss = { reportQuoteId = null }
+        )
+    }
+
+    quoteIdPendingRemoval?.let { pendingId ->
+        AlertDialog(
+            onDismissRequest = { quoteIdPendingRemoval = null },
+            title = { Text(stringResource(R.string.collections_remove_item_title)) },
+            text = { Text(stringResource(R.string.collections_remove_item_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.onRemoveFromCollection(pendingId)
+                    quoteIdPendingRemoval = null
+                }) { Text(stringResource(R.string.action_delete)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { quoteIdPendingRemoval = null }) { Text(stringResource(R.string.action_cancel)) }
+            }
         )
     }
 }

@@ -217,7 +217,12 @@ fun BTweenNavHost(navController: NavHostController) {
         composable(Destination.Settings.route) {
             SettingsScreen(
                 onBack = { navController.popBackStack() },
-                onChangePasswordClick = { navController.navigate(Destination.ChangePassword.route) }
+                onChangePasswordClick = { navController.navigate(Destination.ChangePassword.route) },
+                onLoggedOut = {
+                    navController.navigate(Destination.Home.route) {
+                        popUpTo(Destination.Home.route) { inclusive = true }
+                    }
+                }
             )
         }
 
