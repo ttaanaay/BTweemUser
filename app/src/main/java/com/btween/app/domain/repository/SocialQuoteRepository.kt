@@ -14,6 +14,8 @@ interface SocialQuoteRepository {
 
     suspend fun getQuote(id: Long): Result<SocialQuote>
 
+    suspend fun getDailyQuote(): Result<SocialQuote>
+
     suspend fun getUserQuotes(userId: Long, limit: Int = 20, offset: Long = 0): Result<List<SocialQuote>>
 
     suspend fun createQuote(

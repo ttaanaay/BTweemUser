@@ -47,8 +47,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.R
 import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.SourceType
+import com.btween.app.ui.components.AutocompleteTextField
 import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.QuoteImagePicker
+import com.btween.app.ui.components.TagsAutocompleteField
 import com.btween.app.ui.util.localizedLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,6 +62,7 @@ fun AddEditScreen(
 ) {
     val state by viewModel.formState.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
+    val suggestions by viewModel.suggestions.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Combined into one effect: if a share-to-feed warning came back alongside a successful
@@ -129,42 +132,42 @@ fun AddEditScreen(
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3
             )
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.sourceTitle,
                 onValueChange = viewModel::onSourceTitleChanged,
-                label = { Text(stringResource(R.string.add_edit_label_source_title)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                label = stringResource(R.string.add_edit_label_source_title),
+                suggestions = suggestions.sourceTitles,
+                modifier = Modifier.fillMaxWidth()
             )
             SourceTypeDropdown(
                 selected = state.sourceType,
                 onSelected = viewModel::onSourceTypeChanged
             )
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.speaker,
                 onValueChange = viewModel::onSpeakerChanged,
-                label = { Text(stringResource(R.string.add_edit_label_speaker)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                label = stringResource(R.string.add_edit_label_speaker),
+                suggestions = suggestions.speakers,
+                modifier = Modifier.fillMaxWidth()
             )
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.author,
                 onValueChange = viewModel::onAuthorChanged,
-                label = { Text(stringResource(R.string.add_edit_label_author)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                label = stringResource(R.string.add_edit_label_author),
+                suggestions = suggestions.authors,
+                modifier = Modifier.fillMaxWidth()
             )
             CategoryDropdown(
                 categories = categories,
                 selected = state.category,
                 onSelected = viewModel::onCategoryChanged
             )
-            OutlinedTextField(
+            TagsAutocompleteField(
                 value = state.tagsInput,
                 onValueChange = viewModel::onTagsInputChanged,
-                label = { Text(stringResource(R.string.add_edit_label_tags)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                label = stringResource(R.string.add_edit_label_tags),
+                suggestions = suggestions.tags,
+                modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = state.note,

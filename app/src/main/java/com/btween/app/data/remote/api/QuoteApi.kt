@@ -25,6 +25,9 @@ interface QuoteApi {
     @GET("quotes/{id}")
     suspend fun getQuote(@Path("id") id: Long): QuoteResponseDto
 
+    @GET("quotes/daily")
+    suspend fun getDailyQuote(): QuoteResponseDto
+
     @POST("quotes")
     suspend fun createQuote(@Body request: QuoteRequestDto): QuoteResponseDto
 

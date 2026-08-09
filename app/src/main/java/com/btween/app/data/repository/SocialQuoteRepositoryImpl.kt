@@ -30,6 +30,10 @@ class SocialQuoteRepositoryImpl @Inject constructor(
         quoteApi.getQuote(id).toDomain()
     }
 
+    override suspend fun getDailyQuote(): Result<SocialQuote> = safeApiCall {
+        quoteApi.getDailyQuote().toDomain()
+    }
+
     override suspend fun getUserQuotes(userId: Long, limit: Int, offset: Long): Result<List<SocialQuote>> =
         safeApiCall {
             userApi.getUserQuotes(userId, limit, offset).map { it.toDomain() }

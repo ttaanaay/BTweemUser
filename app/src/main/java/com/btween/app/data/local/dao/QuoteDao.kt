@@ -108,6 +108,22 @@ interface QuoteDao {
     @Query("SELECT COUNT(DISTINCT sourceTitle) FROM quotes")
     fun observeDistinctSourceCount(): Flow<Int>
 
+    // Autocomplete suggestions for the Add/Edit form - each pulls the person's own
+    // previously-entered values so typing "Naval" once means it's suggested next time.
+    @Query("SELECT DISTINCT sourceTitle FROM quotes WHERE sourceTitle != '' ORDER BY sourceTitle COLLATE NOCASE")
+    suspend fun getDistinctSourceTitles(): List<String>
+
+    @Query("SELECT DISTINCT speaker FROM quotes WHERE speaker != '' ORDER BY speaker COLLATE NOCASE")
+    suspend fun getDistinctSpeakers(): List<String>
+
+    @Query("SELECT DISTINCT author FROM quotes WHERE author IS NOT NULL AND author != '' ORDER BY author COLLATE NOCASE")
+    suspend fun getDistinctAuthors(): List<String>
+
+    // tags is stored as a converted List<String> column, so it can't be DISTINCT-ed in SQL -
+    // fetch every quote's tag list and flatten/dedupe in Kotlin instead.
+    @Query("SELECT tags FROM quotes")
+    suspend fun getAllTagLists(): List<List<String>>
+
     @Query(
         """
         SELECT sourceType, COUNT(*) as count FROM quotes

@@ -9,6 +9,7 @@ import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.repository.AuthRepository
+import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
 import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
 import com.btween.app.domain.usecase.category.GetCategoriesUseCase
@@ -71,7 +72,13 @@ class AddEditViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
+    private val _suggestions = MutableStateFlow(QuoteAutocompleteSuggestions())
+    val suggestions: StateFlow<QuoteAutocompleteSuggestions> = _suggestions
+
     init {
+        viewModelScope.launch {
+            _suggestions.value = quoteRepository.getAutocompleteSuggestions()
+        }
         if (requestedId > 0) {
             viewModelScope.launch {
                 val existing = quoteRepository.getQuoteById(requestedId)

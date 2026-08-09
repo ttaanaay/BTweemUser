@@ -7,6 +7,7 @@ import com.btween.app.data.local.mapper.toEntity
 import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.QuoteFilter
+import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
 import com.btween.app.domain.repository.QuoteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -96,6 +97,16 @@ class QuoteRepositoryImpl @Inject constructor(
     override suspend fun getAllQuotesOnce(): List<Quote> {
         val categories = categoryMapFlow().first()
         return quoteDao.getAllQuotesOnce().map { it.toDomain(it.categoryId?.let(categories::get)) }
+    }
+
+    override suspend fun getAutocompleteSuggestions(): QuoteAutocompleteSuggestions {
+        val tags = quoteDao.getAllTagLists().flatten().distinct().sortedWith(String.CASE_INSENSITIVE_ORDER)
+        return QuoteAutocompleteSuggestions(
+            sourceTitles = quoteDao.getDistinctSourceTitles(),
+            speakers = quoteDao.getDistinctSpeakers(),
+            authors = quoteDao.getDistinctAuthors(),
+            tags = tags
+        )
     }
 
     override suspend fun clearAllQuotes() {

@@ -44,14 +44,18 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = !isRefresh, isRefreshing = isRefresh)
 
+            val dailyResult = socialQuoteRepository.getDailyQuote()
             val feedResult = socialQuoteRepository.getFeed(limit = 30)
             val contributors = profileRepository.getTopContributors(limit = 10).getOrDefault(emptyList())
             val unreadCount = notificationRepository.getUnreadCount().getOrDefault(0)
 
             feedResult
                 .onSuccess { quotes ->
+                    // dailyResult failing (e.g. no public quotes exist yet at all) shouldn't
+                    // block the rest of the Home screen from showing - the hero card just
+                    // won't render in that case.
+                    val daily = dailyResult.getOrNull()
                     val byLikes = quotes.sortedByDescending { it.likeCount }
-                    val daily = byLikes.firstOrNull()
                     val trending = byLikes.filter { it.id != daily?.id }.take(6)
                     val recentlyApproved = quotes.filter { it.id != daily?.id }.take(6)
 
