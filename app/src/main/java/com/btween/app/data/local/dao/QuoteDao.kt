@@ -119,11 +119,6 @@ interface QuoteDao {
     @Query("SELECT DISTINCT author FROM quotes WHERE author IS NOT NULL AND author != '' ORDER BY author COLLATE NOCASE")
     suspend fun getDistinctAuthors(): List<String>
 
-    // tags is stored as a converted List<String> column, so it can't be DISTINCT-ed in SQL -
-    // fetch every quote's tag list and flatten/dedupe in Kotlin instead.
-    @Query("SELECT tags FROM quotes")
-    suspend fun getAllTagLists(): List<List<String>>
-
     @Query(
         """
         SELECT sourceType, COUNT(*) as count FROM quotes

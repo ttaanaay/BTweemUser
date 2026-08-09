@@ -100,7 +100,13 @@ class QuoteRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAutocompleteSuggestions(): QuoteAutocompleteSuggestions {
-        val tags = quoteDao.getAllTagLists().flatten().distinct().sortedWith(String.CASE_INSENSITIVE_ORDER)
+        // tags is a TypeConverter-backed List<String> column - Room can't map a raw query
+        // straight to List<List<String>> (that's what broke the build), so pull it from the
+        // full entities instead, which Room already knows how to convert correctly.
+        val tags = quoteDao.getAllQuotesOnce()
+            .flatMap { it.tags }
+            .distinct()
+            .sortedWith(String.CASE_INSENSITIVE_ORDER)
         return QuoteAutocompleteSuggestions(
             sourceTitles = quoteDao.getDistinctSourceTitles(),
             speakers = quoteDao.getDistinctSpeakers(),
