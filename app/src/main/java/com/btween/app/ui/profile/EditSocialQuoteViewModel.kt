@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btween.app.data.remote.CloudinaryUploader
 import com.btween.app.domain.model.SourceType
+import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
+import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
 import com.btween.app.ui.navigation.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,20 +24,23 @@ data class EditSocialQuoteUiState(
     val author: String = "",
     val visibility: String = "PUBLIC",
     val category: String? = null,
-    val tags: List<String> = emptyList(),
+    val tagsInput: String = "",
     val imageUrl: String? = null,
     val isUploadingImage: Boolean = false,
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
     val didSave: Boolean = false,
     val errorMessage: String? = null
-)
+) {
+    val tags: List<String> get() = tagsInput.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+}
 
 @HiltViewModel
 class EditSocialQuoteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val socialQuoteRepository: SocialQuoteRepository,
-    private val cloudinaryUploader: CloudinaryUploader
+    private val cloudinaryUploader: CloudinaryUploader,
+    private val quoteRepository: QuoteRepository
 ) : ViewModel() {
 
     private val quoteId: Long = checkNotNull(savedStateHandle[Destination.EditSocialQuote.ARG_QUOTE_ID])
@@ -43,7 +48,13 @@ class EditSocialQuoteViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EditSocialQuoteUiState())
     val uiState: StateFlow<EditSocialQuoteUiState> = _uiState
 
+    private val _suggestions = MutableStateFlow(QuoteAutocompleteSuggestions())
+    val suggestions: StateFlow<QuoteAutocompleteSuggestions> = _suggestions
+
     init {
+        viewModelScope.launch {
+            _suggestions.value = quoteRepository.getAutocompleteSuggestions()
+        }
         viewModelScope.launch {
             socialQuoteRepository.getQuote(quoteId)
                 .onSuccess { quote ->
@@ -56,7 +67,7 @@ class EditSocialQuoteViewModel @Inject constructor(
                         author = quote.author.orEmpty(),
                         visibility = quote.visibility,
                         category = quote.category,
-                        tags = quote.tags,
+                        tagsInput = quote.tags.joinToString(", "),
                         imageUrl = quote.imageUrl
                     )
                 }
@@ -70,6 +81,7 @@ class EditSocialQuoteViewModel @Inject constructor(
     fun onSourceTitleChanged(value: String) = update { it.copy(sourceTitle = value) }
     fun onSpeakerChanged(value: String) = update { it.copy(speaker = value) }
     fun onAuthorChanged(value: String) = update { it.copy(author = value) }
+    fun onTagsInputChanged(value: String) = update { it.copy(tagsInput = value) }
     fun onSourceTypeChanged(value: SourceType) = update { it.copy(sourceType = value) }
     fun onRemoveImage() = update { it.copy(imageUrl = null) }
     fun consumeError() = update { it.copy(errorMessage = null) }

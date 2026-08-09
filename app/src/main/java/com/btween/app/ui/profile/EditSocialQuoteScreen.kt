@@ -37,7 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.domain.model.SourceType
+import com.btween.app.ui.components.AutocompleteTextField
 import com.btween.app.ui.components.QuoteImagePicker
+import com.btween.app.ui.components.TagsAutocompleteField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +48,7 @@ fun EditSocialQuoteScreen(
     viewModel: EditSocialQuoteViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val suggestions by viewModel.suggestions.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var showSourceTypeMenu by remember { mutableStateOf(false) }
 
@@ -141,28 +144,36 @@ fun EditSocialQuoteScreen(
                 }
             }
 
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.sourceTitle,
                 onValueChange = viewModel::onSourceTitleChanged,
-                label = { Text("Source title") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                label = "Source title",
+                suggestions = suggestions.sourceTitles,
+                modifier = Modifier.fillMaxWidth()
             )
 
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.speaker,
                 onValueChange = viewModel::onSpeakerChanged,
-                label = { Text("Speaker / character") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                label = "Speaker / character",
+                suggestions = suggestions.speakers,
+                modifier = Modifier.fillMaxWidth()
             )
 
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.author,
                 onValueChange = viewModel::onAuthorChanged,
-                label = { Text("Author (optional)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                label = "Author (optional)",
+                suggestions = suggestions.authors,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            TagsAutocompleteField(
+                value = state.tagsInput,
+                onValueChange = viewModel::onTagsInputChanged,
+                label = "Tags (comma separated)",
+                suggestions = suggestions.tags,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
