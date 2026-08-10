@@ -37,10 +37,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.btween.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,15 +74,15 @@ fun EditProfileScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Edit profile") },
+                title = { Text(stringResource(R.string.edit_profile_title)) },
                 navigationIcon = {
                     IconButton(onClick = onDone) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     TextButton(onClick = viewModel::onSave, enabled = !state.isSaving) {
-                        Text("Save")
+                        Text(stringResource(R.string.edit_profile_action_save))
                     }
                 }
             )
@@ -118,7 +120,7 @@ fun EditProfileScreen(
                     } else if (state.avatarUrl.isNotBlank()) {
                         AsyncImage(
                             model = state.avatarUrl,
-                            contentDescription = "Profile photo",
+                            contentDescription = stringResource(R.string.edit_profile_photo_description),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .size(96.dp)
@@ -141,28 +143,28 @@ fun EditProfileScreen(
                     },
                     enabled = !state.isUploadingPhoto
                 ) {
-                    Text(if (state.isUploadingPhoto) "Uploading..." else "Choose photo")
+                    Text(if (state.isUploadingPhoto) stringResource(R.string.edit_profile_uploading) else stringResource(R.string.edit_profile_choose_photo))
                 }
             }
 
             OutlinedTextField(
                 value = state.displayName,
                 onValueChange = viewModel::onDisplayNameChanged,
-                label = { Text("Display name") },
+                label = { Text(stringResource(R.string.edit_profile_label_display_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
             OutlinedTextField(
                 value = state.avatarUrl,
                 onValueChange = viewModel::onAvatarUrlChanged,
-                label = { Text("Avatar URL (or use \"Choose photo\" above)") },
+                label = { Text(stringResource(R.string.edit_profile_label_avatar_url)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
             OutlinedTextField(
                 value = state.bio,
                 onValueChange = viewModel::onBioChanged,
-                label = { Text("Bio (optional)") },
+                label = { Text(stringResource(R.string.edit_profile_label_bio)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3
             )

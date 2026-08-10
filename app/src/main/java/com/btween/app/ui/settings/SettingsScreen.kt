@@ -314,7 +314,7 @@ fun SettingsScreen(
                     OutlinedTextField(
                         value = emailVerification.code,
                         onValueChange = viewModel::onCodeChanged,
-                        label = { Text("6-digit code") },
+                        label = { Text(stringResource(R.string.auth_label_code)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )

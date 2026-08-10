@@ -279,6 +279,30 @@
     <string name="search_people_no_results_title">No one found</string>
     <string name="search_people_no_results_message">Try a different username or name.</string>
 
+    <!-- Edit profile -->
+    <string name="edit_profile_title">Edit profile</string>
+    <string name="edit_profile_action_save">Save</string>
+    <string name="edit_profile_photo_description">Profile photo</string>
+    <string name="edit_profile_uploading">Uploading...</string>
+    <string name="edit_profile_choose_photo">Choose photo</string>
+    <string name="edit_profile_label_display_name">Display name</string>
+    <string name="edit_profile_label_avatar_url">Avatar URL (or use \"Choose photo\" above)</string>
+    <string name="edit_profile_label_bio">Bio (optional)</string>
+
+    <!-- Quote detail -->
+    <string name="quote_detail_title">Quote</string>
+    <string name="quote_detail_share">Share</string>
+    <string name="quote_detail_share_text">Share as text</string>
+    <string name="quote_detail_share_image">Share as image</string>
+    <string name="quote_detail_more_options">More options</string>
+    <string name="quote_detail_report">Report</string>
+    <string name="quote_detail_edit">Edit quote</string>
+    <string name="quote_detail_comments">Comments</string>
+    <string name="quote_detail_add_to_collection">Add to collection</string>
+    <string name="quote_detail_new_collection_title">Add to collection</string>
+    <string name="quote_detail_new_collection_label">New collection name</string>
+    <string name="quote_detail_create_and_add">Create &amp; add</string>
+
     <!-- Edit social quote -->
     <string name="edit_quote_title">Edit quote</string>
     <string name="edit_quote_action_save">Save</string>

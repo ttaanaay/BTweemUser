@@ -268,6 +268,30 @@
     <string name="search_people_no_results_title">ไม่พบใครเลย</string>
     <string name="search_people_no_results_message">ลองใช้ชื่อผู้ใช้หรือชื่ออื่น</string>
 
+    <!-- Edit profile -->
+    <string name="edit_profile_title">แก้ไขโปรไฟล์</string>
+    <string name="edit_profile_action_save">บันทึก</string>
+    <string name="edit_profile_photo_description">รูปโปรไฟล์</string>
+    <string name="edit_profile_uploading">กำลังอัปโหลด...</string>
+    <string name="edit_profile_choose_photo">เลือกรูปภาพ</string>
+    <string name="edit_profile_label_display_name">ชื่อที่แสดง</string>
+    <string name="edit_profile_label_avatar_url">URL รูปโปรไฟล์ (หรือใช้ \"เลือกรูปภาพ\" ด้านบน)</string>
+    <string name="edit_profile_label_bio">แนะนำตัว (ไม่บังคับ)</string>
+
+    <!-- Quote detail -->
+    <string name="quote_detail_title">คำคม</string>
+    <string name="quote_detail_share">แชร์</string>
+    <string name="quote_detail_share_text">แชร์เป็นข้อความ</string>
+    <string name="quote_detail_share_image">แชร์เป็นรูปภาพ</string>
+    <string name="quote_detail_more_options">ตัวเลือกเพิ่มเติม</string>
+    <string name="quote_detail_report">รายงาน</string>
+    <string name="quote_detail_edit">แก้ไขคำคม</string>
+    <string name="quote_detail_comments">คอมเมนต์</string>
+    <string name="quote_detail_add_to_collection">เพิ่มลงคอลเลกชัน</string>
+    <string name="quote_detail_new_collection_title">เพิ่มลงคอลเลกชัน</string>
+    <string name="quote_detail_new_collection_label">ชื่อคอลเลกชันใหม่</string>
+    <string name="quote_detail_create_and_add">สร้างและเพิ่ม</string>
+
     <!-- Edit social quote -->
     <string name="edit_quote_title">แก้ไขคำคม</string>
     <string name="edit_quote_action_save">บันทึก</string>

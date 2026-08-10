@@ -56,11 +56,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.btween.app.R
 import com.btween.app.domain.model.QuoteCollection
 import com.btween.app.domain.repository.ReportTargetType
 import com.btween.app.ui.components.LoginRequiredDialog
@@ -106,28 +108,28 @@ fun SocialQuoteDetailScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Quote") },
+                title = { Text(stringResource(R.string.quote_detail_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     uiState.quote?.let { quote ->
                         Box {
                             IconButton(onClick = { showShareMenu = true }) {
-                                Icon(Icons.Filled.Share, contentDescription = "Share")
+                                Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.quote_detail_share))
                             }
                             DropdownMenu(expanded = showShareMenu, onDismissRequest = { showShareMenu = false }) {
                                 DropdownMenuItem(
-                                    text = { Text("Share as text") },
+                                    text = { Text(stringResource(R.string.quote_detail_share_text)) },
                                     onClick = {
                                         showShareMenu = false
                                         shareQuoteAsText(context, quote)
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Share as image") },
+                                    text = { Text(stringResource(R.string.quote_detail_share_image)) },
                                     onClick = {
                                         showShareMenu = false
                                         scope.launch { shareQuoteAsImage(context, quote) }
@@ -139,11 +141,11 @@ fun SocialQuoteDetailScreen(
                             var showMoreMenu by remember { mutableStateOf(false) }
                             Box {
                                 IconButton(onClick = { showMoreMenu = true }) {
-                                    Icon(Icons.Filled.MoreVert, contentDescription = "More options")
+                                    Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.quote_detail_more_options))
                                 }
                                 DropdownMenu(expanded = showMoreMenu, onDismissRequest = { showMoreMenu = false }) {
                                     DropdownMenuItem(
-                                        text = { Text("Report") },
+                                        text = { Text(stringResource(R.string.quote_detail_report)) },
                                         onClick = {
                                             showMoreMenu = false
                                             showReportDialog = true
@@ -153,7 +155,7 @@ fun SocialQuoteDetailScreen(
                             }
                         } else {
                             IconButton(onClick = { onEditQuote(quote.id) }) {
-                                Icon(Icons.Filled.Edit, contentDescription = "Edit quote")
+                                Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.quote_detail_edit))
                             }
                         }
                     }
@@ -208,12 +210,12 @@ fun SocialQuoteDetailScreen(
                         OutlinedButton(
                             onClick = viewModel::onToggleFollow,
                             enabled = !uiState.isFollowActionInFlight
-                        ) { Text("Following") }
+                        ) { Text(stringResource(R.string.onboarding_following_action)) }
                     } else {
                         Button(
                             onClick = viewModel::onToggleFollow,
                             enabled = !uiState.isFollowActionInFlight
-                        ) { Text("Follow") }
+                        ) { Text(stringResource(R.string.onboarding_follow_action)) }
                     }
                 }
             }
@@ -287,7 +289,7 @@ fun SocialQuoteDetailScreen(
                 IconButton(onClick = { onCommentsClick(quote.id) }) {
                     Icon(
                         Icons.Outlined.ChatBubbleOutline,
-                        contentDescription = "Comments",
+                        contentDescription = stringResource(R.string.quote_detail_comments),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -302,7 +304,7 @@ fun SocialQuoteDetailScreen(
                 IconButton(onClick = viewModel::onShowCollectionPicker) {
                     Icon(
                         Icons.Outlined.BookmarkBorder,
-                        contentDescription = "Add to collection",
+                        contentDescription = stringResource(R.string.quote_detail_add_to_collection),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -354,7 +356,7 @@ private fun AddToCollectionDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add to collection") },
+        title = { Text(stringResource(R.string.quote_detail_new_collection_title)) },
         text = {
             Column {
                 if (isLoading) {
@@ -375,7 +377,7 @@ private fun AddToCollectionDialog(
                     OutlinedTextField(
                         value = newName,
                         onValueChange = { newName = it },
-                        label = { Text("New collection name") },
+                        label = { Text(stringResource(R.string.quote_detail_new_collection_label)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -386,10 +388,10 @@ private fun AddToCollectionDialog(
             TextButton(
                 onClick = { onCreateNew(newName) },
                 enabled = newName.isNotBlank()
-            ) { Text("Create & add") }
+            ) { Text(stringResource(R.string.quote_detail_create_and_add)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
         }
     )
 }
