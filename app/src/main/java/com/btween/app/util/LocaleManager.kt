@@ -7,39 +7,43 @@ import androidx.core.os.LocaleListCompat
 import com.btween.app.domain.model.AppLanguage
 import java.util.Locale
 
+private const val PREFS_NAME = "btween_locale_prefs"
+private const val KEY_LANGUAGE = "language"
+
 /**
- * Wraps AndroidX's per-app language API (`AppCompatDelegate.setApplicationLocales`).
+ * Applies the user's language choice by hand via SharedPreferences + Configuration, rather
+ * than relying on AppCompatDelegate.setApplicationLocales() as the source of truth.
  *
- * This works even though the app uses plain `ComponentActivity` rather than
- * `AppCompatActivity`: since appcompat 1.6.0, simply having the appcompat dependency
- * present is enough - it registers a ContentProvider at process start that reads the
- * persisted locale choice and applies + auto-recreates activities for you, on every
- * API level back to 24. On API 33+ it additionally delegates to the platform
- * `LocaleManager` so the choice also shows up in the system's own per-app language
- * settings screen (enabled via `android:localeConfig` in the manifest).
+ * AppCompatDelegate's per-app language API is designed around AppCompatActivity's own
+ * attachBaseContext hook and an internal ContentProvider-backed store; in practice, reading
+ * it back via getApplicationLocales() from a plain ComponentActivity (like MainActivity
+ * here) was unreliable - the choice would appear to revert after Activity.recreate(). A
+ * plain SharedPreferences value read directly in attachBaseContext sidesteps that
+ * unreliability entirely and is the actual source of truth here.
  *
- * In practice, that auto-recreate path is only reliable for `AppCompatActivity` (it hooks
- * into AppCompat's own `attachBaseContext` override). For a plain `ComponentActivity` like
- * `MainActivity`, [wrapContext] below does the equivalent by hand.
+ * setApplicationLocales() is still called too (best-effort) purely so the choice also shows
+ * up in the system's own per-app language settings screen on API 33+ (enabled via
+ * `android:localeConfig` in the manifest) - just not depended on for correctness.
  */
 object LocaleManager {
 
-    fun applyLanguage(language: AppLanguage) {
+    private fun prefs(context: Context) =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    fun applyLanguage(context: Context, language: AppLanguage) {
+        prefs(context).edit().putString(KEY_LANGUAGE, language.name).apply()
+
         val localeList = when (language) {
             AppLanguage.SYSTEM -> LocaleListCompat.getEmptyLocaleList()
             AppLanguage.ENGLISH -> LocaleListCompat.forLanguageTags("en")
             AppLanguage.THAI -> LocaleListCompat.forLanguageTags("th")
         }
-        AppCompatDelegate.setApplicationLocales(localeList)
+        runCatching { AppCompatDelegate.setApplicationLocales(localeList) }
     }
 
-    fun currentLanguage(): AppLanguage {
-        val tags = AppCompatDelegate.getApplicationLocales().toLanguageTags()
-        return when {
-            tags.startsWith("th") -> AppLanguage.THAI
-            tags.startsWith("en") -> AppLanguage.ENGLISH
-            else -> AppLanguage.SYSTEM
-        }
+    fun currentLanguage(context: Context): AppLanguage {
+        val stored = prefs(context).getString(KEY_LANGUAGE, null)
+        return runCatching { stored?.let { AppLanguage.valueOf(it) } }.getOrNull() ?: AppLanguage.SYSTEM
     }
 
     /**
@@ -48,7 +52,7 @@ object LocaleManager {
      * [base] unchanged so the device's own locale is used.
      */
     fun wrapContext(base: Context): Context {
-        val language = currentLanguage()
+        val language = currentLanguage(base)
         if (language == AppLanguage.SYSTEM) return base
 
         val locale = when (language) {

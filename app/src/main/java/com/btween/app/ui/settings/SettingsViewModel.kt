@@ -1,5 +1,6 @@
 package com.btween.app.ui.settings
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btween.app.domain.model.AppLanguage
@@ -11,6 +12,7 @@ import com.btween.app.domain.repository.SettingsRepository
 import com.btween.app.push.DeviceTokenRepository
 import com.btween.app.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +31,7 @@ data class EmailVerificationUiState(
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val settingsRepository: SettingsRepository,
     private val authRepository: AuthRepository,
     private val profileRepository: ProfileRepository,
@@ -41,7 +44,7 @@ class SettingsViewModel @Inject constructor(
         initialValue = UserSettings()
     )
 
-    private val _appLanguage = MutableStateFlow(LocaleManager.currentLanguage())
+    private val _appLanguage = MutableStateFlow(LocaleManager.currentLanguage(appContext))
     val appLanguage: StateFlow<AppLanguage> = _appLanguage
 
     private val _isDeletingAccount = MutableStateFlow(false)
@@ -81,7 +84,7 @@ class SettingsViewModel @Inject constructor(
 
     fun onLanguageSelected(language: AppLanguage) {
         _appLanguage.value = language
-        LocaleManager.applyLanguage(language)
+        LocaleManager.applyLanguage(appContext, language)
     }
 
     fun onLogout(onDone: () -> Unit) {
