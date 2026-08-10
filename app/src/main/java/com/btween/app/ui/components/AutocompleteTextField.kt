@@ -1,5 +1,7 @@
 package com.btween.app.ui.components
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -12,19 +14,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 
 /**
- * A plain text field that shows a small dropdown of matching suggestions underneath while
- * focused and non-empty. Deliberately not built on ExposedDropdownMenuBox - that component
- * has been unreliable in this codebase before (see AddEditScreen's category picker, which
- * works around the same issue with a manual Box+DropdownMenu pattern). A field + a plain
- * Surface/LazyColumn below it behaves predictably instead.
+ * A plain text field that shows a small dropdown of matching suggestions underneath
+ * whenever there are any (whether or not the field currently has focus - keeping this
+ * simple and permissive rather than trying to gate it on focus state, since focus
+ * detection via Modifier.onFocusChanged has been unreliable for some fields in this
+ * codebase before). Deliberately not built on ExposedDropdownMenuBox - that component has
+ * caused problems here previously too (see AddEditScreen's category picker, which works
+ * around it with a manual Box+DropdownMenu pattern).
  */
 @Composable
 fun AutocompleteTextField(
@@ -36,15 +37,13 @@ fun AutocompleteTextField(
     singleLine: Boolean = true,
     supportingText: String? = null
 ) {
-    var isFocused by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
-    val filtered = remember(value, suggestions) {
-        if (value.isBlank()) {
-            emptyList()
-        } else {
-            suggestions.filter { it.contains(value, ignoreCase = true) && !it.equals(value, ignoreCase = true) }
-                .take(5)
-        }
+    val filtered = if (value.isBlank()) {
+        emptyList()
+    } else {
+        suggestions.filter { it.contains(value, ignoreCase = true) }.take(5)
     }
 
     Column(modifier = modifier) {
@@ -52,14 +51,13 @@ fun AutocompleteTextField(
             value = value,
             onValueChange = onValueChange,
             label = { Text(label) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged { isFocused = it.isFocused },
+            modifier = Modifier.fillMaxWidth(),
             singleLine = singleLine,
-            supportingText = supportingText?.let { { Text(it) } }
+            supportingText = supportingText?.let { { Text(it) } },
+            interactionSource = interactionSource
         )
 
-        if (isFocused && filtered.isNotEmpty()) {
+        if (filtered.isNotEmpty() && (isFocused || value.isNotBlank())) {
             Surface(
                 tonalElevation = 3.dp,
                 shape = MaterialTheme.shapes.small,
@@ -92,7 +90,8 @@ fun TagsAutocompleteField(
     modifier: Modifier = Modifier,
     supportingText: String? = null
 ) {
-    var isFocused by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
     val currentSegment = value.substringAfterLast(',').trim()
     val alreadyEntered = value.substringBeforeLast(',', missingDelimiterValue = "")
@@ -101,16 +100,12 @@ fun TagsAutocompleteField(
         .filter { it.isNotEmpty() }
         .toSet()
 
-    val filtered = remember(currentSegment, suggestions, alreadyEntered) {
-        if (currentSegment.isBlank()) {
-            emptyList()
-        } else {
-            suggestions.filter {
-                it.contains(currentSegment, ignoreCase = true) &&
-                    !it.equals(currentSegment, ignoreCase = true) &&
-                    it !in alreadyEntered
-            }.take(5)
-        }
+    val filtered = if (currentSegment.isBlank()) {
+        emptyList()
+    } else {
+        suggestions.filter {
+            it.contains(currentSegment, ignoreCase = true) && it !in alreadyEntered
+        }.take(5)
     }
 
     Column(modifier = modifier) {
@@ -118,14 +113,13 @@ fun TagsAutocompleteField(
             value = value,
             onValueChange = onValueChange,
             label = { Text(label) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged { isFocused = it.isFocused },
+            modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            supportingText = supportingText?.let { { Text(it) } }
+            supportingText = supportingText?.let { { Text(it) } },
+            interactionSource = interactionSource
         )
 
-        if (isFocused && filtered.isNotEmpty()) {
+        if (filtered.isNotEmpty() && (isFocused || currentSegment.isNotBlank())) {
             Surface(
                 tonalElevation = 3.dp,
                 shape = MaterialTheme.shapes.small,
