@@ -50,7 +50,7 @@ import com.btween.app.domain.model.SourceType
 import com.btween.app.ui.components.AutocompleteTextField
 import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.QuoteImagePicker
-import com.btween.app.ui.components.TagsAutocompleteField
+import com.btween.app.ui.components.TagChipInput
 import com.btween.app.ui.util.localizedLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -162,7 +162,7 @@ fun AddEditScreen(
                 selected = state.category,
                 onSelected = viewModel::onCategoryChanged
             )
-            TagsAutocompleteField(
+            TagChipInput(
                 value = state.tagsInput,
                 onValueChange = viewModel::onTagsInputChanged,
                 label = stringResource(R.string.add_edit_label_tags),

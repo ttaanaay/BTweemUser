@@ -22,6 +22,13 @@ interface QuoteApi {
         @Query("category") category: String? = null
     ): List<QuoteResponseDto>
 
+    @GET("quotes/by-tag")
+    suspend fun getQuotesByTag(
+        @Query("tag") tag: String,
+        @Query("limit") limit: Int = 20,
+        @Query("offset") offset: Long = 0
+    ): List<QuoteResponseDto>
+
     @GET("quotes/{id}")
     suspend fun getQuote(@Path("id") id: Long): QuoteResponseDto
 

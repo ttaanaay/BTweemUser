@@ -56,6 +56,11 @@ sealed class Destination(val route: String) {
         fun createRoute(category: String) = "category_quotes/${java.net.URLEncoder.encode(category, "UTF-8")}"
     }
 
+    data object TagQuotes : Destination("tag_quotes/{tag}") {
+        const val ARG_TAG = "tag"
+        fun createRoute(tag: String) = "tag_quotes/${java.net.URLEncoder.encode(tag, "UTF-8")}"
+    }
+
     data object Comments : Destination("comments/{quoteId}") {
         const val ARG_QUOTE_ID = "quoteId"
         fun createRoute(quoteId: Long) = "comments/$quoteId"

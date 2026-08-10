@@ -20,6 +20,7 @@ import com.btween.app.ui.feed.FeedScreen
 import com.btween.app.ui.feed.SocialQuoteDetailScreen
 import com.btween.app.ui.home.CategoryQuotesScreen
 import com.btween.app.ui.home.HomeScreen
+import com.btween.app.ui.home.TagQuotesScreen
 import com.btween.app.ui.library.LibraryScreen
 import com.btween.app.ui.notifications.NotificationScreen
 import com.btween.app.ui.profile.EditProfileScreen
@@ -96,7 +97,8 @@ fun BTweenNavHost(navController: NavHostController) {
                 onOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
                 onCommentsClick = { quoteId -> navController.navigate(Destination.Comments.createRoute(quoteId)) },
                 onEditQuote = { quoteId -> navController.navigate(Destination.EditSocialQuote.createRoute(quoteId)) },
-                onNavigateToLogin = { navController.navigate(Destination.Login.route) }
+                onNavigateToLogin = { navController.navigate(Destination.Login.route) },
+                onTagClick = { tag -> navController.navigate(Destination.TagQuotes.createRoute(tag)) }
             )
         }
 
@@ -107,6 +109,19 @@ fun BTweenNavHost(navController: NavHostController) {
             )
         ) {
             CategoryQuotesScreen(
+                onBack = { navController.popBackStack() },
+                onQuoteOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
+                onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }
+            )
+        }
+
+        composable(
+            route = Destination.TagQuotes.route,
+            arguments = listOf(
+                navArgument(Destination.TagQuotes.ARG_TAG) { type = NavType.StringType }
+            )
+        ) {
+            TagQuotesScreen(
                 onBack = { navController.popBackStack() },
                 onQuoteOwnerClick = { userId -> navController.navigate(Destination.Profile.createRoute(userId)) },
                 onQuoteClick = { quoteId -> navController.navigate(Destination.SocialQuoteDetail.createRoute(quoteId)) }

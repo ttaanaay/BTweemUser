@@ -303,6 +303,12 @@
     <string name="quote_detail_new_collection_label">New collection name</string>
     <string name="quote_detail_create_and_add">Create &amp; add</string>
 
+    <!-- Tag quotes -->
+    <string name="tag_quotes_title">#%1$s</string>
+    <string name="tag_empty_title">No other quotes tagged #%1$s yet</string>
+    <string name="tag_empty_message">Check back later, or use this tag on your own quotes.</string>
+    <string name="tag_input_placeholder">Type a tag and press comma or space</string>
+
     <!-- Edit social quote -->
     <string name="edit_quote_title">Edit quote</string>
     <string name="edit_quote_action_save">Save</string>

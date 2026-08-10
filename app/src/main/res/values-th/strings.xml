@@ -292,6 +292,12 @@
     <string name="quote_detail_new_collection_label">ชื่อคอลเลกชันใหม่</string>
     <string name="quote_detail_create_and_add">สร้างและเพิ่ม</string>
 
+    <!-- Tag quotes -->
+    <string name="tag_quotes_title">#%1$s</string>
+    <string name="tag_empty_title">ยังไม่มีคำคมอื่นที่ติด #%1$s</string>
+    <string name="tag_empty_message">กลับมาดูใหม่ทีหลัง หรือใช้แท็กนี้กับคำคมของคุณเองสิ</string>
+    <string name="tag_input_placeholder">พิมพ์แท็กแล้วกดคอมม่าหรือเว้นวรรค</string>
+
     <!-- Edit social quote -->
     <string name="edit_quote_title">แก้ไขคำคม</string>
     <string name="edit_quote_action_save">บันทึก</string>

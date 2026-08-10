@@ -82,6 +82,7 @@ fun SocialQuoteDetailScreen(
     onCommentsClick: (Long) -> Unit,
     onEditQuote: (Long) -> Unit,
     onNavigateToLogin: () -> Unit,
+    onTagClick: (String) -> Unit,
     viewModel: SocialQuoteDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -261,7 +262,7 @@ fun SocialQuoteDetailScreen(
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     quote.tags.forEach { tag ->
                         AssistChip(
-                            onClick = {},
+                            onClick = { onTagClick(tag) },
                             label = { Text("#$tag", style = MaterialTheme.typography.labelMedium) }
                         )
                     }

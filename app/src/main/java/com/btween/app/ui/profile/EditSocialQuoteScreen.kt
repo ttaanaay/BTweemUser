@@ -41,7 +41,7 @@ import com.btween.app.R
 import com.btween.app.domain.model.SourceType
 import com.btween.app.ui.components.AutocompleteTextField
 import com.btween.app.ui.components.QuoteImagePicker
-import com.btween.app.ui.components.TagsAutocompleteField
+import com.btween.app.ui.components.TagChipInput
 import com.btween.app.ui.util.localizedLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -171,7 +171,7 @@ fun EditSocialQuoteScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            TagsAutocompleteField(
+            TagChipInput(
                 value = state.tagsInput,
                 onValueChange = viewModel::onTagsInputChanged,
                 label = stringResource(R.string.edit_quote_label_tags),
