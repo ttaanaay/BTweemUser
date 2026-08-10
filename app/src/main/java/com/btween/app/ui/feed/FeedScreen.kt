@@ -38,7 +38,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.domain.model.SocialQuote
 import com.btween.app.domain.repository.ReportTargetType
 import com.btween.app.ui.components.EmptyState
@@ -68,7 +70,7 @@ fun FeedScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(title = { Text("Feed") })
+            TopAppBar(title = { Text(stringResource(R.string.feed_title)) })
         }
     ) { padding ->
         Box(
@@ -89,14 +91,14 @@ fun FeedScreen(
                         onClick = {
                             coroutineScope.launch { pagerState.animateScrollToPage(FeedTab.FOR_YOU.ordinal) }
                         },
-                        text = { Text("For You") }
+                        text = { Text(stringResource(R.string.feed_tab_for_you)) }
                     )
                     Tab(
                         selected = uiState.selectedTab == FeedTab.FOLLOWING,
                         onClick = {
                             coroutineScope.launch { pagerState.animateScrollToPage(FeedTab.FOLLOWING.ordinal) }
                         },
-                        text = { Text("Following") }
+                        text = { Text(stringResource(R.string.feed_tab_following)) }
                     )
                 }
 
@@ -198,15 +200,15 @@ private fun FeedTabContent(
                     EmptyState(
                         modifier = Modifier.fillMaxSize(),
                         icon = Icons.Outlined.People,
-                        title = "No quotes from people you follow yet",
-                        message = "Follow more people to see their public quotes here, or check the For You tab."
+                        title = stringResource(R.string.feed_empty_following_title),
+                        message = stringResource(R.string.feed_empty_following_message)
                     )
                 } else {
                     EmptyState(
                         modifier = Modifier.fillMaxSize(),
                         icon = Icons.Outlined.Public,
-                        title = "No public quotes yet",
-                        message = "Be the first to share a quote with everyone \u2014 mark a quote as Public when adding it."
+                        title = stringResource(R.string.feed_empty_for_you_title),
+                        message = stringResource(R.string.feed_empty_for_you_message)
                     )
                 }
             }

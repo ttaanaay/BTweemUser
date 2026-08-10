@@ -31,10 +31,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.domain.model.User
 import com.btween.app.ui.components.UserAvatar
 
@@ -78,12 +80,12 @@ private fun InterestsStep(
     Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
         Spacer(modifier = Modifier.height(32.dp))
         Text(
-            "What do you love reading?",
+            stringResource(R.string.onboarding_interests_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Text(
-            "Pick a few - we'll use this to help you find quotes you'll love.",
+            stringResource(R.string.onboarding_interests_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 8.dp)
@@ -100,10 +102,10 @@ private fun InterestsStep(
         Spacer(modifier = Modifier.weight(1f))
 
         Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
-            Text("Continue")
+            Text(stringResource(R.string.onboarding_action_continue))
         }
         TextButton(onClick = onSkip, modifier = Modifier.fillMaxWidth()) {
-            Text("Skip for now")
+            Text(stringResource(R.string.onboarding_action_skip))
         }
     }
 }
@@ -165,12 +167,12 @@ private fun FollowSuggestionsStep(
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(24.dp)) {
             Text(
-                "People worth following",
+                stringResource(R.string.onboarding_follow_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                "Follow a few to fill your Following feed with quotes you'll actually want to see.",
+                stringResource(R.string.onboarding_follow_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 8.dp)
@@ -184,7 +186,7 @@ private fun FollowSuggestionsStep(
         } else if (suggestedUsers.isEmpty()) {
             Box(modifier = Modifier.fillMaxWidth().weight(1f).padding(24.dp), contentAlignment = Alignment.Center) {
                 Text(
-                    "No suggestions yet - check back once more people have joined.",
+                    stringResource(R.string.onboarding_follow_empty),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -205,10 +207,10 @@ private fun FollowSuggestionsStep(
 
         Column(modifier = Modifier.padding(24.dp)) {
             Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                Text("Done")
+                Text(stringResource(R.string.onboarding_action_done))
             }
             TextButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-                Text("Back")
+                Text(stringResource(R.string.onboarding_action_back))
             }
         }
     }
@@ -231,9 +233,9 @@ private fun SuggestedUserRow(user: User, isFollowing: Boolean, onToggleFollow: (
             )
         }
         if (isFollowing) {
-            OutlinedButton(onClick = onToggleFollow) { Text("Following") }
+            OutlinedButton(onClick = onToggleFollow) { Text(stringResource(R.string.onboarding_following_action)) }
         } else {
-            Button(onClick = onToggleFollow) { Text("Follow") }
+            Button(onClick = onToggleFollow) { Text(stringResource(R.string.onboarding_follow_action)) }
         }
     }
 }

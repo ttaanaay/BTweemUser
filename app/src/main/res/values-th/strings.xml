@@ -176,6 +176,124 @@
     <string name="comments_delete_title">ลบคอมเมนต์นี้?</string>
     <string name="comments_delete_message">ไม่สามารถกู้คืนได้</string>
 
+    <!-- Feed -->
+    <string name="feed_title">ฟีด</string>
+    <string name="feed_tab_for_you">สำหรับคุณ</string>
+    <string name="feed_tab_following">กำลังติดตาม</string>
+    <string name="feed_empty_following_title">ยังไม่มีคำคมจากคนที่คุณติดตาม</string>
+    <string name="feed_empty_following_message">ติดตามคนเพิ่มเพื่อดูคำคมสาธารณะของพวกเขาที่นี่ หรือดูที่แท็บสำหรับคุณ</string>
+    <string name="feed_empty_for_you_title">ยังไม่มีคำคมสาธารณะ</string>
+    <string name="feed_empty_for_you_message">เป็นคนแรกที่แชร์คำคมให้ทุกคนเห็นสิ \u2014 ตั้งค่าคำคมเป็นสาธารณะตอนเพิ่มคำคม</string>
+
+    <!-- Comments screen -->
+    <string name="comments_title">คอมเมนต์</string>
+    <string name="comments_placeholder">เพิ่มคอมเมนต์...</string>
+    <string name="comments_action_post">โพสต์คอมเมนต์</string>
+    <string name="comments_empty_title">ยังไม่มีคอมเมนต์</string>
+    <string name="comments_empty_message">เป็นคนแรกที่แสดงความคิดเห็นเกี่ยวกับคำคมนี้สิ</string>
+    <string name="comments_action_save_edit">บันทึก</string>
+    <string name="comments_action_cancel_edit">ยกเลิก</string>
+    <string name="comments_action_edit">แก้ไขคอมเมนต์</string>
+    <string name="comments_action_delete">ลบคอมเมนต์</string>
+    <string name="comments_action_report">รายงานคอมเมนต์</string>
+    <string name="comments_edited_indicator">(แก้ไขแล้ว)</string>
+
+    <!-- Collections screens -->
+    <string name="collections_title">คอลเลกชันของฉัน</string>
+    <string name="collections_action_new">สร้างคอลเลกชันใหม่</string>
+    <string name="collections_empty_title">ยังไม่มีคอลเลกชัน</string>
+    <string name="collections_empty_message">จัดกลุ่มคำคมที่ชอบเป็นคอลเลกชัน เช่น \"แรงบันดาลใจ\" หรือ \"ความรัก\" กด + เพื่อสร้างใหม่</string>
+    <string name="collections_new_dialog_title">สร้างคอลเลกชันใหม่</string>
+    <string name="collections_label_name">ชื่อ</string>
+    <string name="collections_action_create">สร้าง</string>
+    <string name="collections_default_title">คอลเลกชัน</string>
+    <string name="collections_detail_empty_title">ยังไม่มีอะไรตรงนี้เลย</string>
+    <string name="collections_detail_empty_message">เพิ่มคำคมเข้าคอลเลกชันนี้ได้จากเมนู \"...\" ของคำคมใดก็ได้ หรือจากหน้ารายละเอียดคำคม</string>
+    <string name="collections_action_remove_item">นำออกจากคอลเลกชัน</string>
+
+    <!-- Report dialog -->
+    <string name="report_reason_spam">สแปม</string>
+    <string name="report_reason_harassment">การคุกคามหรือกลั่นแกล้ง</string>
+    <string name="report_reason_inappropriate">เนื้อหาไม่เหมาะสม</string>
+    <string name="report_reason_misinformation">ข้อมูลเท็จ</string>
+    <string name="report_reason_other">อื่นๆ</string>
+    <string name="report_title_quote">รายงานคำคม</string>
+    <string name="report_title_comment">รายงานคอมเมนต์</string>
+    <string name="report_title_user">รายงานผู้ใช้</string>
+    <string name="report_label_details">รายละเอียดเพิ่มเติม (ไม่บังคับ)</string>
+    <string name="report_action_submit">ส่งรายงาน</string>
+
+    <!-- Change password -->
+    <string name="change_password_title">เปลี่ยนรหัสผ่าน</string>
+    <string name="change_password_label_current">รหัสผ่านปัจจุบัน</string>
+    <string name="change_password_label_confirm">ยืนยันรหัสผ่านใหม่</string>
+    <string name="change_password_mismatch">รหัสผ่านไม่ตรงกัน</string>
+    <string name="change_password_action_update">อัปเดตรหัสผ่าน</string>
+
+    <!-- Notifications -->
+    <string name="notifications_title">การแจ้งเตือน</string>
+    <string name="notifications_empty_title">ยังไม่มีการแจ้งเตือน</string>
+    <string name="notifications_empty_message">เมื่อมีคนติดตามคุณหรือไลค์คำคมของคุณ จะแสดงที่นี่</string>
+    <string name="notif_follow">%1$s เริ่มติดตามคุณ</string>
+    <string name="notif_comment">%1$s แสดงความคิดเห็นในคำคมของคุณ%2$s</string>
+    <string name="notif_rejected">คำคมของคุณถูกปฏิเสธโดยผู้ดูแล%1$s</string>
+    <string name="notif_liked">%1$s ถูกใจคำคมของคุณ%2$s</string>
+
+    <!-- Follow list -->
+    <string name="followlist_empty_followers">ยังไม่มีผู้ติดตาม</string>
+    <string name="followlist_empty_following">ยังไม่ได้ติดตามใครเลย</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_interests_title">คุณชอบอ่านอะไร?</string>
+    <string name="onboarding_interests_subtitle">เลือกสักสองสามอย่าง เราจะใช้ช่วยแนะนำคำคมที่คุณน่าจะชอบ</string>
+    <string name="onboarding_action_continue">ต่อไป</string>
+    <string name="onboarding_action_skip">ข้ามไปก่อน</string>
+    <string name="onboarding_follow_title">คนที่น่าติดตาม</string>
+    <string name="onboarding_follow_subtitle">ติดตามสักสองสามคน เพื่อให้ฟีด Following มีคำคมที่คุณอยากเห็นจริงๆ</string>
+    <string name="onboarding_follow_empty">ยังไม่มีคำแนะนำ ลองกลับมาเช็คอีกทีเมื่อมีคนเข้าร่วมมากขึ้น</string>
+    <string name="onboarding_action_done">เสร็จสิ้น</string>
+    <string name="onboarding_action_back">ย้อนกลับ</string>
+    <string name="onboarding_following_action">กำลังติดตาม</string>
+    <string name="onboarding_follow_action">ติดตาม</string>
+
+    <!-- Category quotes -->
+    <string name="category_empty_title">ยังไม่มีคำคมในหมวด %1$s</string>
+    <string name="category_empty_message">กลับมาดูใหม่ทีหลัง หรือแชร์คำคมของคุณในหมวดนี้เลย</string>
+
+    <!-- Search -->
+    <string name="search_tab_quotes">คำคม</string>
+    <string name="search_tab_people">ผู้คน</string>
+    <string name="search_people_empty_title">ค้นหาผู้คน</string>
+    <string name="search_people_empty_message">ค้นหาด้วยชื่อผู้ใช้หรือชื่อที่แสดง</string>
+    <string name="search_people_no_results_title">ไม่พบใครเลย</string>
+    <string name="search_people_no_results_message">ลองใช้ชื่อผู้ใช้หรือชื่ออื่น</string>
+
+    <!-- Edit social quote -->
+    <string name="edit_quote_title">แก้ไขคำคม</string>
+    <string name="edit_quote_action_save">บันทึก</string>
+    <string name="edit_quote_label_text">ข้อความคำคม</string>
+    <string name="edit_quote_label_source_type">ประเภทแหล่งที่มา</string>
+    <string name="edit_quote_label_source_title">ชื่อแหล่งที่มา</string>
+    <string name="edit_quote_label_speaker">ผู้พูด/ตัวละคร</string>
+    <string name="edit_quote_label_author">ผู้แต่ง (ไม่บังคับ)</string>
+    <string name="edit_quote_label_tags">แท็ก (คั่นด้วยคอมม่า)</string>
+
+    <!-- Settings -->
+    <string name="settings_verify_email_title">ยืนยันอีเมลของคุณ</string>
+    <string name="settings_verify_email_message">ยืนยันที่อยู่อีเมลเพื่อความปลอดภัยของบัญชี</string>
+    <string name="settings_verify_email_action">ยืนยันตอนนี้</string>
+    <string name="settings_change_password">เปลี่ยนรหัสผ่าน</string>
+    <string name="settings_delete_account">ลบบัญชี</string>
+    <string name="settings_delete_account_title">ลบบัญชีของคุณ?</string>
+    <string name="settings_delete_account_message">การดำเนินการนี้จะลบโปรไฟล์ คำคม คอมเมนต์ การกดถูกใจ การติดตาม และคอลเลกชันของคุณอย่างถาวร ไม่สามารถกู้คืนได้</string>
+    <string name="settings_delete_account_password_label">กรอกรหัสผ่านเพื่อยืนยัน</string>
+    <string name="settings_delete_account_deleting">กำลังลบ...</string>
+    <string name="settings_delete_account_confirm">ลบถาวร</string>
+    <string name="settings_verify_code_intro">กรอกรหัสที่เราส่งไปยังอีเมลของคุณ</string>
+    <string name="settings_verify_code_sending">กำลังส่ง...</string>
+    <string name="settings_verify_code_resend">ส่งรหัสอีกครั้ง</string>
+    <string name="settings_verify_code_action">ยืนยัน</string>
+
     <!-- Collections -->
     <string name="collections_remove_item_title">นำออกจากคอลเลกชัน?</string>
     <string name="collections_remove_item_message">แค่นำออกจากคอลเลกชันนี้เท่านั้น คำคมตัวจริงจะไม่ถูกลบ</string>

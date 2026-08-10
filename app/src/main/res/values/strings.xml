@@ -187,6 +187,124 @@
     <string name="comments_delete_title">Delete comment?</string>
     <string name="comments_delete_message">This can\'t be undone.</string>
 
+    <!-- Feed -->
+    <string name="feed_title">Feed</string>
+    <string name="feed_tab_for_you">For You</string>
+    <string name="feed_tab_following">Following</string>
+    <string name="feed_empty_following_title">No quotes from people you follow yet</string>
+    <string name="feed_empty_following_message">Follow more people to see their public quotes here, or check the For You tab.</string>
+    <string name="feed_empty_for_you_title">No public quotes yet</string>
+    <string name="feed_empty_for_you_message">Be the first to share a quote with everyone \u2014 mark a quote as Public when adding it.</string>
+
+    <!-- Comments screen -->
+    <string name="comments_title">Comments</string>
+    <string name="comments_placeholder">Add a comment...</string>
+    <string name="comments_action_post">Post comment</string>
+    <string name="comments_empty_title">No comments yet</string>
+    <string name="comments_empty_message">Be the first to say something about this quote.</string>
+    <string name="comments_action_save_edit">Save</string>
+    <string name="comments_action_cancel_edit">Cancel</string>
+    <string name="comments_action_edit">Edit comment</string>
+    <string name="comments_action_delete">Delete comment</string>
+    <string name="comments_action_report">Report comment</string>
+    <string name="comments_edited_indicator">(edited)</string>
+
+    <!-- Collections screens -->
+    <string name="collections_title">My Collections</string>
+    <string name="collections_action_new">New collection</string>
+    <string name="collections_empty_title">No collections yet</string>
+    <string name="collections_empty_message">Group quotes you love into named collections, like \"Motivation\" or \"Love\". Tap + to create one.</string>
+    <string name="collections_new_dialog_title">New collection</string>
+    <string name="collections_label_name">Name</string>
+    <string name="collections_action_create">Create</string>
+    <string name="collections_default_title">Collection</string>
+    <string name="collections_detail_empty_title">Nothing here yet</string>
+    <string name="collections_detail_empty_message">Add quotes to this collection from any quote\'s \"...\" menu or its detail page.</string>
+    <string name="collections_action_remove_item">Remove from collection</string>
+
+    <!-- Report dialog -->
+    <string name="report_reason_spam">Spam</string>
+    <string name="report_reason_harassment">Harassment or bullying</string>
+    <string name="report_reason_inappropriate">Inappropriate content</string>
+    <string name="report_reason_misinformation">Misinformation</string>
+    <string name="report_reason_other">Other</string>
+    <string name="report_title_quote">Report quote</string>
+    <string name="report_title_comment">Report comment</string>
+    <string name="report_title_user">Report user</string>
+    <string name="report_label_details">Additional details (optional)</string>
+    <string name="report_action_submit">Submit</string>
+
+    <!-- Change password -->
+    <string name="change_password_title">Change password</string>
+    <string name="change_password_label_current">Current password</string>
+    <string name="change_password_label_confirm">Confirm new password</string>
+    <string name="change_password_mismatch">Doesn\'t match</string>
+    <string name="change_password_action_update">Update password</string>
+
+    <!-- Notifications -->
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_empty_title">No notifications yet</string>
+    <string name="notifications_empty_message">When someone follows you or likes your quotes, you\'ll see it here.</string>
+    <string name="notif_follow">%1$s started following you</string>
+    <string name="notif_comment">%1$s commented on your quote%2$s</string>
+    <string name="notif_rejected">Your quote was rejected by a moderator%1$s</string>
+    <string name="notif_liked">%1$s liked your quote%2$s</string>
+
+    <!-- Follow list -->
+    <string name="followlist_empty_followers">No followers yet</string>
+    <string name="followlist_empty_following">Not following anyone yet</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_interests_title">What do you love reading?</string>
+    <string name="onboarding_interests_subtitle">Pick a few - we\'ll use this to help you find quotes you\'ll love.</string>
+    <string name="onboarding_action_continue">Continue</string>
+    <string name="onboarding_action_skip">Skip for now</string>
+    <string name="onboarding_follow_title">People worth following</string>
+    <string name="onboarding_follow_subtitle">Follow a few to fill your Following feed with quotes you\'ll actually want to see.</string>
+    <string name="onboarding_follow_empty">No suggestions yet - check back once more people have joined.</string>
+    <string name="onboarding_action_done">Done</string>
+    <string name="onboarding_action_back">Back</string>
+    <string name="onboarding_following_action">Following</string>
+    <string name="onboarding_follow_action">Follow</string>
+
+    <!-- Category quotes -->
+    <string name="category_empty_title">No quotes in %1$s yet</string>
+    <string name="category_empty_message">Check back later, or share one of your own in this category.</string>
+
+    <!-- Search -->
+    <string name="search_tab_quotes">Quotes</string>
+    <string name="search_tab_people">People</string>
+    <string name="search_people_empty_title">Find people</string>
+    <string name="search_people_empty_message">Search by username or display name.</string>
+    <string name="search_people_no_results_title">No one found</string>
+    <string name="search_people_no_results_message">Try a different username or name.</string>
+
+    <!-- Edit social quote -->
+    <string name="edit_quote_title">Edit quote</string>
+    <string name="edit_quote_action_save">Save</string>
+    <string name="edit_quote_label_text">Quote text</string>
+    <string name="edit_quote_label_source_type">Source type</string>
+    <string name="edit_quote_label_source_title">Source title</string>
+    <string name="edit_quote_label_speaker">Speaker / character</string>
+    <string name="edit_quote_label_author">Author (optional)</string>
+    <string name="edit_quote_label_tags">Tags (comma separated)</string>
+
+    <!-- Settings -->
+    <string name="settings_verify_email_title">Verify your email</string>
+    <string name="settings_verify_email_message">Confirm your email address to secure your account.</string>
+    <string name="settings_verify_email_action">Verify now</string>
+    <string name="settings_change_password">Change password</string>
+    <string name="settings_delete_account">Delete account</string>
+    <string name="settings_delete_account_title">Delete your account?</string>
+    <string name="settings_delete_account_message">This permanently deletes your profile, quotes, comments, likes, follows, and collections. This can\'t be undone.</string>
+    <string name="settings_delete_account_password_label">Enter your password to confirm</string>
+    <string name="settings_delete_account_deleting">Deleting...</string>
+    <string name="settings_delete_account_confirm">Delete permanently</string>
+    <string name="settings_verify_code_intro">Enter the code we sent to your email.</string>
+    <string name="settings_verify_code_sending">Sending...</string>
+    <string name="settings_verify_code_resend">Resend code</string>
+    <string name="settings_verify_code_action">Verify</string>
+
     <!-- Collections -->
     <string name="collections_remove_item_title">Remove from collection?</string>
     <string name="collections_remove_item_message">This only removes it from this collection - the quote itself won\'t be deleted.</string>

@@ -65,10 +65,10 @@ fun CollectionDetailScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(uiState.collection?.name ?: "Collection") },
+                title = { Text(uiState.collection?.name ?: stringResource(R.string.collections_default_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -89,8 +89,8 @@ fun CollectionDetailScreen(
                     EmptyState(
                         modifier = Modifier.fillMaxSize(),
                         icon = Icons.Outlined.CollectionsBookmark,
-                        title = "Nothing here yet",
-                        message = "Add quotes to this collection from any quote's \"...\" menu or its detail page."
+                        title = stringResource(R.string.collections_detail_empty_title),
+                        message = stringResource(R.string.collections_detail_empty_message)
                     )
                 }
                 else -> {
@@ -112,7 +112,7 @@ fun CollectionDetailScreen(
                                     onClick = { quoteIdPendingRemoval = quote.id },
                                     modifier = Modifier.align(Alignment.End)
                                 ) {
-                                    Text("Remove from collection")
+                                    Text(stringResource(R.string.collections_action_remove_item))
                                 }
                             }
                         }

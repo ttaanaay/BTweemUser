@@ -24,9 +24,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.ui.components.PasswordTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,10 +54,10 @@ fun ChangePasswordScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Change password") },
+                title = { Text(stringResource(R.string.change_password_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -72,23 +74,23 @@ fun ChangePasswordScreen(
             PasswordTextField(
                 value = state.currentPassword,
                 onValueChange = viewModel::onCurrentPasswordChanged,
-                label = "Current password",
+                label = stringResource(R.string.change_password_label_current),
                 modifier = Modifier.fillMaxWidth()
             )
             PasswordTextField(
                 value = state.newPassword,
                 onValueChange = viewModel::onNewPasswordChanged,
-                label = "New password",
+                label = stringResource(R.string.auth_label_new_password),
                 modifier = Modifier.fillMaxWidth(),
-                supportingText = "At least 8 characters"
+                supportingText = stringResource(R.string.auth_password_supporting)
             )
             PasswordTextField(
                 value = state.confirmPassword,
                 onValueChange = viewModel::onConfirmPasswordChanged,
-                label = "Confirm new password",
+                label = stringResource(R.string.change_password_label_confirm),
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = if (state.confirmPassword.isNotEmpty() && state.confirmPassword != state.newPassword) {
-                    "Doesn't match"
+                    stringResource(R.string.change_password_mismatch)
                 } else {
                     null
                 }
@@ -102,7 +104,7 @@ fun ChangePasswordScreen(
                 if (state.isSaving) {
                     CircularProgressIndicator(modifier = Modifier.padding(2.dp))
                 } else {
-                    Text("Update password")
+                    Text(stringResource(R.string.change_password_action_update))
                 }
             }
         }

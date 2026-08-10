@@ -33,13 +33,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.domain.model.SourceType
 import com.btween.app.ui.components.AutocompleteTextField
 import com.btween.app.ui.components.QuoteImagePicker
 import com.btween.app.ui.components.TagsAutocompleteField
+import com.btween.app.ui.util.localizedLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,15 +69,15 @@ fun EditSocialQuoteScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Edit quote") },
+                title = { Text(stringResource(R.string.edit_quote_title)) },
                 navigationIcon = {
                     IconButton(onClick = onDone) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     TextButton(onClick = viewModel::onSave, enabled = !state.isSaving && !state.isLoading) {
-                        Text("Save")
+                        Text(stringResource(R.string.edit_quote_action_save))
                     }
                 }
             )
@@ -98,7 +101,7 @@ fun EditSocialQuoteScreen(
             OutlinedTextField(
                 value = state.text,
                 onValueChange = viewModel::onTextChanged,
-                label = { Text("Quote text") },
+                label = { Text(stringResource(R.string.edit_quote_label_text)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3
             )
@@ -115,10 +118,10 @@ fun EditSocialQuoteScreen(
             // menuAnchor()/API surface has shifted across recent Material3 releases).
             Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
-                    value = state.sourceType.name,
+                    value = state.sourceType.localizedLabel(),
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Source type") },
+                    label = { Text(stringResource(R.string.edit_quote_label_source_type)) },
                     trailingIcon = { Icon(Icons.Filled.ArrowDropDown, contentDescription = null) },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -134,7 +137,7 @@ fun EditSocialQuoteScreen(
                 ) {
                     SourceType.entries.forEach { type ->
                         DropdownMenuItem(
-                            text = { Text(type.name) },
+                            text = { Text(type.localizedLabel()) },
                             onClick = {
                                 viewModel.onSourceTypeChanged(type)
                                 showSourceTypeMenu = false
@@ -147,7 +150,7 @@ fun EditSocialQuoteScreen(
             AutocompleteTextField(
                 value = state.sourceTitle,
                 onValueChange = viewModel::onSourceTitleChanged,
-                label = "Source title",
+                label = stringResource(R.string.edit_quote_label_source_title),
                 suggestions = suggestions.sourceTitles,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -155,7 +158,7 @@ fun EditSocialQuoteScreen(
             AutocompleteTextField(
                 value = state.speaker,
                 onValueChange = viewModel::onSpeakerChanged,
-                label = "Speaker / character",
+                label = stringResource(R.string.edit_quote_label_speaker),
                 suggestions = suggestions.speakers,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -163,7 +166,7 @@ fun EditSocialQuoteScreen(
             AutocompleteTextField(
                 value = state.author,
                 onValueChange = viewModel::onAuthorChanged,
-                label = "Author (optional)",
+                label = stringResource(R.string.edit_quote_label_author),
                 suggestions = suggestions.authors,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -171,7 +174,7 @@ fun EditSocialQuoteScreen(
             TagsAutocompleteField(
                 value = state.tagsInput,
                 onValueChange = viewModel::onTagsInputChanged,
-                label = "Tags (comma separated)",
+                label = stringResource(R.string.edit_quote_label_tags),
                 suggestions = suggestions.tags,
                 modifier = Modifier.fillMaxWidth()
             )

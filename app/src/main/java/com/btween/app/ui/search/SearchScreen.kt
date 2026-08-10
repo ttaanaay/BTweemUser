@@ -79,12 +79,12 @@ fun SearchScreen(
                 Tab(
                     selected = uiState.mode == SearchMode.QUOTES,
                     onClick = { viewModel.onModeChanged(SearchMode.QUOTES) },
-                    text = { Text("Quotes") }
+                    text = { Text(stringResource(R.string.search_tab_quotes)) }
                 )
                 Tab(
                     selected = uiState.mode == SearchMode.PEOPLE,
                     onClick = { viewModel.onModeChanged(SearchMode.PEOPLE) },
-                    text = { Text("People") }
+                    text = { Text(stringResource(R.string.search_tab_people)) }
                 )
             }
 
@@ -142,8 +142,8 @@ private fun PeopleResults(
         !uiState.hasSearched -> EmptyState(
             modifier = Modifier.fillMaxSize(),
             icon = Icons.Outlined.Person,
-            title = "Find people",
-            message = "Search by username or display name."
+            title = stringResource(R.string.search_people_empty_title),
+            message = stringResource(R.string.search_people_empty_message)
         )
         uiState.isSearchingUsers -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -151,8 +151,8 @@ private fun PeopleResults(
         uiState.userResults.isEmpty() -> EmptyState(
             modifier = Modifier.fillMaxSize(),
             icon = Icons.Outlined.Person,
-            title = "No one found",
-            message = "Try a different username or name."
+            title = stringResource(R.string.search_people_no_results_title),
+            message = stringResource(R.string.search_people_no_results_message)
         )
         else -> LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)) {
             items(uiState.userResults, key = { it.id }) { user ->

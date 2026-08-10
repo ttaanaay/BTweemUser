@@ -73,17 +73,17 @@ fun CollectionsScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("My Collections") },
+                title = { Text(stringResource(R.string.collections_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = viewModel::onShowCreateDialog) {
-                Icon(Icons.Filled.Add, contentDescription = "New collection")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.collections_action_new))
             }
         }
     ) { padding ->
@@ -102,8 +102,8 @@ fun CollectionsScreen(
                     EmptyState(
                         modifier = Modifier.fillMaxSize(),
                         icon = Icons.Outlined.CollectionsBookmark,
-                        title = "No collections yet",
-                        message = "Group quotes you love into named collections, like \"Motivation\" or \"Love\". Tap + to create one."
+                        title = stringResource(R.string.collections_empty_title),
+                        message = stringResource(R.string.collections_empty_message)
                     )
                 }
                 else -> {
@@ -127,12 +127,12 @@ fun CollectionsScreen(
     if (uiState.showCreateDialog) {
         AlertDialog(
             onDismissRequest = viewModel::onDismissCreateDialog,
-            title = { Text("New collection") },
+            title = { Text(stringResource(R.string.collections_new_dialog_title)) },
             text = {
                 OutlinedTextField(
                     value = uiState.newCollectionName,
                     onValueChange = viewModel::onNewCollectionNameChanged,
-                    label = { Text("Name") },
+                    label = { Text(stringResource(R.string.collections_label_name)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -141,10 +141,10 @@ fun CollectionsScreen(
                 TextButton(
                     onClick = viewModel::onCreateCollection,
                     enabled = !uiState.isCreating && uiState.newCollectionName.isNotBlank()
-                ) { Text("Create") }
+                ) { Text(stringResource(R.string.collections_action_create)) }
             },
             dismissButton = {
-                TextButton(onClick = viewModel::onDismissCreateDialog) { Text("Cancel") }
+                TextButton(onClick = viewModel::onDismissCreateDialog) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -200,7 +200,7 @@ private fun CollectionRow(collection: QuoteCollection, onClick: () -> Unit, onDe
         IconButton(onClick = onDelete) {
             Icon(
                 Icons.Filled.Delete,
-                contentDescription = "Delete collection",
+                contentDescription = stringResource(R.string.action_delete),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

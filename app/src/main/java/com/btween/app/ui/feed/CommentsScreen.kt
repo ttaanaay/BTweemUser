@@ -79,10 +79,10 @@ fun CommentsScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Comments") },
+                title = { Text(stringResource(R.string.comments_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -100,14 +100,14 @@ fun CommentsScreen(
                     value = uiState.draftText,
                     onValueChange = viewModel::onDraftChanged,
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Add a comment...") },
+                    placeholder = { Text(stringResource(R.string.comments_placeholder)) },
                     maxLines = 4
                 )
                 IconButton(
                     onClick = viewModel::onPostComment,
                     enabled = !uiState.isPosting && uiState.draftText.isNotBlank()
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Post comment")
+                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = stringResource(R.string.comments_action_post))
                 }
             }
         }
@@ -129,8 +129,8 @@ fun CommentsScreen(
                     EmptyState(
                         modifier = Modifier.fillMaxSize(),
                         icon = Icons.Outlined.ChatBubbleOutline,
-                        title = "No comments yet",
-                        message = "Be the first to say something about this quote."
+                        title = stringResource(R.string.comments_empty_title),
+                        message = stringResource(R.string.comments_empty_message)
                     )
                 }
                 else -> {
@@ -233,17 +233,17 @@ private fun CommentRow(
                 )
                 Row {
                     IconButton(onClick = onSaveEdit, enabled = !isSavingEdit && editingText.isNotBlank()) {
-                        Icon(Icons.Filled.Check, contentDescription = "Save")
+                        Icon(Icons.Filled.Check, contentDescription = stringResource(R.string.comments_action_save_edit))
                     }
                     IconButton(onClick = onCancelEdit, enabled = !isSavingEdit) {
-                        Icon(Icons.Filled.Close, contentDescription = "Cancel")
+                        Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.comments_action_cancel_edit))
                     }
                 }
             } else {
                 Text(comment.text, style = MaterialTheme.typography.bodyMedium)
                 if (comment.isEdited) {
                     Text(
-                        "(edited)",
+                        stringResource(R.string.comments_edited_indicator),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -254,14 +254,14 @@ private fun CommentRow(
             IconButton(onClick = onStartEdit) {
                 Icon(
                     Icons.Filled.Edit,
-                    contentDescription = "Edit comment",
+                    contentDescription = stringResource(R.string.comments_action_edit),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             IconButton(onClick = onDelete) {
                 Icon(
                     Icons.Filled.Delete,
-                    contentDescription = "Delete comment",
+                    contentDescription = stringResource(R.string.comments_action_delete),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -269,7 +269,7 @@ private fun CommentRow(
             IconButton(onClick = onReport) {
                 Icon(
                     Icons.Filled.Flag,
-                    contentDescription = "Report comment",
+                    contentDescription = stringResource(R.string.comments_action_report),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

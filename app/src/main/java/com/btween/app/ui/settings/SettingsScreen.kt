@@ -89,7 +89,7 @@ fun SettingsScreen(
                 title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -110,18 +110,18 @@ fun SettingsScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            "Verify your email",
+                            stringResource(R.string.settings_verify_email_title),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onErrorContainer
                         )
                         Text(
-                            "Confirm your email address to secure your account.",
+                            stringResource(R.string.settings_verify_email_message),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onErrorContainer,
                             modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
                         )
                         TextButton(onClick = viewModel::onShowVerifyDialog) {
-                            Text("Verify now")
+                            Text(stringResource(R.string.settings_verify_email_action))
                         }
                     }
                 }
@@ -206,7 +206,7 @@ fun SettingsScreen(
                     .selectable(selected = false, onClick = onChangePasswordClick)
                     .padding(horizontal = 20.dp, vertical = 12.dp)
             ) {
-                Text("Change password")
+                Text(stringResource(R.string.settings_change_password))
             }
             Row(
                 modifier = Modifier
@@ -226,7 +226,7 @@ fun SettingsScreen(
                     .padding(horizontal = 20.dp, vertical = 12.dp)
             ) {
                 Text(
-                    "Delete account",
+                    stringResource(R.string.settings_delete_account),
                     color = MaterialTheme.colorScheme.error
                 )
             }
@@ -257,12 +257,11 @@ fun SettingsScreen(
         val hasPassword by viewModel.hasPassword.collectAsStateWithLifecycle()
         AlertDialog(
             onDismissRequest = { if (!isDeletingAccount) showDeleteAccountDialog = false },
-            title = { Text("Delete your account?") },
+            title = { Text(stringResource(R.string.settings_delete_account_title)) },
             text = {
                 Column {
                     Text(
-                        "This permanently deletes your profile, quotes, comments, likes, follows, " +
-                            "and collections. This can't be undone."
+                        stringResource(R.string.settings_delete_account_message)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     // Accounts signed in via Google/Facebook/Microsoft never set a password,
@@ -272,7 +271,7 @@ fun SettingsScreen(
                         PasswordTextField(
                             value = deletePassword,
                             onValueChange = { deletePassword = it },
-                            label = "Enter your password to confirm",
+                            label = stringResource(R.string.settings_delete_account_password_label),
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -288,7 +287,7 @@ fun SettingsScreen(
                     enabled = !isDeletingAccount && (hasPassword == false || deletePassword.isNotBlank())
                 ) {
                     Text(
-                        if (isDeletingAccount) "Deleting..." else "Delete permanently",
+                        if (isDeletingAccount) stringResource(R.string.settings_delete_account_deleting) else stringResource(R.string.settings_delete_account_confirm),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -307,10 +306,10 @@ fun SettingsScreen(
     if (emailVerification.showVerifyDialog) {
         AlertDialog(
             onDismissRequest = viewModel::onDismissVerifyDialog,
-            title = { Text("Verify your email") },
+            title = { Text(stringResource(R.string.settings_verify_email_title)) },
             text = {
                 Column {
-                    Text("Enter the code we sent to your email.")
+                    Text(stringResource(R.string.settings_verify_code_intro))
                     Spacer(modifier = Modifier.height(12.dp))
                     OutlinedTextField(
                         value = emailVerification.code,
@@ -320,7 +319,7 @@ fun SettingsScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                     TextButton(onClick = viewModel::onResendCode, enabled = !emailVerification.isResending) {
-                        Text(if (emailVerification.isResending) "Sending..." else "Resend code")
+                        Text(if (emailVerification.isResending) stringResource(R.string.settings_verify_code_sending) else stringResource(R.string.settings_verify_code_resend))
                     }
                 }
             },
@@ -328,7 +327,7 @@ fun SettingsScreen(
                 TextButton(
                     onClick = viewModel::onSubmitCode,
                     enabled = !emailVerification.isSubmitting && emailVerification.code.isNotBlank()
-                ) { Text("Verify") }
+                ) { Text(stringResource(R.string.settings_verify_code_action)) }
             },
             dismissButton = {
                 TextButton(onClick = viewModel::onDismissVerifyDialog) { Text(stringResource(R.string.action_cancel)) }

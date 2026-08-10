@@ -91,7 +91,7 @@ fun HomeScreen(
                                 }
                             }
                         ) {
-                            Icon(Icons.Filled.Notifications, contentDescription = "Notifications")
+                            Icon(Icons.Filled.Notifications, contentDescription = stringResource(R.string.notifications_title))
                         }
                     }
                 }

@@ -18,18 +18,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.domain.repository.ReportReason
 import com.btween.app.domain.repository.ReportTargetType
 
+@Composable
 private fun ReportReason.label(): String = when (this) {
-    ReportReason.SPAM -> "Spam"
-    ReportReason.HARASSMENT -> "Harassment or bullying"
-    ReportReason.INAPPROPRIATE -> "Inappropriate content"
-    ReportReason.MISINFORMATION -> "Misinformation"
-    ReportReason.OTHER -> "Other"
+    ReportReason.SPAM -> stringResource(R.string.report_reason_spam)
+    ReportReason.HARASSMENT -> stringResource(R.string.report_reason_harassment)
+    ReportReason.INAPPROPRIATE -> stringResource(R.string.report_reason_inappropriate)
+    ReportReason.MISINFORMATION -> stringResource(R.string.report_reason_misinformation)
+    ReportReason.OTHER -> stringResource(R.string.report_reason_other)
 }
 
 /**
@@ -57,9 +60,9 @@ fun ReportDialog(
         title = {
             Text(
                 when (targetType) {
-                    ReportTargetType.QUOTE -> "Report quote"
-                    ReportTargetType.COMMENT -> "Report comment"
-                    ReportTargetType.USER -> "Report user"
+                    ReportTargetType.QUOTE -> stringResource(R.string.report_title_quote)
+                    ReportTargetType.COMMENT -> stringResource(R.string.report_title_comment)
+                    ReportTargetType.USER -> stringResource(R.string.report_title_user)
                 }
             )
         },
@@ -85,7 +88,7 @@ fun ReportDialog(
                     OutlinedTextField(
                         value = details,
                         onValueChange = { details = it },
-                        label = { Text("Additional details (optional)") },
+                        label = { Text(stringResource(R.string.report_label_details)) },
                         modifier = Modifier.fillMaxWidth(),
                         maxLines = 3
                     )
@@ -103,10 +106,10 @@ fun ReportDialog(
                     }
                 },
                 enabled = !uiState.isSubmitting && selectedReason != null
-            ) { Text("Submit") }
+            ) { Text(stringResource(R.string.report_action_submit)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !uiState.isSubmitting) { Text("Cancel") }
+            TextButton(onClick = onDismiss, enabled = !uiState.isSubmitting) { Text(stringResource(R.string.action_cancel)) }
         }
     )
 }

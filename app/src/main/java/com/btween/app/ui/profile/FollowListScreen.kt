@@ -33,9 +33,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.domain.model.User
 import com.btween.app.ui.components.EmptyState
 import com.btween.app.ui.components.UserAvatar
@@ -50,7 +52,7 @@ fun FollowListScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val title = if (viewModel.listType == FollowListType.FOLLOWERS) "Followers" else "Following"
+    val title = if (viewModel.listType == FollowListType.FOLLOWERS) stringResource(R.string.profile_followers) else stringResource(R.string.profile_following)
 
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { snackbarHostState.showSnackbar(it) }
@@ -63,7 +65,7 @@ fun FollowListScreen(
                 title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -79,7 +81,7 @@ fun FollowListScreen(
                 EmptyState(
                     modifier = Modifier.fillMaxSize().padding(padding),
                     icon = Icons.Outlined.Person,
-                    title = if (viewModel.listType == FollowListType.FOLLOWERS) "No followers yet" else "Not following anyone yet",
+                    title = if (viewModel.listType == FollowListType.FOLLOWERS) stringResource(R.string.followlist_empty_followers) else stringResource(R.string.followlist_empty_following),
                     message = ""
                 )
             }

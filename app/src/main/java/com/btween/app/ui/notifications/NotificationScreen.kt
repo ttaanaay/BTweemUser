@@ -38,9 +38,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.domain.model.Notification
 import com.btween.app.ui.components.EmptyState
 
@@ -65,10 +67,10 @@ fun NotificationScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Notifications") },
+                title = { Text(stringResource(R.string.notifications_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -87,8 +89,8 @@ fun NotificationScreen(
                 EmptyState(
                     modifier = Modifier.fillMaxSize().padding(padding),
                     icon = Icons.Outlined.Notifications,
-                    title = "No notifications yet",
-                    message = "When someone follows you or likes your quotes, you'll see it here."
+                    title = stringResource(R.string.notifications_empty_title),
+                    message = stringResource(R.string.notifications_empty_message)
                 )
             }
             else -> {
@@ -148,10 +150,10 @@ private fun NotificationRow(notification: Notification, onClick: () -> Unit) {
         Column {
             val quotePreview = notification.quoteTextPreview?.let { ": \u201C$it\u201D" } ?: ""
             val message = when (notification.type) {
-                "FOLLOW" -> "${notification.actorDisplayName} started following you"
-                "COMMENT" -> "${notification.actorDisplayName} commented on your quote$quotePreview"
-                "REJECTED" -> "Your quote was rejected by a moderator$quotePreview"
-                else -> "${notification.actorDisplayName} liked your quote$quotePreview"
+                "FOLLOW" -> stringResource(R.string.notif_follow, notification.actorDisplayName)
+                "COMMENT" -> stringResource(R.string.notif_comment, notification.actorDisplayName, quotePreview)
+                "REJECTED" -> stringResource(R.string.notif_rejected, quotePreview)
+                else -> stringResource(R.string.notif_liked, notification.actorDisplayName, quotePreview)
             }
             Text(message, style = MaterialTheme.typography.bodyMedium)
         }

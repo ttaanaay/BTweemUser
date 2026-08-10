@@ -29,9 +29,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.btween.app.R
 import com.btween.app.ui.components.EmptyState
 import com.btween.app.ui.feed.SocialQuoteCard
 
@@ -73,7 +75,7 @@ fun CategoryQuotesScreen(
                 title = { Text(viewModel.category) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -96,8 +98,8 @@ fun CategoryQuotesScreen(
                     EmptyState(
                         modifier = Modifier.fillMaxSize(),
                         icon = Icons.Outlined.Search,
-                        title = "No quotes in ${viewModel.category} yet",
-                        message = "Check back later, or share one of your own in this category."
+                        title = stringResource(R.string.category_empty_title, viewModel.category),
+                        message = stringResource(R.string.category_empty_message)
                     )
                 }
                 else -> {
