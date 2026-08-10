@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btween.app.data.remote.CloudinaryUploader
 import com.btween.app.domain.model.SourceType
+import com.btween.app.domain.repository.AuthRepository
+import com.btween.app.domain.repository.ProfileRepository
 import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
 import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
@@ -40,7 +42,9 @@ class EditSocialQuoteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val socialQuoteRepository: SocialQuoteRepository,
     private val cloudinaryUploader: CloudinaryUploader,
-    private val quoteRepository: QuoteRepository
+    private val quoteRepository: QuoteRepository,
+    private val profileRepository: ProfileRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val quoteId: Long = checkNotNull(savedStateHandle[Destination.EditSocialQuote.ARG_QUOTE_ID])
@@ -53,7 +57,22 @@ class EditSocialQuoteViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _suggestions.value = quoteRepository.getAutocompleteSuggestions()
+            val local = quoteRepository.getAutocompleteSuggestions()
+            val userId = authRepository.getCurrentUserId()
+            val social = userId?.let {
+                profileRepository.getUserQuotes(it, limit = 200).getOrDefault(emptyList())
+            }.orEmpty()
+
+            _suggestions.value = QuoteAutocompleteSuggestions(
+                sourceTitles = (local.sourceTitles + social.map { it.sourceTitle })
+                    .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER),
+                speakers = (local.speakers + social.map { it.speaker })
+                    .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER),
+                authors = (local.authors + social.mapNotNull { it.author })
+                    .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER),
+                tags = (local.tags + social.flatMap { it.tags })
+                    .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER)
+            )
         }
         viewModelScope.launch {
             socialQuoteRepository.getQuote(quoteId)

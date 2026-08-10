@@ -9,6 +9,7 @@ import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.repository.AuthRepository
+import com.btween.app.domain.repository.ProfileRepository
 import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
 import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
@@ -53,6 +54,7 @@ class AddEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val quoteRepository: QuoteRepository,
     private val socialQuoteRepository: SocialQuoteRepository,
+    private val profileRepository: ProfileRepository,
     private val addQuoteUseCase: AddQuoteUseCase,
     private val updateQuoteUseCase: UpdateQuoteUseCase,
     private val cloudinaryUploader: CloudinaryUploader,
@@ -77,7 +79,27 @@ class AddEditViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _suggestions.value = quoteRepository.getAutocompleteSuggestions()
+            val local = quoteRepository.getAutocompleteSuggestions()
+
+            // Most of a person's actual quote history often lives on the server (quotes
+            // shared publicly) rather than the local-only library, so local-only
+            // suggestions were nearly always empty in practice. Merge in their own social
+            // quotes too, so autocomplete reflects everything they've ever entered.
+            val userId = authRepository.getCurrentUserId()
+            val social = userId?.let {
+                profileRepository.getUserQuotes(it, limit = 200).getOrDefault(emptyList())
+            }.orEmpty()
+
+            _suggestions.value = QuoteAutocompleteSuggestions(
+                sourceTitles = (local.sourceTitles + social.map { it.sourceTitle })
+                    .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER),
+                speakers = (local.speakers + social.map { it.speaker })
+                    .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER),
+                authors = (local.authors + social.mapNotNull { it.author })
+                    .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER),
+                tags = (local.tags + social.flatMap { it.tags })
+                    .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER)
+            )
         }
         if (requestedId > 0) {
             viewModelScope.launch {
