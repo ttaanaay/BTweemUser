@@ -1,6 +1,5 @@
 package com.btween.app.ui.settings
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.BuildConfig
 import com.btween.app.R
+import com.btween.app.util.findActivity
 import com.btween.app.domain.model.AppLanguage
 import com.btween.app.domain.model.ThemeMode
 import com.btween.app.ui.components.PasswordTextField
@@ -177,7 +177,11 @@ fun SettingsScreen(
                         // AppCompat's automatic recreate-on-locale-change isn't guaranteed to
                         // kick in reliably in that case (especially pre-API 33), so trigger it
                         // explicitly to make sure the change actually takes visible effect.
-                        (context as? Activity)?.recreate()
+                        // context.findActivity() unwraps any ContextWrapper layers (Compose's
+                        // LocalContext.current isn't always the raw Activity) - a direct
+                        // `context as? Activity` cast silently returns null in that case and
+                        // recreate() would just never fire, with no error to show for it.
+                        context.findActivity()?.recreate()
                     }
                 )
             }
