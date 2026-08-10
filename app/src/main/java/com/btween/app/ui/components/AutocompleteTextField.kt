@@ -53,7 +53,9 @@ fun AutocompleteTextField(
             label = { Text(label) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = singleLine,
-            supportingText = supportingText?.let { { Text(it) } },
+            supportingText = {
+                Text("[debug] ${suggestions.size} saved values, ${filtered.size} matching" + (supportingText?.let { " \u2014 $it" } ?: ""))
+            },
             interactionSource = interactionSource
         )
 
@@ -115,7 +117,9 @@ fun TagsAutocompleteField(
             label = { Text(label) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            supportingText = supportingText?.let { { Text(it) } },
+            supportingText = {
+                Text("[debug] ${suggestions.size} saved tags, ${filtered.size} matching" + (supportingText?.let { " \u2014 $it" } ?: ""))
+            },
             interactionSource = interactionSource
         )
 
