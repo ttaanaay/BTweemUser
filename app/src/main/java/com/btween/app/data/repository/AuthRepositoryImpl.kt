@@ -8,8 +8,8 @@ import com.btween.app.data.remote.dto.LoginRequestDto
 import com.btween.app.data.remote.dto.OAuthLoginRequestDto
 import com.btween.app.data.remote.dto.RefreshRequestDto
 import com.btween.app.data.remote.dto.RegisterRequestDto
-import com.btween.app.data.remote.dto.ResendVerificationRequestDto
 import com.btween.app.data.remote.dto.ResetPasswordRequestDto
+import com.btween.app.data.remote.dto.VerifyCodeRequestDto
 import com.btween.app.data.remote.dto.VerifyEmailRequestDto
 import com.btween.app.data.remote.dto.toDomain
 import com.btween.app.data.remote.safeApiCall
@@ -32,8 +32,13 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String,
         displayName: String
-    ): Result<User> = safeApiCall {
-        val response = authApi.register(RegisterRequestDto(username, email, password, displayName))
+    ): Result<Unit> = safeApiCall {
+        authApi.register(RegisterRequestDto(username, email, password, displayName))
+        Unit
+    }
+
+    override suspend fun completeRegistration(email: String, code: String): Result<User> = safeApiCall {
+        val response = authApi.verifyRegistration(VerifyEmailRequestDto(email, code))
         // Must be set before saveSession(): saveSession() flips isLoggedIn to true, which
         // MainViewModel reacts to immediately by checking this same flag - if it ran after,
         // that check would race and read the stale "false" value.
@@ -78,13 +83,13 @@ class AuthRepositoryImpl @Inject constructor(
         Unit
     }
 
-    override suspend fun verifyEmail(email: String, code: String): Result<Unit> = safeApiCall {
-        authApi.verifyEmail(VerifyEmailRequestDto(email, code))
+    override suspend fun verifyEmail(code: String): Result<Unit> = safeApiCall {
+        authApi.verifyEmailMe(VerifyCodeRequestDto(code))
         Unit
     }
 
-    override suspend fun resendVerification(email: String): Result<Unit> = safeApiCall {
-        authApi.resendVerification(ResendVerificationRequestDto(email))
+    override suspend fun resendVerification(): Result<Unit> = safeApiCall {
+        authApi.resendVerificationMe()
         Unit
     }
 

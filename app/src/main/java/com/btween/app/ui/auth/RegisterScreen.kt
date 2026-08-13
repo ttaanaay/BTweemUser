@@ -66,81 +66,118 @@ fun RegisterScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = stringResource(R.string.auth_create_account_title),
-                style = MaterialTheme.typography.headlineMedium.copy(fontFamily = QuoteSerifFontFamily)
-            )
-            Text(
-                text = stringResource(R.string.auth_create_account_subtitle),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (!state.awaitingRegistrationCode) {
+                Text(
+                    text = stringResource(R.string.auth_create_account_title),
+                    style = MaterialTheme.typography.headlineMedium.copy(fontFamily = QuoteSerifFontFamily)
+                )
+                Text(
+                    text = stringResource(R.string.auth_create_account_subtitle),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
-            Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-            OutlinedTextField(
-                value = state.displayName,
-                onValueChange = viewModel::onDisplayNameChanged,
-                label = { Text(stringResource(R.string.auth_label_display_name)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
+                OutlinedTextField(
+                    value = state.displayName,
+                    onValueChange = viewModel::onDisplayNameChanged,
+                    label = { Text(stringResource(R.string.auth_label_display_name)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedTextField(
-                value = state.username,
-                onValueChange = viewModel::onUsernameChanged,
-                label = { Text(stringResource(R.string.auth_label_username)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                supportingText = { Text(stringResource(R.string.auth_username_supporting)) }
-            )
+                OutlinedTextField(
+                    value = state.username,
+                    onValueChange = viewModel::onUsernameChanged,
+                    label = { Text(stringResource(R.string.auth_label_username)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    supportingText = { Text(stringResource(R.string.auth_username_supporting)) }
+                )
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedTextField(
-                value = state.email,
-                onValueChange = viewModel::onEmailChanged,
-                label = { Text(stringResource(R.string.auth_label_email)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-            )
+                OutlinedTextField(
+                    value = state.email,
+                    onValueChange = viewModel::onEmailChanged,
+                    label = { Text(stringResource(R.string.auth_label_email)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                )
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            PasswordTextField(
-                value = state.password,
-                onValueChange = viewModel::onPasswordChanged,
-                label = stringResource(R.string.auth_label_password),
-                modifier = Modifier.fillMaxWidth(),
-                supportingText = stringResource(R.string.auth_password_supporting)
-            )
+                PasswordTextField(
+                    value = state.password,
+                    onValueChange = viewModel::onPasswordChanged,
+                    label = stringResource(R.string.auth_label_password),
+                    modifier = Modifier.fillMaxWidth(),
+                    supportingText = stringResource(R.string.auth_password_supporting)
+                )
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
-                onClick = viewModel::onRegister,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isLoading &&
-                    state.displayName.isNotBlank() &&
-                    state.username.isNotBlank() &&
-                    state.email.isNotBlank() &&
-                    state.password.length >= 8
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
-                } else {
-                    Text(stringResource(R.string.auth_sign_up))
+                Button(
+                    onClick = viewModel::onRegister,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !state.isLoading &&
+                        state.displayName.isNotBlank() &&
+                        state.username.isNotBlank() &&
+                        state.email.isNotBlank() &&
+                        state.password.length >= 8
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                    } else {
+                        Text(stringResource(R.string.auth_sign_up))
+                    }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                TextButton(onClick = onNavigateToLogin) {
-                    Text(stringResource(R.string.auth_have_account_log_in))
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    TextButton(onClick = onNavigateToLogin) {
+                        Text(stringResource(R.string.auth_have_account_log_in))
+                    }
+                }
+            } else {
+                Text(
+                    text = stringResource(R.string.auth_verify_registration_title),
+                    style = MaterialTheme.typography.headlineMedium.copy(fontFamily = QuoteSerifFontFamily)
+                )
+                Text(
+                    text = stringResource(R.string.auth_verify_registration_subtitle, state.email),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                OutlinedTextField(
+                    value = state.registrationCode,
+                    onValueChange = viewModel::onRegistrationCodeChanged,
+                    label = { Text(stringResource(R.string.auth_label_code)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = viewModel::onCompleteRegistration,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !state.isVerifyingRegistration && state.registrationCode.isNotBlank()
+                ) {
+                    if (state.isVerifyingRegistration) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                    } else {
+                        Text(stringResource(R.string.auth_verify_registration_action))
+                    }
                 }
             }
         }

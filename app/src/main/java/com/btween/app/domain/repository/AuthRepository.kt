@@ -7,7 +7,13 @@ interface AuthRepository {
 
     val isLoggedIn: StateFlow<Boolean>
 
-    suspend fun register(username: String, email: String, password: String, displayName: String): Result<User>
+    /** Creates the account and sends a verification code - doesn't log the person in yet.
+     * Call [completeRegistration] with the code to actually finish signing up. */
+    suspend fun register(username: String, email: String, password: String, displayName: String): Result<Unit>
+
+    /** Verifies the code sent by [register] and, on success, logs the person in for the
+     * first time (this is the point a new account actually becomes usable). */
+    suspend fun completeRegistration(email: String, code: String): Result<User>
 
     suspend fun login(email: String, password: String): Result<User>
 
@@ -21,9 +27,9 @@ interface AuthRepository {
 
     suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit>
 
-    suspend fun verifyEmail(email: String, code: String): Result<Unit>
+    suspend fun verifyEmail(code: String): Result<Unit>
 
-    suspend fun resendVerification(email: String): Result<Unit>
+    suspend fun resendVerification(): Result<Unit>
 
     suspend fun changePassword(currentPassword: String, newPassword: String): Result<Unit>
 

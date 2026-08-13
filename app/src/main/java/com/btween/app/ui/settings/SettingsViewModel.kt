@@ -135,14 +135,13 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onResendCode() {
-        val email = authRepository.getCurrentEmail() ?: return
         viewModelScope.launch {
             _emailVerification.value = _emailVerification.value.copy(isResending = true)
-            authRepository.resendVerification(email)
+            authRepository.resendVerification()
                 .onSuccess {
                     _emailVerification.value = _emailVerification.value.copy(
                         isResending = false,
-                        infoMessage = "A new code has been sent to $email"
+                        infoMessage = "A new code has been sent"
                     )
                 }
                 .onFailure { error ->
@@ -155,13 +154,12 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onSubmitCode() {
-        val email = authRepository.getCurrentEmail() ?: return
         val code = _emailVerification.value.code.trim()
         if (code.isEmpty()) return
 
         viewModelScope.launch {
             _emailVerification.value = _emailVerification.value.copy(isSubmitting = true)
-            authRepository.verifyEmail(email, code)
+            authRepository.verifyEmail(code)
                 .onSuccess {
                     _emailVerification.value = _emailVerification.value.copy(
                         isSubmitting = false,

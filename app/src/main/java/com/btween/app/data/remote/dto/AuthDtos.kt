@@ -45,6 +45,11 @@ data class VerifyEmailRequestDto(
 )
 
 @Serializable
+data class VerifyCodeRequestDto(
+    val code: String
+)
+
+@Serializable
 data class ResendVerificationRequestDto(
     val email: String
 )
@@ -65,6 +70,12 @@ data class AuthResponseDto(
     val accessToken: String,
     val refreshToken: String,
     val user: UserResponseDto
+)
+
+@Serializable
+data class RegistrationPendingResponseDto(
+    val email: String,
+    val message: String
 )
 
 @Serializable

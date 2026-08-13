@@ -17,7 +17,13 @@ data class AuthUiState(
     val password: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    val didSucceed: Boolean = false
+    val didSucceed: Boolean = false,
+    // Set once /auth/register has sent a code - the register screen switches to a code
+    // entry step instead of navigating away, since the account isn't usable until
+    // completeRegistration() succeeds.
+    val awaitingRegistrationCode: Boolean = false,
+    val registrationCode: String = "",
+    val isVerifyingRegistration: Boolean = false
 )
 
 @HiltViewModel
@@ -55,11 +61,30 @@ class AuthViewModel @Inject constructor(
                 password = state.password,
                 displayName = state.displayName.trim()
             ).onSuccess {
-                update { it.copy(isLoading = false, didSucceed = true) }
-                registerDeviceForPush()
+                update { it.copy(isLoading = false, awaitingRegistrationCode = true) }
             }.onFailure { error ->
                 update { it.copy(isLoading = false, errorMessage = error.message) }
             }
+        }
+    }
+
+    fun onRegistrationCodeChanged(value: String) = update { it.copy(registrationCode = value) }
+
+    fun onCompleteRegistration() {
+        val state = _uiState.value
+        val code = state.registrationCode.trim()
+        if (code.isEmpty()) return
+
+        viewModelScope.launch {
+            update { it.copy(isVerifyingRegistration = true) }
+            authRepository.completeRegistration(state.email.trim(), code)
+                .onSuccess {
+                    update { it.copy(isVerifyingRegistration = false, didSucceed = true) }
+                    registerDeviceForPush()
+                }
+                .onFailure { error ->
+                    update { it.copy(isVerifyingRegistration = false, errorMessage = error.message) }
+                }
         }
     }
 

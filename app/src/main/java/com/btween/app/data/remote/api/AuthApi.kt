@@ -17,7 +17,10 @@ import retrofit2.http.POST
 interface AuthApi {
 
     @POST("auth/register")
-    suspend fun register(@Body request: RegisterRequestDto): AuthResponseDto
+    suspend fun register(@Body request: RegisterRequestDto): RegistrationPendingResponseDto
+
+    @POST("auth/verify-registration")
+    suspend fun verifyRegistration(@Body request: VerifyEmailRequestDto): AuthResponseDto
 
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequestDto): AuthResponseDto
@@ -45,6 +48,15 @@ interface AuthApi {
 
     @POST("auth/resend-verification")
     suspend fun resendVerification(@Body request: ResendVerificationRequestDto): MessageResponseDto
+
+    // Session-based counterparts - the server already knows which account to verify from
+    // the auth token, so there's no email to pass (and no way to accidentally target a
+    // different account by relying on a possibly-stale cached email).
+    @POST("auth/verify-email-me")
+    suspend fun verifyEmailMe(@Body request: VerifyCodeRequestDto): MessageResponseDto
+
+    @POST("auth/resend-verification-me")
+    suspend fun resendVerificationMe(): MessageResponseDto
 
     @POST("auth/change-password")
     suspend fun changePassword(@Body request: ChangePasswordRequestDto): MessageResponseDto

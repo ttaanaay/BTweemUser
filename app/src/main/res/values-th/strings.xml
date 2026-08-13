@@ -329,4 +329,9 @@
     <string name="collections_remove_item_message">แค่นำออกจากคอลเลกชันนี้เท่านั้น คำคมตัวจริงจะไม่ถูกลบ</string>
     <string name="collections_delete_title">ลบคอลเลกชันนี้?</string>
     <string name="collections_delete_message">ไม่สามารถกู้คืนได้ คำคมข้างในจะไม่ถูกลบ แค่ถูกนำออกจากคอลเลกชันนี้เท่านั้น</string>
+
+    <!-- Registration verification -->
+    <string name="auth_verify_registration_title">เช็คอีเมลของคุณ</string>
+    <string name="auth_verify_registration_subtitle">เราส่งรหัสไปที่ %1$s แล้ว กรอกด้านล่างเพื่อสร้างบัญชีให้เสร็จสมบูรณ์</string>
+    <string name="auth_verify_registration_action">สร้างบัญชี</string>
 </resources>
