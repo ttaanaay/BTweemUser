@@ -8,8 +8,10 @@ import com.btween.app.data.remote.dto.MessageResponseDto
 import com.btween.app.data.remote.dto.OAuthLoginRequestDto
 import com.btween.app.data.remote.dto.RefreshRequestDto
 import com.btween.app.data.remote.dto.RegisterRequestDto
+import com.btween.app.data.remote.dto.RegistrationPendingResponseDto
 import com.btween.app.data.remote.dto.ResendVerificationRequestDto
 import com.btween.app.data.remote.dto.ResetPasswordRequestDto
+import com.btween.app.data.remote.dto.VerifyCodeRequestDto
 import com.btween.app.data.remote.dto.VerifyEmailRequestDto
 import retrofit2.http.Body
 import retrofit2.http.POST
