@@ -31,7 +31,7 @@ class QuoteRepositoryImpl @Inject constructor(
         combine(
             quoteDao.observeFilteredQuotes(
                 categoryId = filter.categoryId,
-                sourceType = filter.sourceType?.name,
+                sourceType = filter.sourceType,
                 favoritesOnly = filter.favoritesOnly,
                 searchQuery = filter.searchQuery.trim(),
                 sortOrder = filter.sortOrder.ordinal
