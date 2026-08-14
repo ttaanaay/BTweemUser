@@ -334,4 +334,6 @@
     <string name="auth_verify_registration_title">เช็คอีเมลของคุณ</string>
     <string name="auth_verify_registration_subtitle">เราส่งรหัสไปที่ %1$s แล้ว กรอกด้านล่างเพื่อสร้างบัญชีให้เสร็จสมบูรณ์</string>
     <string name="auth_verify_registration_action">สร้างบัญชี</string>
+    <string name="auth_verify_registration_action_login">ยืนยันและเข้าสู่ระบบ</string>
+    <string name="auth_resend_code">ส่งรหัสใหม่</string>
 </resources>

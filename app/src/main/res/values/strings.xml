@@ -345,4 +345,6 @@
     <string name="auth_verify_registration_title">Check your email</string>
     <string name="auth_verify_registration_subtitle">We sent a code to %1$s. Enter it below to finish creating your account.</string>
     <string name="auth_verify_registration_action">Create account</string>
+    <string name="auth_verify_registration_action_login">Verify and log in</string>
+    <string name="auth_resend_code">Resend code</string>
 </resources>

@@ -69,6 +69,50 @@ fun LoginScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.Center
         ) {
+            if (state.awaitingRegistrationCode) {
+                Text(
+                    text = stringResource(R.string.auth_verify_registration_title),
+                    style = MaterialTheme.typography.headlineMedium.copy(fontFamily = QuoteSerifFontFamily)
+                )
+                Text(
+                    text = stringResource(R.string.auth_verify_registration_subtitle, state.email),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                OutlinedTextField(
+                    value = state.registrationCode,
+                    onValueChange = viewModel::onRegistrationCodeChanged,
+                    label = { Text(stringResource(R.string.auth_label_code)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = viewModel::onCompleteRegistration,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !state.isVerifyingRegistration && state.registrationCode.isNotBlank()
+                ) {
+                    if (state.isVerifyingRegistration) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                    } else {
+                        Text(stringResource(R.string.auth_verify_registration_action_login))
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    TextButton(onClick = viewModel::onResendLoginVerificationCode) {
+                        Text(stringResource(R.string.auth_resend_code))
+                    }
+                }
+            } else {
             Text(
                 text = "BTween",
                 style = MaterialTheme.typography.displayMedium.copy(fontFamily = QuoteSerifFontFamily)
@@ -146,6 +190,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             FacebookLoginButton(onAccessTokenReceived = viewModel::onFacebookLoginResult)
+            }
         }
     }
 }

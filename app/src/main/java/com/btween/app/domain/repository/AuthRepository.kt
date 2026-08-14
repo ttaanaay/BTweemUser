@@ -31,6 +31,10 @@ interface AuthRepository {
 
     suspend fun resendVerification(): Result<Unit>
 
+    /** Email-based variant for when there's no session yet - used when someone tries to log
+     * in before verifying and needs a fresh code without being authenticated first. */
+    suspend fun resendVerificationForEmail(email: String): Result<Unit>
+
     suspend fun changePassword(currentPassword: String, newPassword: String): Result<Unit>
 
     suspend fun logout()

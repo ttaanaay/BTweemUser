@@ -70,6 +70,15 @@ class AuthViewModel @Inject constructor(
 
     fun onRegistrationCodeChanged(value: String) = update { it.copy(registrationCode = value) }
 
+    fun onResendLoginVerificationCode() {
+        val email = _uiState.value.email.trim()
+        if (email.isEmpty()) return
+        viewModelScope.launch {
+            authRepository.resendVerificationForEmail(email)
+                .onFailure { error -> update { it.copy(errorMessage = error.message) } }
+        }
+    }
+
     fun onCompleteRegistration() {
         val state = _uiState.value
         val code = state.registrationCode.trim()
@@ -98,7 +107,17 @@ class AuthViewModel @Inject constructor(
                     registerDeviceForPush()
                 }
                 .onFailure { error ->
-                    update { it.copy(isLoading = false, errorMessage = error.message) }
+                    // The account exists and the password is right, it just hasn't been
+                    // verified yet - offer the same code-entry step used right after
+                    // registration instead of leaving this as a dead-end error.
+                    val needsVerification = error.message?.contains("verify your email", ignoreCase = true) == true
+                    update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.message,
+                            awaitingRegistrationCode = needsVerification
+                        )
+                    }
                 }
         }
     }
