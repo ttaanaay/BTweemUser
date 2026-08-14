@@ -6,7 +6,6 @@ import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.QuoteFilter
 import com.btween.app.domain.model.SortOrder
-import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.usecase.category.GetCategoriesUseCase
 import com.btween.app.domain.usecase.quote.GetFilteredQuotesUseCase
 import com.btween.app.domain.usecase.quote.ToggleFavoriteUseCase
@@ -63,7 +62,7 @@ class LibraryViewModel @Inject constructor(
         filterState.update { it.copy(categoryId = if (it.categoryId == categoryId) null else categoryId) }
     }
 
-    fun onSourceTypeSelected(sourceType: SourceType?) {
+    fun onSourceTypeSelected(sourceType: String?) {
         filterState.update { it.copy(sourceType = if (it.sourceType == sourceType) null else sourceType) }
     }
 

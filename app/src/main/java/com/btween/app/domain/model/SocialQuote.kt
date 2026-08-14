@@ -4,7 +4,7 @@ data class SocialQuote(
     val id: Long,
     val text: String,
     val sourceTitle: String,
-    val sourceType: SourceType,
+    val sourceType: String,
     val speaker: String,
     val author: String? = null,
     val category: String? = null,

@@ -11,6 +11,7 @@ import com.btween.app.data.remote.api.DeviceApi
 import com.btween.app.data.remote.api.NotificationApi
 import com.btween.app.data.remote.api.QuoteApi
 import com.btween.app.data.remote.api.ReportApi
+import com.btween.app.data.remote.api.SourceTypeApi
 import com.btween.app.data.remote.api.UserApi
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -135,4 +136,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideCategoryApi(retrofit: Retrofit): CategoryApi = retrofit.create(CategoryApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSourceTypeApi(retrofit: Retrofit): SourceTypeApi = retrofit.create(SourceTypeApi::class.java)
 }

@@ -69,7 +69,7 @@ import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.ReportDialog
 import com.btween.app.ui.components.UserAvatar
 import com.btween.app.ui.theme.QuoteSerifFontFamily
-import com.btween.app.ui.util.localizedLabel
+import com.btween.app.ui.util.sourceTypeLabel
 import com.btween.app.util.shareQuoteAsImage
 import com.btween.app.util.shareQuoteAsText
 import kotlinx.coroutines.launch
@@ -252,7 +252,7 @@ fun SocialQuoteDetailScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = quote.sourceType.localizedLabel(),
+                text = sourceTypeLabel(quote.sourceType),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

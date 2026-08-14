@@ -41,7 +41,7 @@ import coil.compose.AsyncImage
 import com.btween.app.domain.model.SocialQuote
 import com.btween.app.ui.components.UserAvatar
 import com.btween.app.ui.theme.QuoteSerifFontFamily
-import com.btween.app.ui.util.localizedLabel
+import com.btween.app.ui.util.sourceTypeLabel
 
 @Composable
 fun SocialQuoteCard(
@@ -143,7 +143,7 @@ fun SocialQuoteCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = quote.sourceType.localizedLabel(),
+                text = sourceTypeLabel(quote.sourceType),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

@@ -4,7 +4,7 @@ data class Quote(
     val id: Long = 0L,
     val text: String,
     val sourceTitle: String,
-    val sourceType: SourceType,
+    val sourceType: String,
     val speaker: String,
     val author: String? = null,
     val category: Category? = null,

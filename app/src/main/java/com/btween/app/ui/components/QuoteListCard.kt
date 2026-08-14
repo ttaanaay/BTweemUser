@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.btween.app.R
 import com.btween.app.domain.model.Quote
 import com.btween.app.ui.theme.QuoteSerifFontFamily
-import com.btween.app.ui.util.localizedLabel
+import com.btween.app.ui.util.sourceTypeLabel
 import com.btween.app.util.toColorOrDefault
 
 @Composable
@@ -82,7 +82,7 @@ fun QuoteListCard(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = quote.sourceType.localizedLabel(),
+                            text = sourceTypeLabel(quote.sourceType),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

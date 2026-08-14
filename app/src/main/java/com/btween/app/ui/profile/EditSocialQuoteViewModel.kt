@@ -8,6 +8,7 @@ import com.btween.app.data.remote.CloudinaryUploader
 import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.ProfileRepository
+import com.btween.app.domain.repository.PublicSourceTypeRepository
 import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
 import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
@@ -21,7 +22,7 @@ import javax.inject.Inject
 data class EditSocialQuoteUiState(
     val text: String = "",
     val sourceTitle: String = "",
-    val sourceType: SourceType = SourceType.MOVIE,
+    val sourceType: String = SourceType.MOVIE,
     val speaker: String = "",
     val author: String = "",
     val visibility: String = "PUBLIC",
@@ -44,7 +45,8 @@ class EditSocialQuoteViewModel @Inject constructor(
     private val cloudinaryUploader: CloudinaryUploader,
     private val quoteRepository: QuoteRepository,
     private val profileRepository: ProfileRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val publicSourceTypeRepository: PublicSourceTypeRepository
 ) : ViewModel() {
 
     private val quoteId: Long = checkNotNull(savedStateHandle[Destination.EditSocialQuote.ARG_QUOTE_ID])
@@ -52,10 +54,18 @@ class EditSocialQuoteViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EditSocialQuoteUiState())
     val uiState: StateFlow<EditSocialQuoteUiState> = _uiState
 
+    private val _sourceTypeOptions = MutableStateFlow(SourceType.DEFAULT_OPTIONS)
+    val sourceTypeOptions: StateFlow<List<String>> = _sourceTypeOptions
+
     private val _suggestions = MutableStateFlow(QuoteAutocompleteSuggestions())
     val suggestions: StateFlow<QuoteAutocompleteSuggestions> = _suggestions
 
     init {
+        viewModelScope.launch {
+            publicSourceTypeRepository.getSourceTypes().onSuccess { types ->
+                if (types.isNotEmpty()) _sourceTypeOptions.value = types
+            }
+        }
         viewModelScope.launch {
             val local = quoteRepository.getAutocompleteSuggestions()
             val userId = authRepository.getCurrentUserId()
@@ -101,7 +111,7 @@ class EditSocialQuoteViewModel @Inject constructor(
     fun onSpeakerChanged(value: String) = update { it.copy(speaker = value) }
     fun onAuthorChanged(value: String) = update { it.copy(author = value) }
     fun onTagsInputChanged(value: String) = update { it.copy(tagsInput = value) }
-    fun onSourceTypeChanged(value: SourceType) = update { it.copy(sourceType = value) }
+    fun onSourceTypeChanged(value: String) = update { it.copy(sourceType = value) }
     fun onRemoveImage() = update { it.copy(imageUrl = null) }
     fun consumeError() = update { it.copy(errorMessage = null) }
 

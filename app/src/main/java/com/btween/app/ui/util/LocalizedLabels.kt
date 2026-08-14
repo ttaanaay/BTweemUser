@@ -7,12 +7,12 @@ import com.btween.app.domain.model.SortOrder
 import com.btween.app.domain.model.SourceType
 
 /**
- * Localized display label for a [SourceType]. Kept in the UI layer (rather than as a
- * property on the domain enum itself) so the domain model has no Android/resource
- * dependency, while the label still updates immediately when the app's language changes.
+ * Localized display label for a source type name. Known legacy names (Movie, Book, etc.)
+ * get a translated label; anything else (a custom name an admin added later) is shown as-is,
+ * since there's no translation available for a name the client doesn't know ahead of time.
  */
 @Composable
-fun SourceType.localizedLabel(): String = when (this) {
+fun sourceTypeLabel(name: String): String = when (name) {
     SourceType.MOVIE -> stringResource(R.string.source_type_movie)
     SourceType.TV_SERIES -> stringResource(R.string.source_type_tv_series)
     SourceType.BOOK -> stringResource(R.string.source_type_book)
@@ -21,6 +21,7 @@ fun SourceType.localizedLabel(): String = when (this) {
     SourceType.PODCAST -> stringResource(R.string.source_type_podcast)
     SourceType.SPEECH -> stringResource(R.string.source_type_speech)
     SourceType.OTHER -> stringResource(R.string.source_type_other)
+    else -> name
 }
 
 @Composable

@@ -38,11 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.R
-import com.btween.app.domain.model.SourceType
 import com.btween.app.ui.components.AutocompleteTextField
 import com.btween.app.ui.components.QuoteImagePicker
 import com.btween.app.ui.components.TagChipInput
-import com.btween.app.ui.util.localizedLabel
+import com.btween.app.ui.util.sourceTypeLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +50,7 @@ fun EditSocialQuoteScreen(
     viewModel: EditSocialQuoteViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val sourceTypeOptions by viewModel.sourceTypeOptions.collectAsStateWithLifecycle()
     val suggestions by viewModel.suggestions.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var showSourceTypeMenu by remember { mutableStateOf(false) }
@@ -118,7 +118,7 @@ fun EditSocialQuoteScreen(
             // menuAnchor()/API surface has shifted across recent Material3 releases).
             Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
-                    value = state.sourceType.localizedLabel(),
+                    value = sourceTypeLabel(state.sourceType),
                     onValueChange = {},
                     readOnly = true,
                     label = { Text(stringResource(R.string.edit_quote_label_source_type)) },
@@ -135,9 +135,9 @@ fun EditSocialQuoteScreen(
                     onDismissRequest = { showSourceTypeMenu = false },
                     modifier = Modifier.fillMaxWidth(0.9f)
                 ) {
-                    SourceType.entries.forEach { type ->
+                    sourceTypeOptions.forEach { type ->
                         DropdownMenuItem(
-                            text = { Text(type.localizedLabel()) },
+                            text = { Text(sourceTypeLabel(type)) },
                             onClick = {
                                 viewModel.onSourceTypeChanged(type)
                                 showSourceTypeMenu = false

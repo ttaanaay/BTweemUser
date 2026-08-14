@@ -6,7 +6,6 @@ import com.btween.app.data.remote.dto.QuoteRequestDto
 import com.btween.app.data.remote.dto.toDomain
 import com.btween.app.data.remote.safeApiCall
 import com.btween.app.domain.model.SocialQuote
-import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.repository.SocialQuoteRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -46,7 +45,7 @@ class SocialQuoteRepositoryImpl @Inject constructor(
     override suspend fun createQuote(
         text: String,
         sourceTitle: String,
-        sourceType: SourceType,
+        sourceType: String,
         speaker: String,
         author: String?,
         category: String?,
@@ -58,7 +57,7 @@ class SocialQuoteRepositoryImpl @Inject constructor(
             QuoteRequestDto(
                 text = text,
                 sourceTitle = sourceTitle,
-                sourceType = sourceType.name,
+                sourceType = sourceType,
                 speaker = speaker,
                 author = author,
                 category = category,
@@ -73,7 +72,7 @@ class SocialQuoteRepositoryImpl @Inject constructor(
         id: Long,
         text: String,
         sourceTitle: String,
-        sourceType: SourceType,
+        sourceType: String,
         speaker: String,
         author: String?,
         category: String?,
@@ -86,7 +85,7 @@ class SocialQuoteRepositoryImpl @Inject constructor(
             QuoteRequestDto(
                 text = text,
                 sourceTitle = sourceTitle,
-                sourceType = sourceType.name,
+                sourceType = sourceType,
                 speaker = speaker,
                 author = author,
                 category = category,

@@ -46,12 +46,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.R
 import com.btween.app.domain.model.Category
-import com.btween.app.domain.model.SourceType
 import com.btween.app.ui.components.AutocompleteTextField
 import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.QuoteImagePicker
 import com.btween.app.ui.components.TagChipInput
-import com.btween.app.ui.util.localizedLabel
+import com.btween.app.ui.util.sourceTypeLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,6 +61,7 @@ fun AddEditScreen(
 ) {
     val state by viewModel.formState.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
+    val sourceTypeOptions by viewModel.sourceTypeOptions.collectAsStateWithLifecycle()
     val suggestions by viewModel.suggestions.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -141,6 +141,7 @@ fun AddEditScreen(
             )
             SourceTypeDropdown(
                 selected = state.sourceType,
+                options = sourceTypeOptions,
                 onSelected = viewModel::onSourceTypeChanged
             )
             AutocompleteTextField(
@@ -254,11 +255,11 @@ fun AddEditScreen(
  * ExposedDropdownMenu API surface has shifted across recent Material3 releases.
  */
 @Composable
-private fun SourceTypeDropdown(selected: SourceType, onSelected: (SourceType) -> Unit) {
+private fun SourceTypeDropdown(selected: String, options: List<String>, onSelected: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
-            value = selected.localizedLabel(),
+            value = sourceTypeLabel(selected),
             onValueChange = {},
             readOnly = true,
             label = { Text(stringResource(R.string.add_edit_label_source_type)) },
@@ -275,9 +276,9 @@ private fun SourceTypeDropdown(selected: SourceType, onSelected: (SourceType) ->
             onDismissRequest = { expanded = false },
             modifier = Modifier.fillMaxWidth(0.9f)
         ) {
-            SourceType.entries.forEach { type ->
+            options.forEach { type ->
                 DropdownMenuItem(
-                    text = { Text(type.localizedLabel()) },
+                    text = { Text(sourceTypeLabel(type)) },
                     onClick = {
                         onSelected(type)
                         expanded = false

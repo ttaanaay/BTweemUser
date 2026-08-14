@@ -10,6 +10,7 @@ import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.ProfileRepository
+import com.btween.app.domain.repository.PublicSourceTypeRepository
 import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
 import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
@@ -29,7 +30,7 @@ data class AddEditFormState(
     val quoteId: Long? = null,
     val text: String = "",
     val sourceTitle: String = "",
-    val sourceType: SourceType = SourceType.MOVIE,
+    val sourceType: String = SourceType.MOVIE,
     val speaker: String = "",
     val author: String = "",
     val category: Category? = null,
@@ -59,6 +60,7 @@ class AddEditViewModel @Inject constructor(
     private val updateQuoteUseCase: UpdateQuoteUseCase,
     private val cloudinaryUploader: CloudinaryUploader,
     private val authRepository: AuthRepository,
+    private val publicSourceTypeRepository: PublicSourceTypeRepository,
     getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
 
@@ -74,10 +76,20 @@ class AddEditViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
+    private val _sourceTypeOptions = MutableStateFlow(SourceType.DEFAULT_OPTIONS)
+    val sourceTypeOptions: StateFlow<List<String>> = _sourceTypeOptions
+
     private val _suggestions = MutableStateFlow(QuoteAutocompleteSuggestions())
     val suggestions: StateFlow<QuoteAutocompleteSuggestions> = _suggestions
 
     init {
+        viewModelScope.launch {
+            // Falls back to the original fixed list (already the initial value) if this
+            // fails - the form should still be usable offline or if the request errors.
+            publicSourceTypeRepository.getSourceTypes().onSuccess { types ->
+                if (types.isNotEmpty()) _sourceTypeOptions.value = types
+            }
+        }
         viewModelScope.launch {
             val local = quoteRepository.getAutocompleteSuggestions()
 
@@ -129,7 +141,7 @@ class AddEditViewModel @Inject constructor(
 
     fun onTextChanged(value: String) = update { it.copy(text = value) }
     fun onSourceTitleChanged(value: String) = update { it.copy(sourceTitle = value) }
-    fun onSourceTypeChanged(value: SourceType) = update { it.copy(sourceType = value) }
+    fun onSourceTypeChanged(value: String) = update { it.copy(sourceType = value) }
     fun onSpeakerChanged(value: String) = update { it.copy(speaker = value) }
     fun onAuthorChanged(value: String) = update { it.copy(author = value) }
     fun onCategoryChanged(value: Category?) = update { it.copy(category = value) }

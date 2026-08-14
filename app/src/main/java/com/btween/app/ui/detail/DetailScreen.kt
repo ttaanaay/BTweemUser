@@ -56,7 +56,7 @@ import com.btween.app.R
 import com.btween.app.domain.model.Quote
 import com.btween.app.ui.theme.QuoteCardShape
 import com.btween.app.ui.theme.QuoteCardTextStyle
-import com.btween.app.ui.util.localizedLabel
+import com.btween.app.ui.util.sourceTypeLabel
 import com.btween.app.util.copyQuoteToClipboard
 import com.btween.app.util.shareQuoteAsImage
 import com.btween.app.util.shareQuoteAsText
@@ -221,7 +221,7 @@ private fun QuoteHeroCard(quote: Quote, modifier: Modifier = Modifier) {
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(
-                        text = quote.sourceType.localizedLabel() + (quote.author?.let { " \u00b7 $it" } ?: ""),
+                        text = sourceTypeLabel(quote.sourceType) + (quote.author?.let { " \u00b7 $it" } ?: ""),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

@@ -1,7 +1,6 @@
 package com.btween.app.domain.repository
 
 import com.btween.app.domain.model.SocialQuote
-import com.btween.app.domain.model.SourceType
 
 interface SocialQuoteRepository {
 
@@ -23,7 +22,7 @@ interface SocialQuoteRepository {
     suspend fun createQuote(
         text: String,
         sourceTitle: String,
-        sourceType: SourceType,
+        sourceType: String,
         speaker: String,
         author: String?,
         category: String?,
@@ -36,7 +35,7 @@ interface SocialQuoteRepository {
         id: Long,
         text: String,
         sourceTitle: String,
-        sourceType: SourceType,
+        sourceType: String,
         speaker: String,
         author: String?,
         category: String?,
