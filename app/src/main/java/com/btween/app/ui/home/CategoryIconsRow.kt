@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.domain.repository.PublicCategory
+import com.btween.app.ui.util.categoryIconFor
 
-// Categories carry their own icon now (an emoji, set by the admin), but not a color - this
-// palette is still cycled by position just for the background tint behind each icon.
+// Categories carry their own icon key now (set by the admin, mapped to a Material Icon via
+// categoryIconFor), but not a color - this palette is still cycled by position just for the
+// background tint behind each icon.
 private val paletteColors: List<Color> = listOf(
     Color(0xFF5DA8E8),
     Color(0xFFE85D8A),
@@ -79,7 +82,7 @@ private fun CategoryChipItem(category: PublicCategory, onClick: () -> Unit) {
                 .background(color.copy(alpha = 0.18f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = category.icon, style = MaterialTheme.typography.titleLarge)
+            Icon(imageVector = categoryIconFor(category.icon), contentDescription = null, tint = color)
         }
         Spacer(modifier = Modifier.height(6.dp))
         Text(

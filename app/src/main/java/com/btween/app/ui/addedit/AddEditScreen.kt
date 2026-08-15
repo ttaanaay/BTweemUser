@@ -51,6 +51,7 @@ import com.btween.app.ui.components.AutocompleteTextField
 import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.QuoteImagePicker
 import com.btween.app.ui.components.TagChipInput
+import com.btween.app.ui.util.categoryIconFor
 import com.btween.app.ui.util.sourceTypeLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -351,16 +352,17 @@ private fun FeedCategoryDropdown(
     onSelected: (String?) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val selectedLabel = options.firstOrNull { it.name == selected }
-        ?.let { "${it.icon} ${it.name}" }
-        ?: stringResource(R.string.add_edit_category_none)
+    val selectedCategory = options.firstOrNull { it.name == selected }
 
     Box(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
-            value = selectedLabel,
+            value = selectedCategory?.name ?: stringResource(R.string.add_edit_category_none),
             onValueChange = {},
             readOnly = true,
             label = { Text(stringResource(R.string.add_edit_label_feed_category)) },
+            leadingIcon = {
+                Icon(imageVector = categoryIconFor(selectedCategory?.icon), contentDescription = null)
+            },
             trailingIcon = { Icon(Icons.Filled.ArrowDropDown, contentDescription = null) },
             modifier = Modifier.fillMaxWidth()
         )
@@ -380,7 +382,8 @@ private fun FeedCategoryDropdown(
             )
             options.forEach { category ->
                 DropdownMenuItem(
-                    text = { Text("${category.icon} ${category.name}") },
+                    text = { Text(category.name) },
+                    leadingIcon = { Icon(imageVector = categoryIconFor(category.icon), contentDescription = null) },
                     onClick = {
                         onSelected(category.name)
                         expanded = false
