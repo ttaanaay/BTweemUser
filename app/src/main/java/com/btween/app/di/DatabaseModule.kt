@@ -27,7 +27,7 @@ object DatabaseModule {
             // a single admin-managed category shared with the server - there's no sensible
             // automatic mapping from old local categories to the new server ones, so this
             // schema change just resets local-only quotes rather than risk a bad migration.
-            .fallbackToDestructiveMigration(dropAllTables = true)
+            .fallbackToDestructiveMigration()
             .build()
     }
 
