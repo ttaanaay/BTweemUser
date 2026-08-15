@@ -8,6 +8,8 @@ import com.btween.app.data.remote.CloudinaryUploader
 import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.ProfileRepository
+import com.btween.app.domain.repository.PublicCategory
+import com.btween.app.domain.repository.PublicCategoryRepository
 import com.btween.app.domain.repository.PublicSourceTypeRepository
 import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
 import com.btween.app.domain.repository.QuoteRepository
@@ -46,7 +48,8 @@ class EditSocialQuoteViewModel @Inject constructor(
     private val quoteRepository: QuoteRepository,
     private val profileRepository: ProfileRepository,
     private val authRepository: AuthRepository,
-    private val publicSourceTypeRepository: PublicSourceTypeRepository
+    private val publicSourceTypeRepository: PublicSourceTypeRepository,
+    private val publicCategoryRepository: PublicCategoryRepository
 ) : ViewModel() {
 
     private val quoteId: Long = checkNotNull(savedStateHandle[Destination.EditSocialQuote.ARG_QUOTE_ID])
@@ -57,6 +60,9 @@ class EditSocialQuoteViewModel @Inject constructor(
     private val _sourceTypeOptions = MutableStateFlow(SourceType.DEFAULT_OPTIONS)
     val sourceTypeOptions: StateFlow<List<String>> = _sourceTypeOptions
 
+    private val _categoryOptions = MutableStateFlow<List<PublicCategory>>(emptyList())
+    val categoryOptions: StateFlow<List<PublicCategory>> = _categoryOptions
+
     private val _suggestions = MutableStateFlow(QuoteAutocompleteSuggestions())
     val suggestions: StateFlow<QuoteAutocompleteSuggestions> = _suggestions
 
@@ -64,6 +70,11 @@ class EditSocialQuoteViewModel @Inject constructor(
         viewModelScope.launch {
             publicSourceTypeRepository.getSourceTypes().onSuccess { types ->
                 if (types.isNotEmpty()) _sourceTypeOptions.value = types
+            }
+        }
+        viewModelScope.launch {
+            publicCategoryRepository.getCategories().onSuccess { categories ->
+                _categoryOptions.value = categories
             }
         }
         viewModelScope.launch {
@@ -116,6 +127,7 @@ class EditSocialQuoteViewModel @Inject constructor(
     fun onAuthorChanged(value: String) = update { it.copy(author = value) }
     fun onTagsInputChanged(value: String) = update { it.copy(tagsInput = value) }
     fun onSourceTypeChanged(value: String) = update { it.copy(sourceType = value) }
+    fun onCategoryChanged(value: String?) = update { it.copy(category = value) }
     fun onRemoveImage() = update { it.copy(imageUrl = null) }
     fun consumeError() = update { it.copy(errorMessage = null) }
 

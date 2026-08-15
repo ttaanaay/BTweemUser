@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.R
 import com.btween.app.ui.components.AutocompleteTextField
+import com.btween.app.ui.components.CategoryDropdown
 import com.btween.app.ui.components.QuoteImagePicker
 import com.btween.app.ui.components.TagChipInput
 import com.btween.app.ui.util.sourceTypeLabel
@@ -51,6 +52,7 @@ fun EditSocialQuoteScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val sourceTypeOptions by viewModel.sourceTypeOptions.collectAsStateWithLifecycle()
+    val categoryOptions by viewModel.categoryOptions.collectAsStateWithLifecycle()
     val suggestions by viewModel.suggestions.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var showSourceTypeMenu by remember { mutableStateOf(false) }
@@ -169,6 +171,12 @@ fun EditSocialQuoteScreen(
                 label = stringResource(R.string.edit_quote_label_author),
                 suggestions = suggestions.authors,
                 modifier = Modifier.fillMaxWidth()
+            )
+
+            CategoryDropdown(
+                options = categoryOptions,
+                selected = state.category,
+                onSelected = viewModel::onCategoryChanged
             )
 
             TagChipInput(
