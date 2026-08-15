@@ -78,6 +78,7 @@
     <string name="add_edit_label_speaker">Speaker / Character</string>
     <string name="add_edit_label_author">Author (optional)</string>
     <string name="add_edit_label_category">Category</string>
+    <string name="add_edit_label_feed_category">Feed category</string>
     <string name="add_edit_label_tags">Tags (comma separated)</string>
     <string name="add_edit_label_note">Personal note (optional)</string>
     <string name="add_edit_category_none">None</string>

@@ -13,6 +13,6 @@ class PublicCategoryRepositoryImpl @Inject constructor(
 ) : PublicCategoryRepository {
 
     override suspend fun getCategories(): Result<List<PublicCategory>> = safeApiCall {
-        categoryApi.getCategories().map { PublicCategory(it.id, it.name) }
+        categoryApi.getCategories().map { PublicCategory(it.id, it.name, it.icon) }
     }
 }

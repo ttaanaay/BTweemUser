@@ -46,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.R
 import com.btween.app.domain.model.Category
+import com.btween.app.domain.repository.PublicCategory
 import com.btween.app.ui.components.AutocompleteTextField
 import com.btween.app.ui.components.LoginRequiredDialog
 import com.btween.app.ui.components.QuoteImagePicker
@@ -62,6 +63,7 @@ fun AddEditScreen(
     val state by viewModel.formState.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
     val sourceTypeOptions by viewModel.sourceTypeOptions.collectAsStateWithLifecycle()
+    val feedCategoryOptions by viewModel.feedCategoryOptions.collectAsStateWithLifecycle()
     val suggestions by viewModel.suggestions.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -227,6 +229,12 @@ fun AddEditScreen(
 
                 if (state.shareToFeed) {
                     Spacer(modifier = Modifier.padding(top = 4.dp))
+                    FeedCategoryDropdown(
+                        options = feedCategoryOptions,
+                        selected = state.feedCategory,
+                        onSelected = viewModel::onFeedCategoryChanged
+                    )
+                    Spacer(modifier = Modifier.padding(top = 8.dp))
                     QuoteImagePicker(
                         imageUrl = state.imageUrl,
                         isUploading = state.isUploadingImage,
@@ -324,6 +332,57 @@ private fun CategoryDropdown(
                     text = { Text(category.name) },
                     onClick = {
                         onSelected(category)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Separate from [CategoryDropdown] above - this picks the admin-managed server category the
+ * post gets filed under when shared to the feed, distinct from the local organizing category.
+ */
+@Composable
+private fun FeedCategoryDropdown(
+    options: List<PublicCategory>,
+    selected: String?,
+    onSelected: (String?) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val selectedLabel = options.firstOrNull { it.name == selected }
+        ?.let { "${it.icon} ${it.name}" }
+        ?: stringResource(R.string.add_edit_category_none)
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        OutlinedTextField(
+            value = selectedLabel,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.add_edit_label_feed_category)) },
+            trailingIcon = { Icon(Icons.Filled.ArrowDropDown, contentDescription = null) },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clickable { expanded = true }
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth(0.9f)
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.add_edit_category_none)) },
+                onClick = { onSelected(null); expanded = false }
+            )
+            options.forEach { category ->
+                DropdownMenuItem(
+                    text = { Text("${category.icon} ${category.name}") },
+                    onClick = {
+                        onSelected(category.name)
                         expanded = false
                     }
                 )

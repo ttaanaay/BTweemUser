@@ -10,6 +10,8 @@ import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.repository.AuthRepository
 import com.btween.app.domain.repository.ProfileRepository
+import com.btween.app.domain.repository.PublicCategory
+import com.btween.app.domain.repository.PublicCategoryRepository
 import com.btween.app.domain.repository.PublicSourceTypeRepository
 import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
 import com.btween.app.domain.repository.QuoteRepository
@@ -34,6 +36,11 @@ data class AddEditFormState(
     val speaker: String = "",
     val author: String = "",
     val category: Category? = null,
+    // Separate from the local `category` above - that one is for organizing this quote in
+    // your own local library and can be any custom category with a color. This is which
+    // admin-managed server category the post gets filed under when shared to the feed, and
+    // has nothing to do with the local one (they may not even have matching names).
+    val feedCategory: String? = null,
     val tagsInput: String = "",
     val note: String = "",
     val isFavorite: Boolean = false,
@@ -61,6 +68,7 @@ class AddEditViewModel @Inject constructor(
     private val cloudinaryUploader: CloudinaryUploader,
     private val authRepository: AuthRepository,
     private val publicSourceTypeRepository: PublicSourceTypeRepository,
+    private val publicCategoryRepository: PublicCategoryRepository,
     getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
 
@@ -79,6 +87,9 @@ class AddEditViewModel @Inject constructor(
     private val _sourceTypeOptions = MutableStateFlow(SourceType.DEFAULT_OPTIONS)
     val sourceTypeOptions: StateFlow<List<String>> = _sourceTypeOptions
 
+    private val _feedCategoryOptions = MutableStateFlow<List<PublicCategory>>(emptyList())
+    val feedCategoryOptions: StateFlow<List<PublicCategory>> = _feedCategoryOptions
+
     private val _suggestions = MutableStateFlow(QuoteAutocompleteSuggestions())
     val suggestions: StateFlow<QuoteAutocompleteSuggestions> = _suggestions
 
@@ -88,6 +99,11 @@ class AddEditViewModel @Inject constructor(
             // fails - the form should still be usable offline or if the request errors.
             publicSourceTypeRepository.getSourceTypes().onSuccess { types ->
                 if (types.isNotEmpty()) _sourceTypeOptions.value = types
+            }
+        }
+        viewModelScope.launch {
+            publicCategoryRepository.getCategories().onSuccess { categories ->
+                _feedCategoryOptions.value = categories
             }
         }
         viewModelScope.launch {
@@ -145,6 +161,7 @@ class AddEditViewModel @Inject constructor(
     fun onSpeakerChanged(value: String) = update { it.copy(speaker = value) }
     fun onAuthorChanged(value: String) = update { it.copy(author = value) }
     fun onCategoryChanged(value: Category?) = update { it.copy(category = value) }
+    fun onFeedCategoryChanged(value: String?) = update { it.copy(feedCategory = value) }
     fun onTagsInputChanged(value: String) = update { it.copy(tagsInput = value) }
     fun onNoteChanged(value: String) = update { it.copy(note = value) }
     fun onFavoriteToggled() = update { it.copy(isFavorite = !it.isFavorite) }
@@ -203,7 +220,7 @@ class AddEditViewModel @Inject constructor(
                             sourceType = quote.sourceType,
                             speaker = quote.speaker,
                             author = quote.author,
-                            category = quote.category?.name,
+                            category = state.feedCategory,
                             tags = quote.tags,
                             imageUrl = state.imageUrl,
                             visibility = "PUBLIC"

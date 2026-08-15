@@ -13,17 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EmojiEmotions
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Groups
-import androidx.compose.material.icons.filled.Label
-import androidx.compose.material.icons.filled.MenuBook
-import androidx.compose.material.icons.filled.Movie
-import androidx.compose.material.icons.filled.Psychology
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.WbSunny
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,26 +20,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.domain.repository.PublicCategory
 
-// A fixed icon/color palette cycled by position, since admin-created categories don't carry
-// their own icon or color - this keeps the row visually consistent with the original design
-// (which had one icon per category) without needing an icon picker in the admin panel.
-private val paletteIcons: List<ImageVector> = listOf(
-    Icons.Filled.WbSunny,
-    Icons.Filled.Favorite,
-    Icons.Filled.Star,
-    Icons.Filled.Groups,
-    Icons.Filled.Psychology,
-    Icons.Filled.EmojiEmotions,
-    Icons.Filled.MenuBook,
-    Icons.Filled.Movie
-)
+// Categories carry their own icon now (an emoji, set by the admin), but not a color - this
+// palette is still cycled by position just for the background tint behind each icon.
 private val paletteColors: List<Color> = listOf(
     Color(0xFF5DA8E8),
     Color(0xFFE85D8A),
@@ -64,9 +41,9 @@ private val paletteColors: List<Color> = listOf(
 
 /**
  * Category shortcuts on Home - tapping one opens [com.btween.app.ui.home.CategoryQuotesScreen]
- * filtered to that category via the feed API's `category` query param. The category list
- * itself comes from the server (admin-managed), not a hardcoded set - icon/color are just
- * assigned by position in a repeating palette since categories are plain names server-side.
+ * filtered to that category via the feed API's `category` query param. The category list and
+ * its icon both come from the server (admin-managed) - only the background tint is assigned
+ * by position in a repeating palette, since categories don't carry their own color.
  */
 @Composable
 fun CategoryIconsRow(
@@ -89,8 +66,7 @@ fun CategoryIconsRow(
 
 @Composable
 private fun CategoryChipItem(category: PublicCategory, onClick: () -> Unit) {
-    val index = (category.id % paletteIcons.size).toInt()
-    val icon = paletteIcons.getOrElse(index) { Icons.Filled.Label }
+    val index = (category.id % paletteColors.size).toInt()
     val color = paletteColors.getOrElse(index) { MaterialTheme.colorScheme.primary }
 
     Column(
@@ -103,7 +79,7 @@ private fun CategoryChipItem(category: PublicCategory, onClick: () -> Unit) {
                 .background(color.copy(alpha = 0.18f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Icon(imageVector = icon, contentDescription = null, tint = color)
+            Text(text = category.icon, style = MaterialTheme.typography.titleLarge)
         }
         Spacer(modifier = Modifier.height(6.dp))
         Text(

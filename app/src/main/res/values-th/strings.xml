@@ -67,6 +67,7 @@
     <string name="add_edit_label_speaker">ผู้พูด / ตัวละคร</string>
     <string name="add_edit_label_author">ผู้แต่ง (ไม่บังคับ)</string>
     <string name="add_edit_label_category">หมวดหมู่</string>
+    <string name="add_edit_label_feed_category">หมวดหมู่ในฟีด</string>
     <string name="add_edit_label_tags">แท็ก (คั่นด้วยจุลภาค)</string>
     <string name="add_edit_label_note">บันทึกส่วนตัว (ไม่บังคับ)</string>
     <string name="add_edit_category_none">ไม่มี</string>
