@@ -118,14 +118,19 @@ class AddEditViewModel @Inject constructor(
                 profileRepository.getUserQuotes(it, limit = 200).getOrDefault(emptyList())
             }.orEmpty()
 
+            // Also merge in a slice of the public feed, so autocomplete is useful even on
+            // someone's very first quote, before they have any history of their own to draw
+            // from - matches the same fix already made on the web app.
+            val community = socialQuoteRepository.getFeed(limit = 200).getOrDefault(emptyList())
+
             _suggestions.value = QuoteAutocompleteSuggestions(
-                sourceTitles = (local.sourceTitles + social.map { it.sourceTitle })
+                sourceTitles = (local.sourceTitles + social.map { it.sourceTitle } + community.map { it.sourceTitle })
                     .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER),
-                speakers = (local.speakers + social.map { it.speaker })
+                speakers = (local.speakers + social.map { it.speaker } + community.map { it.speaker })
                     .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER),
-                authors = (local.authors + social.mapNotNull { it.author })
+                authors = (local.authors + social.mapNotNull { it.author } + community.mapNotNull { it.author })
                     .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER),
-                tags = (local.tags + social.flatMap { it.tags })
+                tags = (local.tags + social.flatMap { it.tags } + community.flatMap { it.tags })
                     .filter { it.isNotBlank() }.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER)
             )
         }
