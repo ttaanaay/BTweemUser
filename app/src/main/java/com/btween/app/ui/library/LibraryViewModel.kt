@@ -2,11 +2,11 @@ package com.btween.app.ui.library
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.QuoteFilter
 import com.btween.app.domain.model.SortOrder
-import com.btween.app.domain.usecase.category.GetCategoriesUseCase
+import com.btween.app.domain.repository.PublicCategory
+import com.btween.app.domain.repository.PublicCategoryRepository
 import com.btween.app.domain.usecase.quote.GetFilteredQuotesUseCase
 import com.btween.app.domain.usecase.quote.ToggleFavoriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,7 @@ import javax.inject.Inject
 data class LibraryUiState(
     val filter: QuoteFilter = QuoteFilter(),
     val quotes: List<Quote> = emptyList(),
-    val categories: List<Category> = emptyList(),
+    val categories: List<PublicCategory> = emptyList(),
     val isLoading: Boolean = true
 )
 
@@ -32,16 +32,23 @@ data class LibraryUiState(
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
     private val getFilteredQuotesUseCase: GetFilteredQuotesUseCase,
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val publicCategoryRepository: PublicCategoryRepository,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase
 ) : ViewModel() {
 
     private val filterState = MutableStateFlow(QuoteFilter())
+    private val categoriesState = MutableStateFlow<List<PublicCategory>>(emptyList())
+
+    init {
+        viewModelScope.launch {
+            publicCategoryRepository.getCategories().onSuccess { categoriesState.value = it }
+        }
+    }
 
     val uiState: StateFlow<LibraryUiState> = combine(
         filterState.flatMapLatest { getFilteredQuotesUseCase(it) },
         filterState,
-        getCategoriesUseCase()
+        categoriesState
     ) { quotes, filter, categories ->
         LibraryUiState(filter = filter, quotes = quotes, categories = categories, isLoading = false)
     }.stateIn(
@@ -58,8 +65,8 @@ class LibraryViewModel @Inject constructor(
         filterState.update { it.copy(sortOrder = order) }
     }
 
-    fun onCategorySelected(categoryId: Long?) {
-        filterState.update { it.copy(categoryId = if (it.categoryId == categoryId) null else categoryId) }
+    fun onCategorySelected(category: String?) {
+        filterState.update { it.copy(category = if (it.category == category) null else category) }
     }
 
     fun onSourceTypeSelected(sourceType: String?) {

@@ -43,6 +43,7 @@ import com.btween.app.R
 import com.btween.app.domain.model.SortOrder
 import com.btween.app.ui.components.EmptyState
 import com.btween.app.ui.components.QuoteListCard
+import com.btween.app.ui.util.categoryIconFor
 import com.btween.app.ui.util.localizedLabel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -114,9 +115,10 @@ fun LibraryScreen(
                 }
                 items(uiState.categories, key = { it.id }) { category ->
                     FilterChip(
-                        selected = uiState.filter.categoryId == category.id,
-                        onClick = { viewModel.onCategorySelected(category.id) },
-                        label = { Text(category.name) }
+                        selected = uiState.filter.category == category.name,
+                        onClick = { viewModel.onCategorySelected(category.name) },
+                        label = { Text(category.name) },
+                        leadingIcon = { Icon(categoryIconFor(category.icon), contentDescription = null) }
                     )
                 }
             }

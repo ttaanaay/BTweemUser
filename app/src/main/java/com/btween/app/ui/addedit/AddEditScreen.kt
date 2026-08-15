@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.btween.app.R
-import com.btween.app.domain.model.Category
 import com.btween.app.domain.repository.PublicCategory
 import com.btween.app.ui.components.AutocompleteTextField
 import com.btween.app.ui.components.LoginRequiredDialog
@@ -62,9 +61,8 @@ fun AddEditScreen(
     viewModel: AddEditViewModel = hiltViewModel()
 ) {
     val state by viewModel.formState.collectAsStateWithLifecycle()
-    val categories by viewModel.categories.collectAsStateWithLifecycle()
     val sourceTypeOptions by viewModel.sourceTypeOptions.collectAsStateWithLifecycle()
-    val feedCategoryOptions by viewModel.feedCategoryOptions.collectAsStateWithLifecycle()
+    val categoryOptions by viewModel.categoryOptions.collectAsStateWithLifecycle()
     val suggestions by viewModel.suggestions.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -162,7 +160,7 @@ fun AddEditScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             CategoryDropdown(
-                categories = categories,
+                options = categoryOptions,
                 selected = state.category,
                 onSelected = viewModel::onCategoryChanged
             )
@@ -230,12 +228,6 @@ fun AddEditScreen(
 
                 if (state.shareToFeed) {
                     Spacer(modifier = Modifier.padding(top = 4.dp))
-                    FeedCategoryDropdown(
-                        options = feedCategoryOptions,
-                        selected = state.feedCategory,
-                        onSelected = viewModel::onFeedCategoryChanged
-                    )
-                    Spacer(modifier = Modifier.padding(top = 8.dp))
                     QuoteImagePicker(
                         imageUrl = state.imageUrl,
                         isUploading = state.isUploadingImage,
@@ -300,53 +292,6 @@ private fun SourceTypeDropdown(selected: String, options: List<String>, onSelect
 
 @Composable
 private fun CategoryDropdown(
-    categories: List<Category>,
-    selected: Category?,
-    onSelected: (Category?) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    Box(modifier = Modifier.fillMaxWidth()) {
-        OutlinedTextField(
-            value = selected?.name ?: stringResource(R.string.add_edit_category_none),
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(stringResource(R.string.add_edit_label_category)) },
-            trailingIcon = { Icon(Icons.Filled.ArrowDropDown, contentDescription = null) },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .clickable { expanded = true }
-        )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth(0.9f)
-        ) {
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.add_edit_category_none)) },
-                onClick = { onSelected(null); expanded = false }
-            )
-            categories.forEach { category ->
-                DropdownMenuItem(
-                    text = { Text(category.name) },
-                    onClick = {
-                        onSelected(category)
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
-}
-
-/**
- * Separate from [CategoryDropdown] above - this picks the admin-managed server category the
- * post gets filed under when shared to the feed, distinct from the local organizing category.
- */
-@Composable
-private fun FeedCategoryDropdown(
     options: List<PublicCategory>,
     selected: String?,
     onSelected: (String?) -> Unit
@@ -359,7 +304,7 @@ private fun FeedCategoryDropdown(
             value = selectedCategory?.name ?: stringResource(R.string.add_edit_category_none),
             onValueChange = {},
             readOnly = true,
-            label = { Text(stringResource(R.string.add_edit_label_feed_category)) },
+            label = { Text(stringResource(R.string.add_edit_label_category)) },
             leadingIcon = {
                 Icon(imageVector = categoryIconFor(selectedCategory?.icon), contentDescription = null)
             },

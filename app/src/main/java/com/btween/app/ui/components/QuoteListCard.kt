@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -33,7 +32,7 @@ import com.btween.app.R
 import com.btween.app.domain.model.Quote
 import com.btween.app.ui.theme.QuoteSerifFontFamily
 import com.btween.app.ui.util.sourceTypeLabel
-import com.btween.app.util.toColorOrDefault
+import com.btween.app.ui.util.categoryIconFor
 
 @Composable
 fun QuoteListCard(
@@ -67,10 +66,11 @@ fun QuoteListCard(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     quote.category?.let { category ->
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .background(category.colorHex.toColorOrDefault(), CircleShape)
+                        Icon(
+                            imageVector = categoryIconFor(category),
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp),
+                            tint = MaterialTheme.colorScheme.primary
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                     }

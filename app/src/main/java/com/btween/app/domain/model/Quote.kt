@@ -7,7 +7,7 @@ data class Quote(
     val sourceType: String,
     val speaker: String,
     val author: String? = null,
-    val category: Category? = null,
+    val category: String? = null,
     val tags: List<String> = emptyList(),
     val note: String? = null,
     val isFavorite: Boolean = false,

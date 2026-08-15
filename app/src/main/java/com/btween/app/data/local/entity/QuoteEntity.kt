@@ -1,21 +1,12 @@
 package com.btween.app.data.local.entity
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "quotes",
-    foreignKeys = [
-        ForeignKey(
-            entity = CategoryEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["categoryId"],
-            onDelete = ForeignKey.SET_NULL
-        )
-    ],
-    indices = [Index("categoryId"), Index("isFavorite"), Index("sourceType")]
+    indices = [Index("isFavorite"), Index("sourceType")]
 )
 data class QuoteEntity(
     @PrimaryKey(autoGenerate = true)
@@ -25,7 +16,7 @@ data class QuoteEntity(
     val sourceType: String,
     val speaker: String,
     val author: String?,
-    val categoryId: Long?,
+    val category: String?,
     val tags: List<String>,
     val note: String?,
     val isFavorite: Boolean = false,

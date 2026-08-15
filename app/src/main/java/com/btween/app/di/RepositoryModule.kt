@@ -1,7 +1,6 @@
 package com.btween.app.di
 
 import com.btween.app.data.repository.AuthRepositoryImpl
-import com.btween.app.data.repository.CategoryRepositoryImpl
 import com.btween.app.data.repository.CollectionRepositoryImpl
 import com.btween.app.data.repository.CommentRepositoryImpl
 import com.btween.app.data.repository.NotificationRepositoryImpl
@@ -13,7 +12,6 @@ import com.btween.app.data.repository.ReportRepositoryImpl
 import com.btween.app.data.repository.SettingsRepositoryImpl
 import com.btween.app.data.repository.SocialQuoteRepositoryImpl
 import com.btween.app.domain.repository.AuthRepository
-import com.btween.app.domain.repository.CategoryRepository
 import com.btween.app.domain.repository.CollectionRepository
 import com.btween.app.domain.repository.CommentRepository
 import com.btween.app.domain.repository.NotificationRepository
@@ -37,10 +35,6 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindQuoteRepository(impl: QuoteRepositoryImpl): QuoteRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindCategoryRepository(impl: CategoryRepositoryImpl): CategoryRepository
 
     @Binds
     @Singleton

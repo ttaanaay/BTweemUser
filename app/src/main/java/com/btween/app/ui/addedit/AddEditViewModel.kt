@@ -5,7 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btween.app.data.remote.CloudinaryUploader
-import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.SourceType
 import com.btween.app.domain.repository.AuthRepository
@@ -16,15 +15,12 @@ import com.btween.app.domain.repository.PublicSourceTypeRepository
 import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
 import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.SocialQuoteRepository
-import com.btween.app.domain.usecase.category.GetCategoriesUseCase
 import com.btween.app.domain.usecase.quote.AddQuoteUseCase
 import com.btween.app.domain.usecase.quote.UpdateQuoteUseCase
 import com.btween.app.ui.navigation.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,12 +31,9 @@ data class AddEditFormState(
     val sourceType: String = SourceType.MOVIE,
     val speaker: String = "",
     val author: String = "",
-    val category: Category? = null,
-    // Separate from the local `category` above - that one is for organizing this quote in
-    // your own local library and can be any custom category with a color. This is which
-    // admin-managed server category the post gets filed under when shared to the feed, and
-    // has nothing to do with the local one (they may not even have matching names).
-    val feedCategory: String? = null,
+    // A single admin-managed category, shared between local storage and the feed post if
+    // shared - there's no separate local-only category system anymore.
+    val category: String? = null,
     val tagsInput: String = "",
     val note: String = "",
     val isFavorite: Boolean = false,
@@ -68,8 +61,7 @@ class AddEditViewModel @Inject constructor(
     private val cloudinaryUploader: CloudinaryUploader,
     private val authRepository: AuthRepository,
     private val publicSourceTypeRepository: PublicSourceTypeRepository,
-    private val publicCategoryRepository: PublicCategoryRepository,
-    getCategoriesUseCase: GetCategoriesUseCase
+    private val publicCategoryRepository: PublicCategoryRepository
 ) : ViewModel() {
 
     private val requestedId: Long = savedStateHandle.get<Long>(Destination.AddEditQuote.ARG_QUOTE_ID)
@@ -78,17 +70,11 @@ class AddEditViewModel @Inject constructor(
     private val _formState = MutableStateFlow(AddEditFormState())
     val formState: StateFlow<AddEditFormState> = _formState
 
-    val categories: StateFlow<List<Category>> = getCategoriesUseCase().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyList()
-    )
-
     private val _sourceTypeOptions = MutableStateFlow(SourceType.DEFAULT_OPTIONS)
     val sourceTypeOptions: StateFlow<List<String>> = _sourceTypeOptions
 
-    private val _feedCategoryOptions = MutableStateFlow<List<PublicCategory>>(emptyList())
-    val feedCategoryOptions: StateFlow<List<PublicCategory>> = _feedCategoryOptions
+    private val _categoryOptions = MutableStateFlow<List<PublicCategory>>(emptyList())
+    val categoryOptions: StateFlow<List<PublicCategory>> = _categoryOptions
 
     private val _suggestions = MutableStateFlow(QuoteAutocompleteSuggestions())
     val suggestions: StateFlow<QuoteAutocompleteSuggestions> = _suggestions
@@ -103,7 +89,7 @@ class AddEditViewModel @Inject constructor(
         }
         viewModelScope.launch {
             publicCategoryRepository.getCategories().onSuccess { categories ->
-                _feedCategoryOptions.value = categories
+                _categoryOptions.value = categories
             }
         }
         viewModelScope.launch {
@@ -165,8 +151,7 @@ class AddEditViewModel @Inject constructor(
     fun onSourceTypeChanged(value: String) = update { it.copy(sourceType = value) }
     fun onSpeakerChanged(value: String) = update { it.copy(speaker = value) }
     fun onAuthorChanged(value: String) = update { it.copy(author = value) }
-    fun onCategoryChanged(value: Category?) = update { it.copy(category = value) }
-    fun onFeedCategoryChanged(value: String?) = update { it.copy(feedCategory = value) }
+    fun onCategoryChanged(value: String?) = update { it.copy(category = value) }
     fun onTagsInputChanged(value: String) = update { it.copy(tagsInput = value) }
     fun onNoteChanged(value: String) = update { it.copy(note = value) }
     fun onFavoriteToggled() = update { it.copy(isFavorite = !it.isFavorite) }
@@ -225,7 +210,7 @@ class AddEditViewModel @Inject constructor(
                             sourceType = quote.sourceType,
                             speaker = quote.speaker,
                             author = quote.author,
-                            category = state.feedCategory,
+                            category = state.category,
                             tags = quote.tags,
                             imageUrl = state.imageUrl,
                             visibility = "PUBLIC"

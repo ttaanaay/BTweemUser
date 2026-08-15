@@ -1,71 +1,45 @@
 package com.btween.app.data.repository
 
-import com.btween.app.data.local.dao.CategoryDao
 import com.btween.app.data.local.dao.QuoteDao
 import com.btween.app.data.local.mapper.toDomain
 import com.btween.app.data.local.mapper.toEntity
-import com.btween.app.domain.model.Category
 import com.btween.app.domain.model.Quote
 import com.btween.app.domain.model.QuoteFilter
 import com.btween.app.domain.repository.QuoteAutocompleteSuggestions
 import com.btween.app.domain.repository.QuoteRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class QuoteRepositoryImpl @Inject constructor(
-    private val quoteDao: QuoteDao,
-    private val categoryDao: CategoryDao
+    private val quoteDao: QuoteDao
 ) : QuoteRepository {
 
-    private fun categoryMapFlow(): Flow<Map<Long, Category>> =
-        categoryDao.observeCategories().map { entities ->
-            entities.associate { it.id to it.toDomain() }
-        }
-
     override fun observeFilteredQuotes(filter: QuoteFilter): Flow<List<Quote>> =
-        combine(
-            quoteDao.observeFilteredQuotes(
-                categoryId = filter.categoryId,
-                sourceType = filter.sourceType,
-                favoritesOnly = filter.favoritesOnly,
-                searchQuery = filter.searchQuery.trim(),
-                sortOrder = filter.sortOrder.ordinal
-            ),
-            categoryMapFlow()
-        ) { entities, categories ->
-            entities.map { it.toDomain(it.categoryId?.let(categories::get)) }
-        }
+        quoteDao.observeFilteredQuotes(
+            category = filter.category,
+            sourceType = filter.sourceType,
+            favoritesOnly = filter.favoritesOnly,
+            searchQuery = filter.searchQuery.trim(),
+            sortOrder = filter.sortOrder.ordinal
+        ).map { entities -> entities.map { it.toDomain() } }
 
     override fun observeQuoteById(id: Long): Flow<Quote?> =
-        combine(quoteDao.observeQuoteById(id), categoryMapFlow()) { entity, categories ->
-            entity?.let { it.toDomain(it.categoryId?.let(categories::get)) }
-        }
+        quoteDao.observeQuoteById(id).map { it?.toDomain() }
 
-    override suspend fun getQuoteById(id: Long): Quote? {
-        val entity = quoteDao.getQuoteById(id) ?: return null
-        val categories = categoryMapFlow().first()
-        return entity.toDomain(entity.categoryId?.let(categories::get))
-    }
+    override suspend fun getQuoteById(id: Long): Quote? =
+        quoteDao.getQuoteById(id)?.toDomain()
 
     override fun observeFavorites(): Flow<List<Quote>> =
-        combine(quoteDao.observeFavorites(), categoryMapFlow()) { entities, categories ->
-            entities.map { it.toDomain(it.categoryId?.let(categories::get)) }
-        }
+        quoteDao.observeFavorites().map { entities -> entities.map { it.toDomain() } }
 
     override fun observeRecentlyAdded(limit: Int): Flow<List<Quote>> =
-        combine(quoteDao.observeRecentlyAdded(limit), categoryMapFlow()) { entities, categories ->
-            entities.map { it.toDomain(it.categoryId?.let(categories::get)) }
-        }
+        quoteDao.observeRecentlyAdded(limit).map { entities -> entities.map { it.toDomain() } }
 
     override fun observeRecentlyViewed(limit: Int): Flow<List<Quote>> =
-        combine(quoteDao.observeRecentlyViewed(limit), categoryMapFlow()) { entities, categories ->
-            entities.map { it.toDomain(it.categoryId?.let(categories::get)) }
-        }
+        quoteDao.observeRecentlyViewed(limit).map { entities -> entities.map { it.toDomain() } }
 
     override fun observeTotalCount(): Flow<Int> = quoteDao.observeTotalCount()
 
@@ -94,10 +68,8 @@ class QuoteRepositoryImpl @Inject constructor(
         quoteDao.markViewed(id, System.currentTimeMillis())
     }
 
-    override suspend fun getAllQuotesOnce(): List<Quote> {
-        val categories = categoryMapFlow().first()
-        return quoteDao.getAllQuotesOnce().map { it.toDomain(it.categoryId?.let(categories::get)) }
-    }
+    override suspend fun getAllQuotesOnce(): List<Quote> =
+        quoteDao.getAllQuotesOnce().map { it.toDomain() }
 
     override suspend fun getAutocompleteSuggestions(): QuoteAutocompleteSuggestions {
         // tags is a TypeConverter-backed List<String> column - Room can't map a raw query

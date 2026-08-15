@@ -51,7 +51,7 @@ interface QuoteDao {
     @Query(
         """
         SELECT * FROM quotes
-        WHERE (:categoryId IS NULL OR categoryId = :categoryId)
+        WHERE (:category IS NULL OR category = :category)
         AND (:sourceType IS NULL OR sourceType = :sourceType)
         AND (:favoritesOnly = 0 OR isFavorite = 1)
         AND (
@@ -61,7 +61,7 @@ interface QuoteDao {
             OR speaker LIKE '%' || :searchQuery || '%'
             OR author LIKE '%' || :searchQuery || '%'
             OR tags LIKE '%' || :searchQuery || '%'
-            OR categoryId IN (SELECT id FROM categories WHERE name LIKE '%' || :searchQuery || '%')
+            OR category LIKE '%' || :searchQuery || '%'
         )
         ORDER BY
             CASE WHEN :sortOrder = 0 THEN createdAt END DESC,
@@ -72,7 +72,7 @@ interface QuoteDao {
         """
     )
     fun observeFilteredQuotes(
-        categoryId: Long?,
+        category: String?,
         sourceType: String?,
         favoritesOnly: Boolean,
         searchQuery: String,
@@ -95,9 +95,6 @@ interface QuoteDao {
 
     @Query("UPDATE quotes SET lastViewedAt = :viewedAt WHERE id = :id")
     suspend fun markViewed(id: Long, viewedAt: Long)
-
-    @Query("UPDATE quotes SET categoryId = NULL WHERE categoryId = :categoryId")
-    suspend fun clearCategoryFromQuotes(categoryId: Long)
 
     @Query("SELECT COUNT(*) FROM quotes")
     fun observeTotalCount(): Flow<Int>

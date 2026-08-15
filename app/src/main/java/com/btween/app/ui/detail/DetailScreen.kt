@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
@@ -60,7 +59,7 @@ import com.btween.app.ui.util.sourceTypeLabel
 import com.btween.app.util.copyQuoteToClipboard
 import com.btween.app.util.shareQuoteAsImage
 import com.btween.app.util.shareQuoteAsText
-import com.btween.app.util.toColorOrDefault
+import com.btween.app.ui.util.categoryIconFor
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -208,12 +207,13 @@ private fun QuoteHeroCard(quote: Quote, modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(20.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 quote.category?.let { category ->
-                    Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .background(category.colorHex.toColorOrDefault(), CircleShape)
+                    Icon(
+                        imageVector = categoryIconFor(category),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                 }
                 Column {
                     Text(
