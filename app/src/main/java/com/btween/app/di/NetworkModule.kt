@@ -8,6 +8,7 @@ import com.btween.app.data.remote.api.AuthApi
 import com.btween.app.data.remote.api.CategoryApi
 import com.btween.app.data.remote.api.CollectionApi
 import com.btween.app.data.remote.api.DeviceApi
+import com.btween.app.data.remote.api.MaintenanceApi
 import com.btween.app.data.remote.api.NotificationApi
 import com.btween.app.data.remote.api.QuoteApi
 import com.btween.app.data.remote.api.ReportApi
@@ -140,4 +141,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideSourceTypeApi(retrofit: Retrofit): SourceTypeApi = retrofit.create(SourceTypeApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideMaintenanceApi(retrofit: Retrofit): MaintenanceApi = retrofit.create(MaintenanceApi::class.java)
 }

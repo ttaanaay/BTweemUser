@@ -7,6 +7,7 @@ import com.btween.app.data.repository.NotificationRepositoryImpl
 import com.btween.app.data.repository.ProfileRepositoryImpl
 import com.btween.app.data.repository.QuoteRepositoryImpl
 import com.btween.app.data.repository.PublicCategoryRepositoryImpl
+import com.btween.app.data.repository.MaintenanceRepositoryImpl
 import com.btween.app.data.repository.PublicSourceTypeRepositoryImpl
 import com.btween.app.data.repository.ReportRepositoryImpl
 import com.btween.app.data.repository.SettingsRepositoryImpl
@@ -18,6 +19,7 @@ import com.btween.app.domain.repository.NotificationRepository
 import com.btween.app.domain.repository.ProfileRepository
 import com.btween.app.domain.repository.QuoteRepository
 import com.btween.app.domain.repository.PublicCategoryRepository
+import com.btween.app.domain.repository.MaintenanceRepository
 import com.btween.app.domain.repository.PublicSourceTypeRepository
 import com.btween.app.domain.repository.ReportRepository
 import com.btween.app.domain.repository.SettingsRepository
@@ -75,4 +77,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindPublicSourceTypeRepository(impl: PublicSourceTypeRepositoryImpl): PublicSourceTypeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMaintenanceRepository(impl: MaintenanceRepositoryImpl): MaintenanceRepository
 }

@@ -348,4 +348,6 @@
     <string name="auth_verify_registration_action">Create account</string>
     <string name="auth_verify_registration_action_login">Verify and log in</string>
     <string name="auth_resend_code">Resend code</string>
+    <string name="maintenance_title">We\'ll be right back</string>
+    <string name="maintenance_default_message">BTween is down for maintenance right now. Thanks for your patience.</string>
 </resources>

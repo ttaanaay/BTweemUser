@@ -337,4 +337,6 @@
     <string name="auth_verify_registration_action">สร้างบัญชี</string>
     <string name="auth_verify_registration_action_login">ยืนยันและเข้าสู่ระบบ</string>
     <string name="auth_resend_code">ส่งรหัสใหม่</string>
+    <string name="maintenance_title">เดี๋ยวกลับมานะ</string>
+    <string name="maintenance_default_message">BTween กำลังปิดปรับปรุงชั่วคราว ขอบคุณที่รอครับ</string>
 </resources>

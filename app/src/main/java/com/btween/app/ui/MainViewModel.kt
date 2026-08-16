@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.btween.app.domain.model.ThemeMode
 import com.btween.app.domain.model.UserSettings
 import com.btween.app.domain.repository.AuthRepository
+import com.btween.app.domain.repository.MaintenanceRepository
+import com.btween.app.domain.repository.MaintenanceStatus
 import com.btween.app.domain.repository.SettingsRepository
 import com.btween.app.push.DeviceTokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +21,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     settingsRepository: SettingsRepository,
     private val authRepository: AuthRepository,
+    private val maintenanceRepository: MaintenanceRepository,
     deviceTokenRepository: DeviceTokenRepository
 ) : ViewModel() {
 
@@ -42,6 +45,12 @@ class MainViewModel @Inject constructor(
         _shouldShowOnboarding.value = false
     }
 
+    // Null while unchecked (renders nothing, avoiding a flash of the real app before a
+    // maintenance screen would replace it) or if the check itself failed - a failed check
+    // fails open (shows the app) rather than risk locking everyone out over a network hiccup.
+    private val _maintenanceStatus = MutableStateFlow<MaintenanceStatus?>(null)
+    val maintenanceStatus: StateFlow<MaintenanceStatus?> = _maintenanceStatus
+
     init {
         viewModelScope.launch {
             isLoggedIn.collect { loggedIn ->
@@ -53,6 +62,12 @@ class MainViewModel @Inject constructor(
         // the fresh-sign-in case themselves right after succeeding.
         if (authRepository.getCurrentUserId() != null) {
             viewModelScope.launch { deviceTokenRepository.registerCurrentToken() }
+        }
+
+        viewModelScope.launch {
+            maintenanceRepository.getStatus()
+                .onSuccess { _maintenanceStatus.value = it }
+                .onFailure { _maintenanceStatus.value = MaintenanceStatus(enabled = false, message = null) }
         }
     }
 }

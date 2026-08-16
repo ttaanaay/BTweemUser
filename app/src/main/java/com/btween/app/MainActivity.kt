@@ -28,6 +28,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.btween.app.ui.MainViewModel
+import com.btween.app.ui.MaintenanceScreen
 import com.btween.app.ui.navigation.BTweenBottomNavBar
 import com.btween.app.ui.navigation.BTweenNavHost
 import com.btween.app.ui.navigation.bottomNavItems
@@ -71,11 +72,15 @@ class MainActivity : ComponentActivity() {
                 dynamicColor = userSettings.useDynamicColor
             ) {
                 Surface(modifier = Modifier.fillMaxSize()) {
+                    val maintenanceStatus by mainViewModel.maintenanceStatus.collectAsStateWithLifecycle()
                     val shouldShowOnboarding by mainViewModel.shouldShowOnboarding.collectAsStateWithLifecycle()
-                    if (shouldShowOnboarding) {
-                        OnboardingScreen(onFinished = mainViewModel::onOnboardingCompleted)
-                    } else {
-                        MainAppContent()
+                    when {
+                        // Still checking (null) - render nothing rather than flash the app
+                        // then immediately replace it with the maintenance screen.
+                        maintenanceStatus == null -> Unit
+                        maintenanceStatus?.enabled == true -> MaintenanceScreen(maintenanceStatus?.message)
+                        shouldShowOnboarding -> OnboardingScreen(onFinished = mainViewModel::onOnboardingCompleted)
+                        else -> MainAppContent()
                     }
                 }
             }
