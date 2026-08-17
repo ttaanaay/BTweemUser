@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.btween.app"
+    namespace = "com.btweeu.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.btween.app"
+        applicationId = "com.btweeu.app"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

@@ -1,0 +1,33 @@
+package com.btweeu.app.ui.util
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.btweeu.app.R
+import com.btweeu.app.domain.model.SortOrder
+import com.btweeu.app.domain.model.SourceType
+
+/**
+ * Localized display label for a source type name. Known legacy names (Movie, Book, etc.)
+ * get a translated label; anything else (a custom name an admin added later) is shown as-is,
+ * since there's no translation available for a name the client doesn't know ahead of time.
+ */
+@Composable
+fun sourceTypeLabel(name: String): String = when (name) {
+    SourceType.MOVIE -> stringResource(R.string.source_type_movie)
+    SourceType.TV_SERIES -> stringResource(R.string.source_type_tv_series)
+    SourceType.BOOK -> stringResource(R.string.source_type_book)
+    SourceType.ANIME -> stringResource(R.string.source_type_anime)
+    SourceType.GAME -> stringResource(R.string.source_type_game)
+    SourceType.PODCAST -> stringResource(R.string.source_type_podcast)
+    SourceType.SPEECH -> stringResource(R.string.source_type_speech)
+    SourceType.OTHER -> stringResource(R.string.source_type_other)
+    else -> name
+}
+
+@Composable
+fun SortOrder.localizedLabel(): String = when (this) {
+    SortOrder.NEWEST -> stringResource(R.string.sort_newest)
+    SortOrder.OLDEST -> stringResource(R.string.sort_oldest)
+    SortOrder.ALPHABETICAL -> stringResource(R.string.sort_alphabetical)
+    SortOrder.FAVORITE -> stringResource(R.string.sort_favorite)
+}

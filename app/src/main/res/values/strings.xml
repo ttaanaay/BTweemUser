@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BTween</string>
+    <string name="app_name">Btweeu</string>
 
     <!-- Not user-facing text - a config value, so not translated. Web Client ID from Google
          Cloud Console (see conversation history for setup steps). Client IDs are not secrets. -->
@@ -32,6 +32,11 @@
     <string name="action_sort">Sort</string>
     <string name="cd_add_to_favorites">Add to favorites</string>
     <string name="cd_remove_from_favorites">Remove from favorites</string>
+    <string name="visibility_public">Public</string>
+    <string name="visibility_private">Private</string>
+    <string name="add_edit_visibility_label">Who can see this</string>
+    <string name="add_edit_visibility_public_hint">Anyone can see this in the public feed</string>
+    <string name="add_edit_visibility_private_hint">Only you can see this</string>
 
     <!-- Home -->
     <string name="home_empty_title">Your collection is empty</string>
@@ -163,7 +168,7 @@
     <string name="auth_no_account_sign_up">Don\'t have an account? Sign up</string>
     <string name="auth_or_divider">  or  </string>
     <string name="auth_create_account_title">Create your account</string>
-    <string name="auth_create_account_subtitle">Join BTween and start sharing quotes</string>
+    <string name="auth_create_account_subtitle">Join Btweeu and start sharing quotes</string>
     <string name="auth_label_display_name">Display name</string>
     <string name="auth_label_username">Username</string>
     <string name="auth_username_supporting">3-20 characters: letters, numbers, underscore only</string>
@@ -349,5 +354,5 @@
     <string name="auth_verify_registration_action_login">Verify and log in</string>
     <string name="auth_resend_code">Resend code</string>
     <string name="maintenance_title">We\'ll be right back</string>
-    <string name="maintenance_default_message">BTween is down for maintenance right now. Thanks for your patience.</string>
+    <string name="maintenance_default_message">Btweeu is down for maintenance right now. Thanks for your patience.</string>
 </resources>

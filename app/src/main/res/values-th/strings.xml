@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BTween</string>
+    <string name="app_name">Btweeu</string>
 
     <!-- Bottom navigation -->
     <string name="nav_home">หน้าแรก</string>
@@ -21,6 +21,11 @@
     <string name="action_sort">เรียงลำดับ</string>
     <string name="cd_add_to_favorites">เพิ่มในรายการโปรด</string>
     <string name="cd_remove_from_favorites">นำออกจากรายการโปรด</string>
+    <string name="visibility_public">สาธารณะ</string>
+    <string name="visibility_private">ส่วนตัว</string>
+    <string name="add_edit_visibility_label">ใครดูได้บ้าง</string>
+    <string name="add_edit_visibility_public_hint">ทุกคนเห็นได้ในฟีดสาธารณะ</string>
+    <string name="add_edit_visibility_private_hint">เห็นได้แค่คุณคนเดียว</string>
 
     <!-- Home -->
     <string name="home_empty_title">คลังคำคมของคุณว่างเปล่า</string>
@@ -152,7 +157,7 @@
     <string name="auth_no_account_sign_up">ยังไม่มีบัญชี? สมัครสมาชิก</string>
     <string name="auth_or_divider">  หรือ  </string>
     <string name="auth_create_account_title">สร้างบัญชีของคุณ</string>
-    <string name="auth_create_account_subtitle">เข้าร่วม BTween แล้วเริ่มแชร์คำคม</string>
+    <string name="auth_create_account_subtitle">เข้าร่วม Btweeu แล้วเริ่มแชร์คำคม</string>
     <string name="auth_label_display_name">ชื่อที่แสดง</string>
     <string name="auth_label_username">ชื่อผู้ใช้</string>
     <string name="auth_username_supporting">3-20 ตัวอักษร: ตัวอักษรภาษาอังกฤษ ตัวเลข หรือขีดล่างเท่านั้น</string>
@@ -338,5 +343,5 @@
     <string name="auth_verify_registration_action_login">ยืนยันและเข้าสู่ระบบ</string>
     <string name="auth_resend_code">ส่งรหัสใหม่</string>
     <string name="maintenance_title">เดี๋ยวกลับมานะ</string>
-    <string name="maintenance_default_message">BTween กำลังปิดปรับปรุงชั่วคราว ขอบคุณที่รอครับ</string>
+    <string name="maintenance_default_message">Btweeu กำลังปิดปรับปรุงชั่วคราว ขอบคุณที่รอครับ</string>
 </resources>
